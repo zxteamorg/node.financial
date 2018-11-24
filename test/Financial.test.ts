@@ -55,5 +55,15 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
+		it("Should NOT instance with 0.4", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				new Financial("123", 0.4);
+			} catch (e) {
+				//expected
+				return;
+			}
+			assert.fail("Should never happened");
+		});
 	});
 });

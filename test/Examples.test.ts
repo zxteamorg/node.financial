@@ -6,7 +6,7 @@ describe("financial funtion tests", function () {
 	it("Should avoid approximation as number (multiply)", function () {
 		const totalMoney = financial(600.90, 2);
 		const pricePerItem = financial(200.30, 2);
-		const buyItems = financial(3);
+		const buyItems = financial("3");
 		const result = pricePerItem.multiply(buyItems);
 
 		assert.isTrue(totalMoney.equalsTo(result));
@@ -24,7 +24,7 @@ describe("financial funtion tests", function () {
 	it("Should avoid approximation as number (divide)", function () {
 		const totalMoney = financial(600.90, 2);
 		const pricePerItem = financial(200.30, 2);
-		const buyItems = financial(3);
+		const buyItems = financial("3");
 		const result = totalMoney.divide(buyItems);
 
 		assert.isTrue(pricePerItem.equalsTo(result));
