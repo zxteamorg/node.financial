@@ -1,5 +1,5 @@
 {
-	"name": "financial.js",
+	"name": "@zxteam/financial.js",
 	"version": "0.0.0-pre000",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",

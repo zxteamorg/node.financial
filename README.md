@@ -1,6 +1,6 @@
 # Financial.JS
 
-Finance JS is a data type for storing decimal values and manipulate its via mathematical functions. It should be used when it is important to preserve exact precision, for example with monetary data.
+Finance JS is a data type for storing decimal values and manipulate its via mathematical functions according infinite-precision arithmetic. It should be used when it is important to preserve exact precision, for example with monetary data.
 
 ## Problems of JavaScript [IEEE 754 floating point numbers](https://en.wikipedia.org/wiki/IEEE_754).
 ### Approximation
