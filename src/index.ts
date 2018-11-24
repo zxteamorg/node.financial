@@ -49,9 +49,24 @@ export function financial(value: number | string): Financial;
 export function financial(...args: Array<any>): Financial {
 	if (args.length === 1) {
 		const value = args[0];
+		const argsRegex = /^-?(0|0\.[0-9]+|[1-9][0-9]+\.[0-9]+)$/;
 		if (typeof (value) === "number") {
-			// TODO decimal values
-			return new Financial(value.toString(), 0);
+
+			const toStringValue = String(value);
+			const spliteValue = toStringValue.split(".");
+			const stringValue = toStringValue.replace(".", "");
+			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
+
+			return new Financial(stringValue, countValue);
+		} else if (typeof (value) === "string") {
+			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
+			const stringValue = value.replace(".", "");
+			const spliteValue = value.split(".");
+			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
+
+			return new Financial(stringValue, countValue);
+		} else {
+			throw new Error("Unknown type");
 		}
 	}
 	// TODO
