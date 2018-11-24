@@ -3,7 +3,7 @@ import { assert } from "chai";
 import { financial } from "../src/index";
 
 describe("financial funtion tests", function () {
-	it("Should avoid approximation (multiply)", function () {
+	it("Should avoid approximation as number (multiply)", function () {
 		const totalMoney = financial(600.90, 2);
 		const pricePerItem = financial(200.30, 2);
 		const buyItems = financial(3);
@@ -12,10 +12,28 @@ describe("financial funtion tests", function () {
 		assert.isTrue(totalMoney.equalsTo(result));
 		assert.equal(result.toString(), "600.90");
 	});
-	it("Should avoid approximation (divide)", function () {
+	it("Should avoid approximation as string (multiply)", function () {
+		const totalMoney = financial("600.90");
+		const pricePerItem = financial("200.30");
+		const buyItems = financial("3");
+		const result = pricePerItem.multiply(buyItems);
+
+		assert.isTrue(totalMoney.equalsTo(result));
+		assert.equal(result.toString(), "600.90");
+	});
+	it("Should avoid approximation as number (divide)", function () {
 		const totalMoney = financial(600.90, 2);
 		const pricePerItem = financial(200.30, 2);
 		const buyItems = financial(3);
+		const result = totalMoney.divide(buyItems);
+
+		assert.isTrue(pricePerItem.equalsTo(result));
+		assert.equal(result.toString(), "200.30");
+	});
+	it("Should avoid approximation as string (divide)", function () {
+		const totalMoney = financial("600.90");
+		const pricePerItem = financial("200.30");
+		const buyItems = financial("3");
 		const result = totalMoney.divide(buyItems);
 
 		assert.isTrue(pricePerItem.equalsTo(result));
