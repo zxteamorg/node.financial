@@ -30,6 +30,7 @@
 	},
 	"homepage": "https://github.com/zxteamorg/financial.js#readme",
 	"scripts": {
+		"build": "zxbuild clean dist",
 		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha 'test/**/*.test.js' --recursive --timeout 10000"
 	},
 	"private": true,
