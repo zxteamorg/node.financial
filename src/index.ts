@@ -4,15 +4,6 @@ export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 
-	public static parse(value: number | string): Financial {
-		if (typeof (value) === "number") {
-			// TODO decimal values
-			return new Financial(value.toString(), 0);
-		}
-		// TODO
-		throw new Error("Not implemented yet");
-	}
-
 	public constructor(integerString: string, fraction: number) {
 		// TODO Check integerString for correct digits
 		// TODO Check fraction
@@ -24,16 +15,20 @@ export class Financial implements FinancialLike {
 	public get value(): string { return this._value; }
 	public get fraction(): number { return this._fraction; }
 
-	public plus(value: FinancialLike): Financial {
+	public equalsTo(value: Financial): boolean {
 		throw new Error("Not implemented yet");
 	}
-	public minus(value: FinancialLike): Financial {
+
+	public plus(value: Financial): Financial {
 		throw new Error("Not implemented yet");
 	}
-	public multiply(value: FinancialLike): Financial {
+	public minus(value: Financial): Financial {
 		throw new Error("Not implemented yet");
 	}
-	public divide(value: FinancialLike): Financial {
+	public multiply(value: Financial): Financial {
+		throw new Error("Not implemented yet");
+	}
+	public divide(value: Financial): Financial {
 		throw new Error("Not implemented yet");
 	}
 
@@ -49,5 +44,17 @@ export class Financial implements FinancialLike {
 	}
 }
 
-export const financial = Financial.parse;
+export function financial(value: number, fractionDigits: number): Financial;
+export function financial(value: number | string): Financial;
+export function financial(...args: Array<any>): Financial {
+	if (args.length === 1) {
+		const value = args[0];
+		if (typeof (value) === "number") {
+			// TODO decimal values
+			return new Financial(value.toString(), 0);
+		}
+	}
+	// TODO
+	throw new Error("Not implemented yet");
+}
 export default financial;
