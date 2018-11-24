@@ -1,0 +1,39 @@
+{
+	"name": "financial.js",
+	"version": "0.0.0-pre000",
+	"description": "Financial data type for Java Script",
+	"main": "./src/index.js",
+	"types": "./src/index.d.ts",
+	"author": {
+		"name": "Maxim Anurin",
+		"email": "maxim.anurin@zxteam.org",
+		"url": "http://www.anurin.name"
+	},
+	"contributors": [
+		{
+			"name": "Serg Zgama",
+			"email": "serg.zgama@zxteam.org"
+		}
+	],
+	"license": "MIT",
+	"devDependencies": {
+		"@zxnode/build": "0.0.28",
+		"nyc": "^13.1.0"
+	},
+	"keywords": [],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zxteamorg/financial.js.git"
+	},
+	"bugs": {
+		"url": "https://github.com/zxteamorg/issues"
+	},
+	"homepage": "https://github.com/zxteamorg/financial.js#readme",
+	"scripts": {
+		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha 'test/**/*.test.js' --recursive --timeout 10000"
+	},
+	"private": true,
+	"dependencies": {
+		"@zxteam/contract": "0.0.0-pre002"
+	}
+}
