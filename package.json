@@ -33,8 +33,5 @@
 		"build": "zxbuild clean dist",
 		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha 'test/**/*.test.js' --recursive --timeout 10000"
 	},
-	"private": true,
-	"dependencies": {
-		"@zxteam/contract": "0.0.0-pre002"
-	}
+	"private": true
 }

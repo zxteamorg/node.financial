@@ -1,8 +1,10 @@
-import { FinancialLike } from "@zxteam/contract";
-
-export class Financial implements FinancialLike {
+export class Financial {
 	private readonly _value: string;
 	private readonly _fraction: number;
+
+	public static equals(left: Financial, right: Financial): boolean {
+		return left.equalsTo(right);
+	}
 
 	public constructor(integerString: string, fraction: number) {
 		// TODO Check integerString for correct digits
@@ -33,9 +35,11 @@ export class Financial implements FinancialLike {
 	}
 
 	public toFloat(): number {
+		// TODO
 		return parseFloat(this.toString());
 	}
 	public toInt(): number {
+		// TODO
 		return parseInt(this.toString());
 	}
 	public toString(): string {

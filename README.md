@@ -42,4 +42,4 @@ const first = financial("123456789012345678901234567890");
 const second = financial("1");
 const result = first.plus(second);
 console.log(result.toString()); // 123456789012345678901234567891
-``
+```
