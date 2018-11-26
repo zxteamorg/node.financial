@@ -10,7 +10,7 @@ export class Financial {
 	public constructor(integerString: string, fraction: number) {
 		const argsRegex = /^(-?(?!(0))[1-9][0-9]*)$/;
 		if (!argsRegex.test(integerString)) { throw new Error("Invalid integerString string"); }
-		if (!this.isInt(fraction)) { throw new Error("Invalid fraction number"); }
+		if (!Financial._isInt(fraction)) { throw new Error("Invalid fraction number"); }
 
 		this._separatorChar = ".";
 		this._value = integerString;
@@ -21,7 +21,11 @@ export class Financial {
 	public get fraction(): number { return this._fraction; }
 
 	public equalsTo(value: Financial): boolean {
-		throw new Error("Not implemented yet");
+		if (this._value === value._value && this._fraction && value._fraction) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public plus(value: Financial): Financial {
@@ -46,12 +50,22 @@ export class Financial {
 		return parseInt(this.toString());
 	}
 	public toString(): string {
-		const number = this._value.split("");
-		const fullNumber = number.splice(-this._fraction, 0, this._separatorChar);
-		return fullNumber.toString();
+		const number = Financial.insert(this._value, this._fraction, this._separatorChar);
+		return number;
 	}
-	private isInt(n: number) {
+	private static _isInt(n: number) {
 		return Number(n) === n && n % 1 === 0;
+	}
+	private static insert(str: string, index: number, value: string) {
+		const indexReal = str.length - index;
+		return str.substr(0, indexReal) + value + str.substr(indexReal);
+	}
+	private static sum(args: Array<number>) {
+		let result = 0;
+		for (let i = 0, max = args.length; i < max; i++) {
+			result += args[i] * 10;
+		}
+		return result / 10;
 	}
 }
 
@@ -63,7 +77,7 @@ export function financial(...args: Array<any>): Financial {
 		const value = args[0];
 
 		if (typeof (value) === "string") {
-			const argsRegex = /^-?(0|0\.[0-9]+|[1-9][0-9]+\.[0-9]+)$/;
+			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
 			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
 			const stringValue = value.replace(_separatorChar, "");
 			const spliteValue = value.split(_separatorChar);
