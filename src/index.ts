@@ -26,7 +26,7 @@ export class Financial {
 	public get fraction(): number { return this._fraction; }
 
 	public equalsTo(value: Financial): boolean {
-		if (this._value === value._value && this._fraction && value._fraction) {
+		if (this._value === value._value && this._fraction === value._fraction) {
 			return true;
 		} else {
 			return false;
