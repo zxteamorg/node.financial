@@ -10,7 +10,18 @@ describe("Financial funtion tests", function () {
 			const result = first.plus(second);
 			assert.equal(result.toString(), "5");
 		});
-
+		it("Should be '0.5' + '0.7' = '1.2'", function () {
+			const first = new Financial("05", 1);
+			const second = new Financial("07", 1);
+			const result = first.plus(second);
+			assert.equal(result.toString(), "1.2");
+		});
+		it("Should be '0.50221199' + '0.00000001' = '0.50221200'", function () {
+			const first = new Financial("050221199", 8);
+			const second = new Financial("000000001", 8);
+			const result = first.plus(second);
+			assert.equal(result.toString(), "0.50221200");
+		});
 		it("Should be '3' - '2' = '1'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);

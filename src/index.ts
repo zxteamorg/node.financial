@@ -1,3 +1,6 @@
+
+enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
+
 export class Financial {
 	private readonly _value: string;
 	private readonly _fraction: number;
@@ -8,7 +11,9 @@ export class Financial {
 	}
 
 	public constructor(integerString: string, fraction: number) {
-		const argsRegex = /^(-?(?!(0))[1-9][0-9]*)$/;
+		const argsRegex = /^(-?[0-9]*)$/;
+		// const argsRegex = /^(-?(?!(0))[1-9][0-9]*)$/;
+		// const argsRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 		if (!argsRegex.test(integerString)) { throw new Error("Invalid integerString string"); }
 		if (!Financial._isInt(fraction)) { throw new Error("Invalid fraction number"); }
 
@@ -29,43 +34,76 @@ export class Financial {
 	}
 
 	public plus(value: Financial): Financial {
-		throw new Error("Not implemented yet");
+		if (this._value.length > 10 || value._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(this, value, Action.PLUS);
 	}
 	public minus(value: Financial): Financial {
-		throw new Error("Not implemented yet");
+		if (this._value.length > 10 || value._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(this, value, Action.MINUS);
 	}
 	public multiply(value: Financial): Financial {
-		throw new Error("Not implemented yet");
+		if (this._value.length > 10 || value._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(this, value, Action.MULTIPLY);
 	}
 	public divide(value: Financial): Financial {
-		throw new Error("Not implemented yet");
+		if (this._value.length > 10 || value._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(this, value, Action.DIVIDE);
 	}
 
 	public toFloat(): number {
-		// TODO
-		return parseFloat(this.toString());
+		const string = this.toString();
+		const number = parseFloat(string);
+		return number;
 	}
 	public toInt(): number {
 		// TODO
 		return parseInt(this.toString());
 	}
 	public toString(): string {
-		const number = Financial.insert(this._value, this._fraction, this._separatorChar);
-		return number;
+		if (this._fraction === 0) {
+			return String(this._value);
+		} else {
+			const indexReal = this._value.length - this._fraction;
+			return this._value.substr(0, indexReal) + this._separatorChar + this._value.substr(indexReal);
+		}
 	}
 	private static _isInt(n: number) {
 		return Number(n) === n && n % 1 === 0;
 	}
-	private static insert(str: string, index: number, value: string) {
-		const indexReal = str.length - index;
-		return str.substr(0, indexReal) + value + str.substr(indexReal);
-	}
-	private static sum(args: Array<number>) {
-		let result = 0;
-		for (let i = 0, max = args.length; i < max; i++) {
-			result += args[i] * 10;
+	private static _actionMath(a: Financial, b: Financial, action: Action): Financial {
+		const first = (a._fraction === 0) ? a.toInt() : a.toFloat();
+		const second = (b._fraction === 0) ? b.toInt() : b.toFloat();
+
+		let num;
+		switch (action) {
+			case Action.PLUS:
+				num = first + second;
+				break;
+			case Action.MINUS:
+				num = first - second;
+				break;
+			case Action.MULTIPLY:
+				num = first * second;
+				break;
+			case Action.DIVIDE:
+				num = first / second;
+				break;
+			default:
+				throw new Error("Not implemented yet");
 		}
-		return result / 10;
+
+		const fixedNum = (a._fraction >= b._fraction)
+			? num.toFixed(a._fraction)
+			: num.toFixed(b._fraction);
+		return financial(fixedNum);
 	}
 }
 
