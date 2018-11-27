@@ -28,19 +28,33 @@ describe("Financial funtion tests", function () {
 			const result = first.minus(second);
 			assert.equal(result.toString(), "1");
 		});
-
 		it("Should be '3' * '2' = '6'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
 			const result = first.multiply(second);
 			assert.equal(result.toString(), "6");
 		});
-
 		it("Should be '6' / '2' = '3'", function () {
 			const first = new Financial("6", 0);
 			const second = new Financial("2", 0);
 			const result = first.divide(second);
 			assert.equal(result.toString(), "3");
+		});
+		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {
+			const rawPrice = 0.00157292 * 100000000; // move point to 8 right
+			const rawPriceStr = rawPrice.toFixed(0);
+			assert.equal(rawPriceStr, "157292");
+			const price = new Financial(rawPriceStr, 8);
+			const result = price.toString();
+			assert.equal(result, "0.00157292");
+		});
+		it("(Bug v0.0.1) Should work toString(): 0.00000152", function () {
+			const rawPrice = 0.00000152 * 100000000; // move point to 8 right
+			const rawPriceStr = rawPrice.toFixed(0);
+			assert.equal(rawPriceStr, "152");
+			const price = new Financial(rawPriceStr, 8);
+			const result = price.toString();
+			assert.equal(result, "0.00000152");
 		});
 	});
 
