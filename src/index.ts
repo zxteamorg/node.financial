@@ -4,7 +4,7 @@ enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
 export class Financial {
 	private readonly _value: string;
 	private readonly _fraction: number;
-	private readonly _separatorChar: string;
+	// private readonly _separatorChar: string;
 
 	public static equals(left: Financial, right: Financial): boolean {
 		return left.equalsTo(right);
@@ -12,14 +12,12 @@ export class Financial {
 
 	public constructor(integerString: string, fraction: number) {
 		const argsRegex = /^(-?[0-9]*)$/;
-		// const argsRegex = /^(-?(?!(0))[1-9][0-9]*)$/;
-		// const argsRegex = /^-?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i;
 		if (!argsRegex.test(integerString)) { throw new Error("Invalid integerString string"); }
 		if (!Financial._isInt(fraction)) { throw new Error("Invalid fraction number"); }
 
-		this._separatorChar = ".";
 		this._value = integerString;
 		this._fraction = fraction;
+		// this._separatorChar = ".";
 	}
 
 	public get value(): string { return this._value; }
@@ -60,19 +58,17 @@ export class Financial {
 
 	public toFloat(): number {
 		const string = this.toString();
-		const number = parseFloat(string);
-		return number;
+		return parseFloat(string);
 	}
 	public toInt(): number {
-		// TODO
 		return parseInt(this.toString());
 	}
 	public toString(): string {
 		if (this._fraction === 0) {
 			return String(this._value);
 		} else {
-			const indexReal = this._value.length - this._fraction;
-			return this._value.substr(0, indexReal) + this._separatorChar + this._value.substr(indexReal);
+			const number = parseInt(this._value) / Math.pow(10, this._fraction);
+			return number.toFixed(this._fraction);
 		}
 	}
 	private static _isInt(n: number) {
@@ -117,11 +113,27 @@ export function financial(...args: Array<any>): Financial {
 		if (typeof (value) === "string") {
 			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
 			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
-			const stringValue = value.replace(_separatorChar, "");
-			const spliteValue = value.split(_separatorChar);
+
+			// Negative/positive number
+			const numb = (value.startsWith("-"))
+				? - Math.abs(parseFloat(value))
+				: Math.abs(parseFloat(value));
+
+			let stringValue;
+			let spliteValue;
+
+			if (numb.toString().lastIndexOf("e") > -1) {
+				stringValue = value.replace(_separatorChar, "");
+				spliteValue = value.split(_separatorChar);
+			} else {
+				stringValue = numb.toString().replace(_separatorChar, "");
+				spliteValue = numb.toString().split(_separatorChar);
+			}
+
+			const stringValueF = parseInt(stringValue).toString();
 			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
 
-			return new Financial(stringValue, countValue);
+			return new Financial(stringValueF, countValue);
 		} else {
 			throw new Error("Unknown arg");
 		}
@@ -130,9 +142,24 @@ export function financial(...args: Array<any>): Financial {
 		const value = args[0];
 		const fraction = args[1];
 		if (typeof (value) === "number" && typeof (fraction) === "number") {
-			const fixNum = value.toFixed(fraction);
-			const friendNum = fixNum.replace(_separatorChar, "");
-			return new Financial(friendNum, fraction);
+			const numb = Math.abs(value);
+
+			const splitValue = (numb.toString().lastIndexOf("e") > -1)
+				? value.toFixed(fraction).split(_separatorChar)
+				: numb.toString().split(_separatorChar);
+
+			const actualFraction = (splitValue.length > 1) ? splitValue[1].length : 0;
+			const correctFraction = (actualFraction <= fraction) ? actualFraction : fraction;
+			const diffFraction = actualFraction - fraction;
+
+			const fixedNum = (diffFraction > 0)
+				? numb.toString().slice(0, -(actualFraction - fraction))
+				: value.toFixed(correctFraction);
+
+			const friendlyNum = fixedNum.replace(_separatorChar, "");
+			const superFriendlyNum = parseInt(friendlyNum).toString();
+
+			return new Financial(superFriendlyNum, correctFraction);
 		} else {
 			throw new Error("Unknown arg");
 		}
