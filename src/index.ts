@@ -1,3 +1,5 @@
+import { FinancialLike } from "@zxteam/contract";
+
 
 enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
 
@@ -103,14 +105,23 @@ export class Financial {
 	}
 }
 
+export function financial(wrap: FinancialLike): Financial;
 export function financial(value: number, fractionDigits: number): Financial;
 export function financial(value: string): Financial;
 export function financial(...args: Array<any>): Financial {
+	if (!Array.isArray(args)) {
+		throw new Error("Wrong arguments: Expected an array");
+	}
+
 	const _separatorChar = ".";
 	if (args.length === 1) {
 		const value = args[0];
 
-		if (typeof (value) === "string") {
+		if (typeof (value) === "object" && typeof (value.value) === "string" && typeof (value.fraction) === "number") {
+			// Implementation of financial(wrap: FinancialLike): Financial;
+			const friendlyValue: FinancialLike = value;
+			return new Financial(friendlyValue.value, friendlyValue.fraction);
+		} else if (typeof (value) === "string") {
 			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
 			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
 
@@ -134,8 +145,6 @@ export function financial(...args: Array<any>): Financial {
 			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
 
 			return new Financial(stringValueF, countValue);
-		} else {
-			throw new Error("Unknown arg");
 		}
 	}
 	if (args.length === 2) {
@@ -160,10 +169,8 @@ export function financial(...args: Array<any>): Financial {
 			const superFriendlyNum = parseInt(friendlyNum).toString();
 
 			return new Financial(superFriendlyNum, correctFraction);
-		} else {
-			throw new Error("Unknown arg");
 		}
 	}
-	throw new Error("Unknown arg");
+	throw new Error("Unknown argument(s): " + args.join(", "));
 }
 export default financial;
