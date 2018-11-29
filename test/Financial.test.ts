@@ -134,5 +134,15 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
+		it("Should NOT instance with 00055000", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				new Financial("00055000", 8);
+			} catch (e) {
+				//expected
+				return;
+			}
+			assert.fail("Should never happened");
+		});
 	});
 });

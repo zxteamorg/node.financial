@@ -6,20 +6,18 @@ enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
 export class Financial {
 	private readonly _value: string;
 	private readonly _fraction: number;
-	// private readonly _separatorChar: string;
 
 	public static equals(left: Financial, right: Financial): boolean {
 		return left.equalsTo(right);
 	}
 
 	public constructor(integerString: string, fraction: number) {
-		const argsRegex = /^(-?[0-9]*)$/;
+		const argsRegex = /^-?(0|[1-9][0-9]*)$/;
 		if (!argsRegex.test(integerString)) { throw new Error("Invalid integerString string"); }
 		if (!Financial._isInt(fraction)) { throw new Error("Invalid fraction number"); }
 
 		this._value = integerString;
 		this._fraction = fraction;
-		// this._separatorChar = ".";
 	}
 
 	public get value(): string { return this._value; }

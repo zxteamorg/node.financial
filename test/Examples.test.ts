@@ -122,6 +122,11 @@ describe("Financial funtion tests", function () {
 			const b = financial(-0.00000012, 8);
 			assert.isTrue(a.equalsTo(b));
 		});
+		it("Should be equalsTo 0.00056000 as string and 0.00056000 as number", function () {
+			const a = financial("0.00056000");
+			const b = financial(0.00056000, 8);
+			assert.isTrue(a.equalsTo(b));
+		});
 		it("Should be equalsTo 0.000012 and 12", function () {
 			const a = financial("0.000012");
 			const b = financial(0.000012, 6);
