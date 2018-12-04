@@ -87,7 +87,7 @@ describe("Financial funtion tests", function () {
 			assert.isTrue(money.equalsTo(someMoney));
 			assert.isTrue(someMoney.equalsTo(money));
 		});
-		it.only("Should avoid approximation as number (equalsTo)", function () {
+		it("Should avoid approximation as number (equalsTo)", function () {
 			const percent = -6.818181818181825;
 			const money = financial(percent, 8);
 			assert.equal(money.toFloat(), -6.81818181);
