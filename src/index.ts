@@ -149,7 +149,7 @@ export function financial(...args: Array<any>): Financial {
 		const value = args[0];
 		const fraction = args[1];
 		if (typeof (value) === "number" && typeof (fraction) === "number") {
-			const numb = Math.abs(value);
+			const numb = (value > 0) ? Math.abs(value) : -Math.abs(value);
 
 			const splitValue = (numb.toString().lastIndexOf("e") > -1)
 				? value.toFixed(fraction).split(_separatorChar)
