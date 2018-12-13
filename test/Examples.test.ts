@@ -1,5 +1,6 @@
 import { assert } from "chai";
 
+import { FinancialLike } from "@zxteam/contract";
 import { financial } from "../src/index";
 
 describe("Financial funtion tests", function () {
@@ -22,6 +23,12 @@ describe("Financial funtion tests", function () {
 			assert.isTrue(totalMoney.equalsTo(result));
 			assert.equal(result.toString(), "600.9");
 		});
+		it("Should work not equalsTo two financial", function () {
+			const first = financial("600.90");
+			const second = financial("200.30");
+			assert.isFalse(first.equalsTo(second));
+			assert.isFalse(second.equalsTo(first));
+		});
 		it("Should avoid approximation as number (divide)", function () {
 			const totalMoney = financial(600.90, 2);
 			const pricePerItem = financial(200.30, 2);
@@ -39,6 +46,14 @@ describe("Financial funtion tests", function () {
 
 			assert.isTrue(pricePerItem.equalsTo(result));
 			assert.equal(result.toString(), "200.3");
+		});
+		it("Should avoid approximation as string (PLUS)", function () {
+			const totalMoney = financial("600.90");
+			const pricePerItem = financial("200.3005");
+
+			const result = totalMoney.plus(pricePerItem);
+
+			assert.equal(result.toString(), "801.2005");
 		});
 		it.skip("Should avoid digits limit (plus)", function () {
 			const first = financial("123456789012345678901234567890");
@@ -107,6 +122,11 @@ describe("Financial funtion tests", function () {
 			const numberMoney = money.toInt();
 			assert.equal(numberMoney, 600);
 		});
+		it("Should avoid approximation as string 10", function () {
+			const money = financial("10");
+			const numberMoney = money.toInt();
+			assert.equal(numberMoney, 10);
+		});
 		it("Should avoid approximation as number (toInt)", function () {
 			const money = financial(600, 0);
 			const numberMoney = money.toInt();
@@ -146,6 +166,33 @@ describe("Financial funtion tests", function () {
 			const a = financial(1.9123456789, 8);
 			assert.equal(a.toString(), "1.91234567");
 			assert.equal(a.toFloat(), 1.91234567);
+		});
+		it("Should work FinancialLike value: 1000001001, fraction: 8 toString()", function () {
+			const financialLike: FinancialLike = {
+				value: "1000001001",
+				fraction: 8
+			};
+			const newFinacial = financial(financialLike);
+			const toString = newFinacial.toString();
+			assert.equal(toString, "10.00001001");
+		});
+		it("Should work FinancialLike value: -1000001001, fraction: 8 toFloat()", function () {
+			const financialLike: FinancialLike = {
+				value: "-1000001001",
+				fraction: 8
+			};
+			const newFinacial = financial(financialLike);
+			const toFloat = newFinacial.toFloat();
+			assert.equal(toFloat, -10.00001001);
+		});
+		it("Should work FinancialLike value: -1000001001, fraction: 8 toInt()", function () {
+			const financialLike: FinancialLike = {
+				value: "-1000001001",
+				fraction: 8
+			};
+			const newFinacial = financial(financialLike);
+			const toInt = newFinacial.toInt();
+			assert.equal(toInt, -10);
 		});
 	});
 });

@@ -100,6 +100,22 @@ describe("Financial funtion tests", function () {
 			const result = price.toString();
 			assert.equal(result, "-0.00000152");
 		});
+		it("Should work static equals() 0.33557701", function () {
+			const left = new Financial("33557701", 8);
+			const right = new Financial("33557701", 8);
+			const equal = Financial.equals(left, right);
+			assert.isTrue(equal);
+		});
+		it("Should work get value() -33557701", function () {
+			const fin = new Financial("-33557701", 8);
+			const value = fin.value;
+			assert.equal(value, "-33557701");
+		});
+		it("Should work get fraction() 6", function () {
+			const fin = new Financial("-33557701", 6);
+			const fraction = fin.fraction;
+			assert.equal(fraction, 6);
+		});
 	});
 
 	describe("Negatove tests", function () {
