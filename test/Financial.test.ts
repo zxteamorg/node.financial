@@ -119,7 +119,7 @@ describe("Financial funtion tests", function () {
 	});
 
 	describe("Negatove tests", function () {
-		it("Should NOT instance with '123.123.123'", function () {
+		it("Should NOT instance with value=\"123.123.123\"", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
 				new Financial("123.123.123", 3);
@@ -130,7 +130,7 @@ describe("Financial funtion tests", function () {
 			assert.fail("Should never happened");
 		});
 
-		it("Should NOT instance with 'a'", function () {
+		it("Should NOT instance with value=\"a\"", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
 				new Financial("a", 0);
@@ -140,7 +140,7 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-		it("Should NOT instance with 0.4", function () {
+		it("Should NOT instance with fraction=0.4", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
 				new Financial("123", 0.4);
@@ -150,7 +150,7 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-		it("Should NOT instance with 00055000", function () {
+		it("Should NOT instance with value=\"00055000\"", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
 				new Financial("00055000", 8);

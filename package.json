@@ -17,8 +17,7 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
-		"@zxnode/build": "0.0.29",
-		"nyc": "^13.1.0"
+		"@zxnode/build": "0.0.30"
 	},
 	"keywords": [],
 	"repository": {
@@ -31,7 +30,7 @@
 	"homepage": "https://github.com/zxteamorg/financial.js#readme",
 	"scripts": {
 		"build": "zxbuild clean dist",
-		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive --timeout 10000"
+		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive"
 	},
 	"private": true,
 	"dependencies": {
