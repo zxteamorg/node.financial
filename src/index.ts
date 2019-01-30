@@ -3,7 +3,7 @@ import { FinancialLike } from "@zxteam/contract";
 
 enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
 
-export class Financial {
+export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 

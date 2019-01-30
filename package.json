@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial.js",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",
 	"types": "./src/index.d.ts",
@@ -16,6 +16,9 @@
 		}
 	],
 	"license": "MIT",
+	"dependencies": {
+		"@zxteam/contract": "^1.0.5"
+	},
 	"devDependencies": {
 		"@zxnode/build": "0.0.30"
 	},
@@ -32,8 +35,5 @@
 		"build": "zxbuild clean dist",
 		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive"
 	},
-	"private": true,
-	"dependencies": {
-		"@zxteam/contract": "1.0.0"
-	}
+	"private": true
 }
