@@ -7,73 +7,73 @@ describe("Financial funtion tests", function () {
 		it("Should be '2' + '3' = '5'", function () {
 			const first = new Financial("2", 0);
 			const second = new Financial("3", 0);
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "5");
 		});
 		it("Should be '0.5' + '0.7' = '1.2'", function () {
 			const first = new Financial("5", 1);
 			const second = new Financial("7", 1);
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "1.2");
 		});
 		it("Should be '-0.5' + '0.7' = '1.2'", function () {
 			const first = new Financial("-5", 1);
 			const second = new Financial("7", 1);
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "0.2");
 		});
 		it("Should be '0.50221199' + '0.00000001' = '0.50221200'", function () {
 			const first = new Financial("50221199", 8);
 			const second = new Financial("1", 8);
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "0.502212");
 		});
 		it("Should be '-0.50221199' + '0.00000001' = '-0.50221198'", function () {
 			const first = new Financial("-50221199", 8);
 			const second = new Financial("1", 8);
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "-0.50221198");
 		});
 		it("Should be '3' - '2' = '1'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
-			const result = first.minus(second);
+			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "1");
 		});
 		it("Should be '-3' - '2' = '-5'", function () {
 			const first = new Financial("-3", 0);
 			const second = new Financial("2", 0);
-			const result = first.minus(second);
+			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "-5");
 		});
 		it("Should be '3' * '2' = '6'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
-			const result = first.multiply(second);
+			const result = Financial.multiply(first, second);
 			assert.equal(result.toString(), "6");
 		});
 		it("Should be '-3' * '2' = '6'", function () {
 			const first = new Financial("-3", 0);
 			const second = new Financial("2", 0);
-			const result = first.multiply(second);
+			const result = Financial.multiply(first, second);
 			assert.equal(result.toString(), "-6");
 		});
 		it("Should be '6' / '2' = '3'", function () {
 			const first = new Financial("6", 0);
 			const second = new Financial("2", 0);
-			const result = first.divide(second);
+			const result = Financial.divide(first, second);
 			assert.equal(result.toString(), "3");
 		});
 		it("Should be '-6' / '2' = '-3'", function () {
 			const first = new Financial("-6", 0);
 			const second = new Financial("2", 0);
-			const result = first.divide(second);
+			const result = Financial.divide(first, second);
 			assert.equal(result.toString(), "-3");
 		});
 		it("Should be '6' / '-2' = '-3'", function () {
 			const first = new Financial("6", 0);
 			const second = new Financial("-2", 0);
-			const result = first.divide(second);
+			const result = Financial.divide(first, second);
 			assert.equal(result.toString(), "-3");
 		});
 		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {

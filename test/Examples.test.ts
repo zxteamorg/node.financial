@@ -1,7 +1,7 @@
 import { assert } from "chai";
 
 import { FinancialLike } from "@zxteam/contract";
-import { financial } from "../src/index";
+import { financial, Financial } from "../src/index";
 
 describe("Financial funtion tests", function () {
 	describe("Financial funtion math action tests", function () {
@@ -9,7 +9,7 @@ describe("Financial funtion tests", function () {
 			const totalMoney = financial(600.90, 2);
 			const pricePerItem = financial(200.30, 2);
 			const buyItems = financial("3");
-			const result = pricePerItem.multiply(buyItems);
+			const result = Financial.multiply(pricePerItem, buyItems);
 
 			assert.isTrue(totalMoney.equalsTo(result));
 			assert.equal(result.toString(), "600.9");
@@ -18,7 +18,7 @@ describe("Financial funtion tests", function () {
 			const totalMoney = financial("600.90");
 			const pricePerItem = financial("200.30");
 			const buyItems = financial("3");
-			const result = pricePerItem.multiply(buyItems);
+			const result = Financial.multiply(pricePerItem, buyItems);
 
 			assert.isTrue(totalMoney.equalsTo(result));
 			assert.equal(result.toString(), "600.9");
@@ -33,7 +33,7 @@ describe("Financial funtion tests", function () {
 			const totalMoney = financial(600.90, 2);
 			const pricePerItem = financial(200.30, 2);
 			const buyItems = financial("3");
-			const result = totalMoney.divide(buyItems);
+			const result = Financial.divide(totalMoney, buyItems);
 
 			assert.isTrue(pricePerItem.equalsTo(result));
 			assert.equal(result.toString(), "200.3");
@@ -42,7 +42,7 @@ describe("Financial funtion tests", function () {
 			const totalMoney = financial("600.90");
 			const pricePerItem = financial("200.30");
 			const buyItems = financial("3");
-			const result = totalMoney.divide(buyItems);
+			const result = Financial.divide(totalMoney, buyItems);
 
 			assert.isTrue(pricePerItem.equalsTo(result));
 			assert.equal(result.toString(), "200.3");
@@ -51,20 +51,20 @@ describe("Financial funtion tests", function () {
 			const totalMoney = financial("600.90");
 			const pricePerItem = financial("200.3005");
 
-			const result = totalMoney.plus(pricePerItem);
+			const result = Financial.plus(totalMoney, pricePerItem);
 
 			assert.equal(result.toString(), "801.2005");
 		});
 		it.skip("Should avoid digits limit (plus)", function () {
 			const first = financial("123456789012345678901234567890");
 			const second = financial("1");
-			const result = first.plus(second);
+			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "123456789012345678901234567891");
 		});
 		it.skip("Should avoid digits limit (minus)", function () {
 			const first = financial("123456789012345678901234567890");
 			const second = financial("1");
-			const result = first.minus(second);
+			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "123456789012345678901234567889");
 		});
 	});

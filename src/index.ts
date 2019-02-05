@@ -10,6 +10,30 @@ export class Financial implements FinancialLike {
 	public static equals(left: Financial, right: Financial): boolean {
 		return left.equalsTo(right);
 	}
+	public static plus(left: Financial, right: Financial): Financial {
+		if (left._value.length > 10 || left._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(left, right, Action.PLUS);
+	}
+	public static minus(left: Financial, right: Financial): Financial {
+		if (left._value.length > 10 || left._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(left, right, Action.MINUS);
+	}
+	public static multiply(left: Financial, right: Financial): Financial {
+		if (left._value.length > 10 || left._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(left, right, Action.MULTIPLY);
+	}
+	public static divide(left: Financial, right: Financial): Financial {
+		if (left._value.length > 10 || left._value.length > 10) {
+			throw new Error("Not implemented yet");
+		}
+		return Financial._actionMath(left, right, Action.DIVIDE);
+	}
 
 	public constructor(integerString: string, fraction: number) {
 		const argsRegex = /^-?(0|[1-9][0-9]*)$/;
@@ -31,31 +55,6 @@ export class Financial implements FinancialLike {
 		}
 	}
 
-	public plus(value: Financial): Financial {
-		if (this._value.length > 10 || value._value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-		return Financial._actionMath(this, value, Action.PLUS);
-	}
-	public minus(value: Financial): Financial {
-		if (this._value.length > 10 || value._value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-		return Financial._actionMath(this, value, Action.MINUS);
-	}
-	public multiply(value: Financial): Financial {
-		if (this._value.length > 10 || value._value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-		return Financial._actionMath(this, value, Action.MULTIPLY);
-	}
-	public divide(value: Financial): Financial {
-		if (this._value.length > 10 || value._value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-		return Financial._actionMath(this, value, Action.DIVIDE);
-	}
-
 	public toFloat(): number {
 		const string = this.toString();
 		return parseFloat(string);
@@ -71,9 +70,11 @@ export class Financial implements FinancialLike {
 			return number.toFixed(this._fraction);
 		}
 	}
+
 	private static _isInt(n: number) {
 		return Number(n) === n && n % 1 === 0;
 	}
+
 	private static _actionMath(a: Financial, b: Financial, action: Action): Financial {
 		const first = (a._fraction === 0) ? a.toInt() : a.toFloat();
 		const second = (b._fraction === 0) ? b.toInt() : b.toFloat();
