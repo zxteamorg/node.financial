@@ -1,66 +1,109 @@
 import { FinancialLike } from "@zxteam/contract";
 
-
-enum Action { MINUS, PLUS, MULTIPLY, DIVIDE }
+const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 
 export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 
-	public static equals(left: Financial, right: Financial): boolean {
-		return left.equalsTo(right);
+	public static isFinancialLike(testNum: any): testNum is FinancialLike {
+		if (testNum && "value" in testNum && "fraction" in testNum) {
+			if (typeof testNum.value === "string" && typeof testNum.fraction === "number") {
+				return true;
+			}
+		}
+		return false;
 	}
-	public static plus(left: Financial, right: Financial): Financial {
-		if (left._value.length > 10 || left._value.length > 10) {
+	public static equals(left: FinancialLike, right: FinancialLike): boolean {
+		if (left.value === right.value && right.fraction === right.fraction) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public static plus(left: FinancialLike, right: FinancialLike): Financial {
+		if (left.value.length > 10 || left.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
-		return Financial._actionMath(left, right, Action.PLUS);
+
+		const first = Financial.toFloat(left);
+		const second = Financial.toFloat(right);
+
+		const result = first + second;
+
+		const fraction = Math.max(left.fraction, right.fraction);
+		return financial(result.toFixed(fraction));
 	}
-	public static minus(left: Financial, right: Financial): Financial {
-		if (left._value.length > 10 || left._value.length > 10) {
+	public static minus(left: FinancialLike, right: FinancialLike): Financial {
+		if (left.value.length > 10 || left.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
-		return Financial._actionMath(left, right, Action.MINUS);
+
+		const first = Financial.toFloat(left);
+		const second = Financial.toFloat(right);
+
+		const result = first - second;
+
+		const fraction = Math.max(left.fraction, right.fraction);
+		return financial(result.toFixed(fraction));
 	}
-	public static multiply(left: Financial, right: Financial): Financial {
-		if (left._value.length > 10 || left._value.length > 10) {
+	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
+		if (left.value.length > 10 || left.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
-		return Financial._actionMath(left, right, Action.MULTIPLY);
+
+		const first = Financial.toFloat(left);
+		const second = Financial.toFloat(right);
+
+		const result = first * second;
+
+		const fraction = Math.max(left.fraction, right.fraction);
+		return financial(result.toFixed(fraction));
 	}
-	public static divide(left: Financial, right: Financial): Financial {
-		if (left._value.length > 10 || left._value.length > 10) {
+	public static divide(left: FinancialLike, right: FinancialLike): Financial {
+		if (left.value.length > 10 || left.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
-		return Financial._actionMath(left, right, Action.DIVIDE);
+
+		const first = Financial.toFloat(left);
+		const second = Financial.toFloat(right);
+
+		const result = first / second;
+
+		const fraction = Math.max(left.fraction, right.fraction);
+		return financial(result.toFixed(fraction));
+	}
+	public static toFloat(num: FinancialLike): number {
+		const string = num.toString();
+		return parseFloat(string);
+	}
+	public static toInt(num: FinancialLike): number {
+		return parseInt(num.toString());
 	}
 
-	public constructor(integerString: string, fraction: number) {
-		const argsRegex = /^-?(0|[1-9][0-9]*)$/;
-		if (!argsRegex.test(integerString)) { throw new Error("Invalid integerString string"); }
-		if (!Financial._isInt(fraction)) { throw new Error("Invalid fraction number"); }
+	public constructor(value: string, fraction: number) {
+		if (!valueRegExp.test(value)) {
+			throw new Error(`Invalid argument 'value' = ${value}. Expected integer number in string representation`);
+		}
+		if (!Number.isInteger(fraction) || fraction < 0) {
+			throw new Error(`Invalid argument 'fraction' = ${fraction}. Expected integer number >= 0.`);
+		}
 
-		this._value = integerString;
+		this._value = value;
 		this._fraction = fraction;
 	}
 
 	public get value(): string { return this._value; }
 	public get fraction(): number { return this._fraction; }
 
-	public equalsTo(value: Financial): boolean {
-		if (this._value === value._value && this._fraction === value._fraction) {
-			return true;
-		} else {
-			return false;
-		}
+	public equalsTo(num: FinancialLike): boolean {
+		return Financial.equals(this, num);
 	}
-
 	public toFloat(): number {
-		const string = this.toString();
-		return parseFloat(string);
+		return Financial.toFloat(this);
 	}
 	public toInt(): number {
-		return parseInt(this.toString());
+		return Financial.toInt(this);
 	}
 	public toString(): string {
 		if (this._fraction === 0) {
@@ -69,38 +112,6 @@ export class Financial implements FinancialLike {
 			const number = parseInt(this._value) / Math.pow(10, this._fraction);
 			return number.toFixed(this._fraction);
 		}
-	}
-
-	private static _isInt(n: number) {
-		return Number(n) === n && n % 1 === 0;
-	}
-
-	private static _actionMath(a: Financial, b: Financial, action: Action): Financial {
-		const first = (a._fraction === 0) ? a.toInt() : a.toFloat();
-		const second = (b._fraction === 0) ? b.toInt() : b.toFloat();
-
-		let num;
-		switch (action) {
-			case Action.PLUS:
-				num = first + second;
-				break;
-			case Action.MINUS:
-				num = first - second;
-				break;
-			case Action.MULTIPLY:
-				num = first * second;
-				break;
-			case Action.DIVIDE:
-				num = first / second;
-				break;
-			default:
-				throw new Error("Not implemented yet");
-		}
-
-		const fixedNum = (a._fraction >= b._fraction)
-			? num.toFixed(a._fraction)
-			: num.toFixed(b._fraction);
-		return financial(fixedNum);
 	}
 }
 

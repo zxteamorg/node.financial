@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { Financial } from "../src/index";
+import financial, { Financial } from "../src/index";
 
 describe("Financial funtion tests", function () {
 	describe("Positive tests", function () {
@@ -116,6 +116,14 @@ describe("Financial funtion tests", function () {
 			const fraction = fin.fraction;
 			assert.equal(fraction, 6);
 		});
+		it.skip("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
+			const instanceOverConstructor = new Financial("60090", 2);
+			const instanceOverFactory = financial(600.90, 2);
+			assert.equal(instanceOverConstructor.value, "6009");
+			assert.equal(instanceOverFactory.value, "6009");
+			assert.equal(instanceOverConstructor.fraction, 1);
+			assert.equal(instanceOverFactory.fraction, 1);
+		});
 	});
 
 	describe("Negatove tests", function () {
@@ -129,7 +137,6 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-
 		it("Should NOT instance with value=\"a\"", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
