@@ -124,6 +124,18 @@ describe("Financial funtion tests", function () {
 			assert.equal(instanceOverConstructor.fraction, 1);
 			assert.equal(instanceOverFactory.fraction, 1);
 		});
+		it.skip("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
+			const first = financial(0, 0);
+			const second = financial(0, 0);
+			let expectedError;
+			try {
+				Financial.divide(first, second);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Division by zero");
+		});
 	});
 
 	describe("Negatove tests", function () {
