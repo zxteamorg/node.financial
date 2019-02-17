@@ -61,6 +61,9 @@ export class Financial implements FinancialLike {
 		return financial(result.toFixed(fraction));
 	}
 	public static divide(left: FinancialLike, right: FinancialLike): Financial {
+		if (right.value === "0") {
+			throw new Error("Division by zero");
+		}
 		if (left.value.length > 10 || left.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}

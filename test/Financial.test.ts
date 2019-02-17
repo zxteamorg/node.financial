@@ -130,7 +130,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(instanceOverConstructor.fraction, 1);
 			assert.equal(instanceOverFactory.fraction, 1);
 		});
-		it.skip("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
+		it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
 			const first = financial(0, 0);
 			const second = financial(0, 0);
 			let expectedError;
