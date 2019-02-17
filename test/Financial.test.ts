@@ -122,7 +122,7 @@ describe("Financial funtion tests", function () {
 			const fraction = fin.fraction;
 			assert.equal(fraction, 6);
 		});
-		it.skip("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
+		it("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
 			const instanceOverConstructor = new Financial("60090", 2);
 			const instanceOverFactory = financial(600.90, 2);
 			assert.equal(instanceOverConstructor.value, "6009");

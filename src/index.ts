@@ -169,18 +169,17 @@ export function financial(...args: Array<any>): Financial {
 		const value = args[0];
 		const fraction = args[1];
 		if (typeof (value) === "number" && typeof (fraction) === "number") {
-			const numb = (value > 0) ? Math.abs(value) : -Math.abs(value);
 
-			const splitValue = (numb.toString().lastIndexOf("e") > -1)
+			const splitValue = (value.toString().lastIndexOf("e") > -1)
 				? value.toFixed(fraction).split(_separatorChar)
-				: numb.toString().split(_separatorChar);
+				: value.toString().split(_separatorChar);
 
 			const actualFraction = (splitValue.length > 1) ? splitValue[1].length : 0;
 			const correctFraction = (actualFraction <= fraction) ? actualFraction : fraction;
 			const diffFraction = actualFraction - fraction;
 
 			const fixedNum = (diffFraction > 0)
-				? numb.toString().slice(0, -(actualFraction - fraction))
+				? value.toString().slice(0, -(actualFraction - fraction))
 				: value.toFixed(correctFraction);
 
 			const friendlyNum = fixedNum.replace(_separatorChar, "");
