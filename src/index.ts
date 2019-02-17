@@ -80,6 +80,14 @@ export class Financial implements FinancialLike {
 	public static toInt(num: FinancialLike): number {
 		return parseInt(num.toString());
 	}
+	public static toString(num: FinancialLike): string {
+		if (num.fraction === 0) {
+			return num.value;
+		} else {
+			const number = parseInt(num.value) / Math.pow(10, num.fraction);
+			return number.toFixed(num.fraction);
+		}
+	}
 
 	public constructor(value: string, fraction: number) {
 		if (!valueRegExp.test(value)) {
@@ -87,6 +95,11 @@ export class Financial implements FinancialLike {
 		}
 		if (!Number.isInteger(fraction) || fraction < 0) {
 			throw new Error(`Invalid argument 'fraction' = ${fraction}. Expected integer number >= 0.`);
+		}
+
+		while (fraction > 0 && value.length > 0 && value.endsWith("0")) {
+			--fraction;
+			value = value.substr(0, value.length - 1);
 		}
 
 		this._value = value;
@@ -106,12 +119,7 @@ export class Financial implements FinancialLike {
 		return Financial.toInt(this);
 	}
 	public toString(): string {
-		if (this._fraction === 0) {
-			return String(this._value);
-		} else {
-			const number = parseInt(this._value) / Math.pow(10, this._fraction);
-			return number.toFixed(this._fraction);
-		}
+		return Financial.toString(this);
 	}
 }
 

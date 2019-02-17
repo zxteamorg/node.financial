@@ -46,6 +46,12 @@ describe("Financial funtion tests", function () {
 			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "-5");
 		});
+		it("Should be '2' - '7' = '-5'", function () {
+			const first = new Financial("2", 0);
+			const second = new Financial("7", 0);
+			const result = Financial.minus(first, second);
+			assert.equal(result.toString(), "-5");
+		});
 		it("Should be '3' * '2' = '6'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
