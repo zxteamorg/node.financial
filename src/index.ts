@@ -100,9 +100,10 @@ export class Financial implements FinancialLike {
 			throw new Error(`Invalid argument 'fraction' = ${fraction}. Expected integer number >= 0.`);
 		}
 
-		while (fraction > 0 && value.length > 0 && value.endsWith("0")) {
-			--fraction;
-			value = value.substr(0, value.length - 1);
+		while (fraction > 0 && value.endsWith("0") && value.length > 0) {
+			value.endsWith("0".repeat(fraction)) ?
+				value = value.substr(0, value.length - fraction)
+				: --fraction;
 		}
 
 		this._value = value;
