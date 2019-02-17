@@ -82,29 +82,29 @@ describe("Financial funtion tests", function () {
 			const result = Financial.divide(first, second);
 			assert.equal(result.toString(), "-3");
 		});
-		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {
-			const rawPrice = 0.00157292 * 100000000; // move point to 8 right
-			const rawPriceStr = rawPrice.toFixed(0);
-			assert.equal(rawPriceStr, "157292");
-			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
-			assert.equal(result, "0.00157292");
+		it("Should plus 0.001 + 0.000001 = 0.001001", function () {
+			const amount = new Financial("1", 3); // setup number 0.001
+			const commission = new Financial("1", 6); // setup number 0.000001
+
+			const sum = Financial.plus(amount, commission); // 0.001001
+			assert.equal(sum.value, "1001");
+			assert.equal(sum.fraction, 6);
 		});
-		it("(Bug v0.0.1) Should work toString(): 0.00000152", function () {
-			const rawPrice = 0.00000152 * 100000000; // move point to 8 right
-			const rawPriceStr = rawPrice.toFixed(0);
-			assert.equal(rawPriceStr, "152");
-			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
-			assert.equal(result, "0.00000152");
+		it("Should minus 0.001 - 0.000001 = 0.000999", function () {
+			const amount = new Financial("1", 3); // setup number 0.001
+			const commission = new Financial("1", 6); // setup number 0.000001
+
+			const sum = Financial.minus(amount, commission); // 0.000999
+			assert.equal(sum.value, "999");
+			assert.equal(sum.fraction, 6);
 		});
-		it("(Bug v0.0.1) Should work toString(): -0.00000152", function () {
-			const rawPrice = -0.00000152 * 100000000; // move point to 8 right
-			const rawPriceStr = rawPrice.toFixed(0);
-			assert.equal(rawPriceStr, "-152");
-			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
-			assert.equal(result, "-0.00000152");
+		it("Should divide 0.001 / 0.02000000 = 0.05", function () {
+			const left = new Financial("1", 3); // setup number 0.001
+			const right = new Financial("2", 2); // setup number 0.02000000
+
+			const result = Financial.divide(left, right); // 0.05
+			assert.equal(result.value, "5");
+			assert.equal(result.fraction, 2);
 		});
 		it("Should work static equals() 0.33557701", function () {
 			const left = new Financial("33557701", 8);
@@ -131,6 +131,30 @@ describe("Financial funtion tests", function () {
 			const instanceOverConstructor = financial("10.00"); // setup number 10
 			assert.equal(instanceOverConstructor.value, "10");
 			assert.equal(instanceOverConstructor.fraction, 0);
+		});
+		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {
+			const rawPrice = 0.00157292 * 100000000; // move point to 8 right
+			const rawPriceStr = rawPrice.toFixed(0);
+			assert.equal(rawPriceStr, "157292");
+			const price = new Financial(rawPriceStr, 8);
+			const result = price.toString();
+			assert.equal(result, "0.00157292");
+		});
+		it("(Bug v0.0.1) Should work toString(): 0.00000152", function () {
+			const rawPrice = 0.00000152 * 100000000; // move point to 8 right
+			const rawPriceStr = rawPrice.toFixed(0);
+			assert.equal(rawPriceStr, "152");
+			const price = new Financial(rawPriceStr, 8);
+			const result = price.toString();
+			assert.equal(result, "0.00000152");
+		});
+		it("(Bug v0.0.1) Should work toString(): -0.00000152", function () {
+			const rawPrice = -0.00000152 * 100000000; // move point to 8 right
+			const rawPriceStr = rawPrice.toFixed(0);
+			assert.equal(rawPriceStr, "-152");
+			const price = new Financial(rawPriceStr, 8);
+			const result = price.toString();
+			assert.equal(result, "-0.00000152");
 		});
 		it("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
 			const instanceOverConstructor = new Financial("60090", 2);
@@ -161,6 +185,14 @@ describe("Financial funtion tests", function () {
 			const instanceOverConstructor = new Financial("1000", 2); // setup number 10
 			assert.equal(instanceOverConstructor.value, "10");
 			assert.equal(instanceOverConstructor.fraction, 0);
+		});
+		it("(Bug 2.0.2) Should multiply 0.05 * 0.02000000 = 0.001", function () {
+			const left = new Financial("5", 2); // setup number 0.05
+			const right = new Financial("2", 2); // setup number 0.02000000
+
+			const result = Financial.multiply(left, right); // 0.001
+			assert.equal(result.value, "1");
+			assert.equal(result.fraction, 3);
 		});
 	});
 
