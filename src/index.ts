@@ -22,7 +22,7 @@ export class Financial implements FinancialLike {
 		}
 	}
 	public static plus(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || left.value.length > 10) {
+		if (left.value.length > 10 || right.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
 
@@ -35,7 +35,7 @@ export class Financial implements FinancialLike {
 		return financial(result.toFixed(fraction));
 	}
 	public static minus(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || left.value.length > 10) {
+		if (left.value.length > 10 || right.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
 
@@ -48,7 +48,7 @@ export class Financial implements FinancialLike {
 		return financial(result.toFixed(fraction));
 	}
 	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || left.value.length > 10) {
+		if (left.value.length > 10 || right.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
 
@@ -64,7 +64,7 @@ export class Financial implements FinancialLike {
 		if (right.value === "0") {
 			throw new Error("Division by zero");
 		}
-		if (left.value.length > 10 || left.value.length > 10) {
+		if (left.value.length > 10 || right.value.length > 10) {
 			throw new Error("Not implemented yet");
 		}
 
