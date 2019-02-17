@@ -122,6 +122,16 @@ describe("Financial funtion tests", function () {
 			const fraction = fin.fraction;
 			assert.equal(fraction, 6);
 		});
+		it("Should normalize via factory from to 0.1000 to 1,1", function () {
+			const instanceOverConstructor = financial("0.1000"); // setup number 0.1
+			assert.equal(instanceOverConstructor.value, "1");
+			assert.equal(instanceOverConstructor.fraction, 1);
+		});
+		it("Should normalize via factory from to 10.00 to 10,0", function () {
+			const instanceOverConstructor = financial("10.00"); // setup number 10
+			assert.equal(instanceOverConstructor.value, "10");
+			assert.equal(instanceOverConstructor.fraction, 0);
+		});
 		it("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
 			const instanceOverConstructor = new Financial("60090", 2);
 			const instanceOverFactory = financial(600.90, 2);
@@ -141,6 +151,16 @@ describe("Financial funtion tests", function () {
 			}
 			assert.instanceOf(expectedError, Error);
 			assert.equal(expectedError.message, "Division by zero");
+		});
+		it("(Bug 2.0.2) Should normalize via constructor from to 1000,4 to 1,1", function () {
+			const instanceOverConstructor = new Financial("1000", 4); // setup number 0.1
+			assert.equal(instanceOverConstructor.value, "1");
+			assert.equal(instanceOverConstructor.fraction, 1);
+		});
+		it("(Bug 2.0.2) Should normalize via constructor from to 1000,2 to 10,0", function () {
+			const instanceOverConstructor = new Financial("1000", 2); // setup number 10
+			assert.equal(instanceOverConstructor.value, "10");
+			assert.equal(instanceOverConstructor.fraction, 0);
 		});
 	});
 
