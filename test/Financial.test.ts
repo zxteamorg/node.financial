@@ -194,6 +194,22 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "1");
 			assert.equal(result.fraction, 3);
 		});
+		it("(Bug 2.0.2) Should multiply 200.30 * 3.00002 = 600.904006", function () {
+			const left = new Financial("2003", 1); // setup number 200.30
+			const right = new Financial("300002", 5); // setup number 3.00002
+
+			const result = Financial.multiply(left, right); // 600.904006
+			assert.equal(result.value, "600904006");
+			assert.equal(result.fraction, 6);
+		});
+		it("(Bug 2.0.2) Should multiply 200.0000001 * 3.01 = 602.000000301", function () {
+			const left = new Financial("2000000001", 7); // setup number 200.0000001
+			const right = new Financial("301", 2); // setup number 3.01
+
+			const result = Financial.multiply(left, right); // 602.000000301
+			assert.equal(result.value, "602000000301");
+			assert.equal(result.fraction, 9);
+		});
 	});
 
 	describe("Negatove tests", function () {

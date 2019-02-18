@@ -57,7 +57,7 @@ export class Financial implements FinancialLike {
 
 		const result = first * second;
 
-		const fraction = Math.max(left.fraction, right.fraction);
+		const fraction = left.fraction + right.fraction;
 		return financial(result.toFixed(fraction));
 	}
 	public static divide(left: FinancialLike, right: FinancialLike): Financial {
