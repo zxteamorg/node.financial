@@ -210,6 +210,14 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "602000000301");
 			assert.equal(result.fraction, 9);
 		});
+		it.skip("(Warn 2.0.2) Should multiply 2366.06639088(XRP) * 0.00008328(Price) = 0.19704600(BTC)", function () {
+			const left = new Financial("236606639088", 8); // setup number 2366.06639088
+			const right = new Financial("8328", 8); // setup number 0.00008328
+
+			const result = Financial.multiply(left, right); // 0.1970460090324864
+			assert.equal(result.value, "1970460090324864");
+			assert.equal(result.fraction, 16);
+		});
 	});
 
 	describe("Negatove tests", function () {

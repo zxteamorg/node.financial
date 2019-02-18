@@ -194,5 +194,11 @@ describe("Financial funtion tests", function () {
 			const toInt = newFinacial.toInt();
 			assert.equal(toInt, -10);
 		});
+		it("Should work Financial value: 0.00008328, fraction: 8", function () {
+			const right = new Financial("8328", 8); // setup number 0.00008328
+
+			assert.equal(right.toFloat(), 0.00008328);
+			assert.equal(right.toInt(), 0);
+		});
 	});
 });
