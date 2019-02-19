@@ -100,7 +100,11 @@ export class Financial implements FinancialLike {
 			throw new Error(`Invalid argument 'fraction' = ${fraction}. Expected integer number >= 0.`);
 		}
 
-		while (fraction > 0 && value.length > 0 && value.endsWith("0")) {
+		if (value === "0" && fraction > 0) {
+			fraction = 0;
+		}
+
+		while (fraction > 0 && value.length > 1 && value.endsWith("0")) {
 			--fraction;
 			value = value.substr(0, value.length - 1);
 		}
@@ -185,10 +189,20 @@ export function financial(...args: Array<any>): Financial {
 				? value.toString().slice(0, -(actualFraction - fraction))
 				: value.toFixed(correctFraction);
 
-			const friendlyNum = fixedNum.replace(_separatorChar, "");
-			const superFriendlyNum = parseInt(friendlyNum).toString();
+			let friendlyNum = fixedNum.replace(_separatorChar, "");
+			// const superFriendlyNum = parseInt(friendlyNum).toString();
 
-			return new Financial(superFriendlyNum, correctFraction);
+			if (friendlyNum[0] === "-") {
+				while (friendlyNum[1] === "0" && friendlyNum.length > 1) {
+					friendlyNum = (-friendlyNum.slice(1)).toString();
+				}
+			} else if (friendlyNum[0] === "0") {
+				while (friendlyNum[0] === "0" && friendlyNum.length > 1) {
+					friendlyNum = friendlyNum.slice(1);
+				}
+			}
+
+			return new Financial(friendlyNum, correctFraction);
 		}
 	}
 	throw new Error("Unknown argument(s): " + args.join(", "));
