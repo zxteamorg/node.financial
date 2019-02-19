@@ -6,6 +6,9 @@ export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 
+	public static create(value: number, fraction: number): Financial {
+		return financial(value, fraction);
+	}
 	public static isFinancialLike(testNum: any): testNum is FinancialLike {
 		if (testNum && "value" in testNum && "fraction" in testNum) {
 			if (typeof testNum.value === "string" && typeof testNum.fraction === "number") {
@@ -20,6 +23,9 @@ export class Financial implements FinancialLike {
 		} else {
 			return false;
 		}
+	}
+	public static parse(num: string): Financial {
+		return financial(num);
 	}
 	public static plus(left: FinancialLike, right: FinancialLike): Financial {
 		if (left.value.length > 10 || right.value.length > 10) {
@@ -90,6 +96,9 @@ export class Financial implements FinancialLike {
 			const number = parseInt(num.value) / Math.pow(10, num.fraction);
 			return number.toFixed(num.fraction);
 		}
+	}
+	public static wrap(num: FinancialLike): Financial {
+		return financial(num);
 	}
 
 	public constructor(value: string, fraction: number) {

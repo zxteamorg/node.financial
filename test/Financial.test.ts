@@ -2,7 +2,60 @@ import { assert } from "chai";
 
 import financial, { Financial } from "../src/index";
 
+interface TestCases {
+	create: Array<[[number, number], [string, number]]>;
+	parse: Array<[string, [string, number]]>;
+}
+
+const positiveTestCases: TestCases = {
+	create: [
+		[[0.000999, 6], ["999", 6]],
+		[[0.00000001, 8], ["1", 8]],
+		[[-0.5, 1], ["-5", 1]],
+		[[1001, 0], ["1001", 0]],
+		[[10010, 0], ["10010", 0]],
+		[[-999, 0], ["-999", 0]],
+		[[1001.101, 3], ["1001101", 3]]
+	],
+	parse: [
+		["0.000999", ["999", 6]],
+		["0.00000001", ["1", 8]],
+		["-0.5", ["-5", 1]],
+		["1001", ["1001", 0]],
+		["10010", ["10010", 0]],
+		["-999", ["-999", 0]],
+		["1001.1010000", ["1001101", 3]]
+	]
+};
+
 describe("Financial funtion tests", function () {
+	describe("Positive Test Cases", function () {
+		describe("create", function () {
+			positiveTestCases.create.forEach(createCase => {
+				const [input, expectedResult] = createCase;
+				const [inputValue, inputFraction] = input;
+				const [expectedValue, expectedFraction] = expectedResult;
+				// tslint:disable-next-line:max-line-length
+				it.only(`Should create by v:${inputValue} and f:${inputFraction} to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
+					const result = Financial.create(inputValue, inputFraction);
+					assert.equal(result.value, expectedValue);
+					assert.equal(result.fraction, expectedFraction);
+				});
+			});
+		});
+		describe("parse", function () {
+			positiveTestCases.parse.forEach(parseCase => {
+				const [input, expectedResult] = parseCase;
+				const [expectedValue, expectedFraction] = expectedResult;
+				it.only(`Should parse string value "${input}" to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
+					const result = Financial.parse(input);
+					assert.equal(result.value, expectedValue);
+					assert.equal(result.fraction, expectedFraction);
+				});
+			});
+		});
+	});
+
 	describe("Positive tests", function () {
 		it("Should be '2' + '3' = '5'", function () {
 			const first = new Financial("2", 0);
@@ -218,7 +271,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "1970460090324864");
 			assert.equal(result.fraction, 16);
 		});
-		it("(Bug 2.0.3) Should be equalsTo 0.00452 value 0 and fraction 0", function () {
+		it("(Bug 2.0.3) Should truncate 0.00452 to value 0 and fraction 0", function () {
 			const a = financial(0.00452, 2);
 
 			assert.equal(a.value, "0");
