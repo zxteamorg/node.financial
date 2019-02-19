@@ -218,6 +218,12 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "1970460090324864");
 			assert.equal(result.fraction, 16);
 		});
+		it("(Bug 2.0.3) Should be equalsTo 0.00452 value 0 and fraction 0", function () {
+			const a = financial(0.00452, 2);
+
+			assert.equal(a.value, "0");
+			assert.equal(a.fraction, 0);
+		});
 	});
 
 	describe("Negatove tests", function () {
