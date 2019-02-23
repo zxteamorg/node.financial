@@ -36,7 +36,7 @@ describe("Financial funtion tests", function () {
 				const [inputValue, inputFraction] = input;
 				const [expectedValue, expectedFraction] = expectedResult;
 				// tslint:disable-next-line:max-line-length
-				it.only(`Should create by v:${inputValue} and f:${inputFraction} to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
+				it(`Should create by v:${inputValue} and f:${inputFraction} to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
 					const result = Financial.create(inputValue, inputFraction);
 					assert.equal(result.value, expectedValue);
 					assert.equal(result.fraction, expectedFraction);
@@ -47,7 +47,7 @@ describe("Financial funtion tests", function () {
 			positiveTestCases.parse.forEach(parseCase => {
 				const [input, expectedResult] = parseCase;
 				const [expectedValue, expectedFraction] = expectedResult;
-				it.only(`Should parse string value "${input}" to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
+				it(`Should parse string value "${input}" to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
 					const result = Financial.parse(input);
 					assert.equal(result.value, expectedValue);
 					assert.equal(result.fraction, expectedFraction);
@@ -263,7 +263,13 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "602000000301");
 			assert.equal(result.fraction, 9);
 		});
-		it.skip("(Warn 2.0.2) Should multiply 2366.06639088(XRP) * 0.00008328(Price) = 0.19704600(BTC)", function () {
+		it("(Bug 2.0.3) Should truncate 0.00452 to value 0 and fraction 0", function () {
+			const a = financial(0.00452, 2);
+
+			assert.equal(a.value, "0");
+			assert.equal(a.fraction, 0);
+		});
+		it("(Bug 2.0.4) Should multiply 2366.06639088(XRP) * 0.00008328(Price) = 0.19704600(BTC)", function () {
 			const left = new Financial("236606639088", 8); // setup number 2366.06639088
 			const right = new Financial("8328", 8); // setup number 0.00008328
 
@@ -271,11 +277,13 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "1970460090324864");
 			assert.equal(result.fraction, 16);
 		});
-		it("(Bug 2.0.3) Should truncate 0.00452 to value 0 and fraction 0", function () {
-			const a = financial(0.00452, 2);
+		it("(Bug 2.0.4) Should multiply 262.75618992 * 0.03742 = 9.8323366268064", function () {
+			const left = new Financial("26275618992", 8); // setup number 262.75618992
+			const right = new Financial("3742", 5); // setup number 0.03742
 
-			assert.equal(a.value, "0");
-			assert.equal(a.fraction, 0);
+			const result = Financial.multiply(left, right); // 9.8323366268064
+			assert.equal(result.value, "98323366268064");
+			assert.equal(result.fraction, 13);
 		});
 	});
 
