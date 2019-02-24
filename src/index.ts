@@ -54,22 +54,24 @@ export class Financial implements FinancialLike {
 		return financial(result.toFixed(fraction));
 	}
 	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
-		const friendlyLeftValue = BigInt(left.value);
-		const friendlyRightValue = BigInt(right.value);
+		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
+		// IEEE-754 maximum integer value is +/- 9007199254740991
 
-		const result = friendlyLeftValue * friendlyRightValue / BigInt(left.fraction + right.fraction);
+		const summaryLength = left.value.length + right.value.length;
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Number.parseInt(left.value);
+			const friendlyRightValue = Number.parseInt(right.value);
+			const result = friendlyLeftValue * friendlyRightValue;
+			return new Financial(result.toString(), left.fraction + right.fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			const result = friendlyLeftValue * friendlyRightValue;
+			return new Financial(result.toString(), left.fraction + right.fraction);
+		}
 
-		//if (left.value.length > 10 || right.value.length > 10) {
-			throw new Error("Not implemented yet");
-		//}
-
-		// const first = Financial.toFloat(left);
-		// const second = Financial.toFloat(right);
-
-		// const result = first * second;
-
-		// const fraction = left.fraction + right.fraction;
-		// return financial(result.toFixed(fraction));
 	}
 	public static divide(left: FinancialLike, right: FinancialLike): Financial {
 		if (right.value === "0") {
@@ -114,13 +116,13 @@ export class Financial implements FinancialLike {
 			throw new Error(`Invalid argument 'fraction' = ${fraction}. Expected integer number >= 0.`);
 		}
 
-		if (value === "0" && fraction > 0) {
+		if (value === "0") {
 			fraction = 0;
-		}
-
-		while (fraction > 0 && value.length > 1 && value.endsWith("0")) {
-			--fraction;
-			value = value.substr(0, value.length - 1);
+		} else {
+			while (fraction > 0 && value.length > 1 && value.endsWith("0")) {
+				--fraction;
+				value = value.substr(0, value.length - 1);
+			}
 		}
 
 		this._value = value;

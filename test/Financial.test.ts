@@ -185,6 +185,20 @@ describe("Financial funtion tests", function () {
 			assert.equal(instanceOverConstructor.value, "10");
 			assert.equal(instanceOverConstructor.fraction, 0);
 		});
+		it("Should multiply integer values out of range IEEE-754", function () {
+			const left = new Financial(Number.MAX_SAFE_INTEGER.toString(), 0); // setup maximum integer value according IEEE-754
+			const right = new Financial("5", 0);
+			const multiplyResult = Financial.multiply(left, right);
+			assert.equal(multiplyResult.value, "45035996273704955");
+			assert.equal(multiplyResult.fraction, 0);
+		});
+		it("Should multiply integer and decimal values out of range IEEE-754", function () {
+			const left = new Financial(Number.MAX_SAFE_INTEGER.toString(), 0); // setup maximum integer value according IEEE-754
+			const right = new Financial("52", 1);
+			const multiplyResult = Financial.multiply(left, right);
+			assert.equal(multiplyResult.value, "468374361246531532");
+			assert.equal(multiplyResult.fraction, 1);
+		});
 		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {
 			const rawPrice = 0.00157292 * 100000000; // move point to 8 right
 			const rawPriceStr = rawPrice.toFixed(0);
