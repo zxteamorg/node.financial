@@ -20,7 +20,9 @@
 		"@zxteam/contract": "^2.0.0"
 	},
 	"devDependencies": {
-		"@zxnode/build": "0.0.30"
+		"@types/node": "^10.12.27",
+		"@zxnode/build": "0.0.30",
+		"typescript": "^3.3.3333"
 	},
 	"keywords": [],
 	"repository": {

@@ -54,17 +54,22 @@ export class Financial implements FinancialLike {
 		return financial(result.toFixed(fraction));
 	}
 	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || right.value.length > 10) {
+		const friendlyLeftValue = BigInt(left.value);
+		const friendlyRightValue = BigInt(right.value);
+
+		const result = friendlyLeftValue * friendlyRightValue / BigInt(left.fraction + right.fraction);
+
+		//if (left.value.length > 10 || right.value.length > 10) {
 			throw new Error("Not implemented yet");
-		}
+		//}
 
-		const first = Financial.toFloat(left);
-		const second = Financial.toFloat(right);
+		// const first = Financial.toFloat(left);
+		// const second = Financial.toFloat(right);
 
-		const result = first * second;
+		// const result = first * second;
 
-		const fraction = left.fraction + right.fraction;
-		return financial(result.toFixed(fraction));
+		// const fraction = left.fraction + right.fraction;
+		// return financial(result.toFixed(fraction));
 	}
 	public static divide(left: FinancialLike, right: FinancialLike): Financial {
 		if (right.value === "0") {
