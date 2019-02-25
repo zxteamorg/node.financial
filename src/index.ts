@@ -28,30 +28,69 @@ export class Financial implements FinancialLike {
 		return financial(num);
 	}
 	public static plus(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || right.value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-
-		const first = Financial.toFloat(left);
-		const second = Financial.toFloat(right);
-
-		const result = first + second;
-
+		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
-		return financial(result.toFixed(fraction));
+		const diffFraction = left.fraction - right.fraction;
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Number.parseInt(left.value);
+			const friendlyRightValue = Number.parseInt(right.value);
+			let result: number;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue + (friendlyRightValue * rightZero);
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * leftZero) + friendlyRightValue;
+			} else {
+				result = friendlyLeftValue + friendlyRightValue;
+			}
+
+			return new Financial(result.toString(), fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			let result: BigInt;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue + (friendlyRightValue * BigInt(rightZero));
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * BigInt(leftZero)) + friendlyRightValue;
+			} else {
+				result = friendlyLeftValue + friendlyRightValue;
+			}
+
+			return new Financial(result.toString(), fraction);
+		}
 	}
 	public static minus(left: FinancialLike, right: FinancialLike): Financial {
-		if (left.value.length > 10 || right.value.length > 10) {
-			throw new Error("Not implemented yet");
-		}
-
-		const first = Financial.toFloat(left);
-		const second = Financial.toFloat(right);
-
-		const result = first - second;
-
+		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
-		return financial(result.toFixed(fraction));
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Financial.toFloat(left);
+			const friendlyRightValue = Financial.toFloat(right);
+			const result = friendlyLeftValue - friendlyRightValue;
+			return financial(result, fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			const diffFraction = left.fraction - right.fraction;
+			let result: BigInt;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue - (friendlyRightValue * BigInt(rightZero));
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * BigInt(leftZero)) - friendlyRightValue;
+			} else {
+				result = friendlyLeftValue - friendlyRightValue;
+			}
+			return new Financial(result.toString(), fraction);
+		}
 	}
 	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
 		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
@@ -182,7 +221,7 @@ export function financial(...args: Array<any>): Financial {
 				spliteValue = numb.toString().split(_separatorChar);
 			}
 
-			const stringValueF = parseInt(stringValue).toString();
+			const stringValueF = (stringValue.length > 15) ? stringValue : parseInt(stringValue).toString();
 			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
 
 			return new Financial(stringValueF, countValue);

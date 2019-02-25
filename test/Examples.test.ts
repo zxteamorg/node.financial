@@ -55,17 +55,31 @@ describe("Financial funtion tests", function () {
 
 			assert.equal(result.toString(), "801.2005");
 		});
-		it.skip("Should avoid digits limit (plus)", function () {
+		it("Should avoid digits limit (plus)", function () {
 			const first = financial("123456789012345678901234567890");
 			const second = financial("1");
 			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "123456789012345678901234567891");
 		});
-		it.skip("Should avoid digits limit (minus)", function () {
+		it("Should avoid digits limit and fraction (plus)", function () {
+			const first = financial("123456789012345678901234567890.01");
+			const second = financial("1.002");
+			const result = Financial.plus(first, second);
+			assert.equal(result.value, "123456789012345678901234567891012");
+			assert.equal(result.fraction, 3);
+		});
+		it("Should avoid digits limit (minus)", function () {
 			const first = financial("123456789012345678901234567890");
 			const second = financial("1");
 			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "123456789012345678901234567889");
+		});
+		it("Should avoid digits limit and fraction (minus)", function () {
+			const first = financial("123456789012345678901234567890.01");
+			const second = financial("1.001");
+			const result = Financial.minus(first, second);
+			assert.equal(result.value, "123456789012345678901234567889009");
+			assert.equal(result.fraction, 3);
 		});
 	});
 	describe("Financial funtion converting tests", function () {
