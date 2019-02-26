@@ -139,8 +139,13 @@ export class Financial implements FinancialLike {
 		if (num.fraction === 0) {
 			return num.value;
 		} else {
-			const number = parseInt(num.value) / Math.pow(10, num.fraction);
-			return number.toFixed(num.fraction);
+			if (num.value.length < 15) {
+				const number = Number.parseInt(num.value) / Math.pow(10, num.fraction);
+				return number.toFixed(num.fraction);
+			} else {
+				const number = [num.value.slice(0, num.value.length - num.fraction), ".", num.value.slice(num.value.length - num.fraction)].join("");
+				return number;
+			}
 		}
 	}
 	public static wrap(num: FinancialLike): Financial {

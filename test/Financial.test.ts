@@ -299,17 +299,17 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "98323366268064");
 			assert.equal(result.fraction, 13);
 		});
-		it("(Bug 2.0.5) Should avoid approximation as long number (toString)", function () {
-			const money = financial(123456789012345678901234567889009, 2);
+		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(number, number)", function () {
+			const money = financial(1234567890123456789012345678890.09, 2);
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
-		it("(Bug 2.0.5) Should avoid approximation as long number (toString)", function () {
+		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(string)", function () {
 			const money = financial("1234567890123456789012345678890.09");
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
-		it("(Bug 2.0.5) Should avoid approximation as long number (toString)", function () {
+		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(string, number)", function () {
 			const money = new Financial("123456789012345678901234567889009", 2);
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");
