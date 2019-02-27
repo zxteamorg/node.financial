@@ -299,7 +299,11 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.value, "98323366268064");
 			assert.equal(result.fraction, 13);
 		});
-		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(number, number)", function () {
+		it.skip("(Bug 2.0.5) Should avoid approximation as long number (toString)(number, number)", function () {
+
+			// TODO: THIS TEST IS INCORRECT
+			// The number value 1234567890123456789012345678890.09 cannot be presented as IEEE-754 without rounding.
+
 			const money = financial(1234567890123456789012345678890.09, 2);
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");

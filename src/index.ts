@@ -2,6 +2,15 @@ import { FinancialLike } from "@zxteam/contract";
 
 const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 
+function getSeparatorChar(): string {
+	// TODO: Detect locale and return correct separator.
+
+	// return ","; // Russia, Ukraine....
+
+	return ".";
+}
+
+
 export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
@@ -136,16 +145,34 @@ export class Financial implements FinancialLike {
 		return parseInt(num.toString());
 	}
 	public static toString(num: FinancialLike): string {
-		if (num.fraction === 0) {
+		const { value, fraction } = num;
+		if (fraction === 0) {
 			return num.value;
 		} else {
-			if (num.value.length < 15) {
-				const number = Number.parseInt(num.value) / Math.pow(10, num.fraction);
-				return number.toFixed(num.fraction);
+			const separatorChar = getSeparatorChar();
+			const isNegative = value.length > 0 && value[0] === "-";
+			const sign = isNegative ? "-" : "";
+			const absoluteValue = isNegative ? value.substr(1) : value;
+			const absoluteValueLen = absoluteValue.length;
+			if (fraction < absoluteValueLen) {
+				const delimerPosition = absoluteValueLen - fraction;
+				const wholePart = absoluteValue.substr(0, delimerPosition);
+				const fractionPart = absoluteValue.substr(delimerPosition);
+				return `${sign}${wholePart}${separatorChar}${fractionPart}`;
 			} else {
-				const number = [num.value.slice(0, num.value.length - num.fraction), ".", num.value.slice(num.value.length - num.fraction)].join("");
-				return number;
+				const lengthenZeroCount = fraction - absoluteValueLen;
+				const lengthenPart = "0".repeat(lengthenZeroCount);
+				return `${sign}0${separatorChar}${lengthenPart}${absoluteValue}`;
 			}
+
+			// if (num.value.length < 15) {
+			// 	const number = Number.parseInt(num.value) / Math.pow(10, num.fraction);
+			// 	return number.toFixed(num.fraction);
+			// } else {
+			// Вообще не понятно, что здесь происходит. Каждое выражение нужно присваивать в константе + давать имя константе человеческое
+			// 	const number = [num.value.slice(0, num.value.length - num.fraction), ".", num.value.slice(num.value.length - num.fraction)].join("");
+			// 	return number;
+			// }
 		}
 	}
 	public static wrap(num: FinancialLike): Financial {
@@ -198,7 +225,8 @@ export function financial(...args: Array<any>): Financial {
 		throw new Error("Wrong arguments: Expected an array");
 	}
 
-	const _separatorChar = ".";
+	const separatorChar = getSeparatorChar();
+
 	if (args.length === 1) {
 		const value = args[0];
 
@@ -219,11 +247,11 @@ export function financial(...args: Array<any>): Financial {
 			let spliteValue;
 
 			if (numb.toString().lastIndexOf("e") > -1) {
-				stringValue = value.replace(_separatorChar, "");
-				spliteValue = value.split(_separatorChar);
+				stringValue = value.replace(separatorChar, "");
+				spliteValue = value.split(separatorChar);
 			} else {
-				stringValue = numb.toString().replace(_separatorChar, "");
-				spliteValue = numb.toString().split(_separatorChar);
+				stringValue = numb.toString().replace(separatorChar, "");
+				spliteValue = numb.toString().split(separatorChar);
 			}
 
 			const stringValueF = (stringValue.length > 15) ? stringValue : parseInt(stringValue).toString();
@@ -238,8 +266,8 @@ export function financial(...args: Array<any>): Financial {
 		if (typeof (value) === "number" && typeof (fraction) === "number") {
 
 			const splitValue = (value.toString().lastIndexOf("e") > -1)
-				? value.toFixed(fraction).split(_separatorChar)
-				: value.toString().split(_separatorChar);
+				? value.toFixed(fraction).split(separatorChar)
+				: value.toString().split(separatorChar);
 
 			const actualFraction = (splitValue.length > 1) ? splitValue[1].length : 0;
 			const correctFraction = (actualFraction <= fraction) ? actualFraction : fraction;
@@ -249,7 +277,7 @@ export function financial(...args: Array<any>): Financial {
 				? value.toString().slice(0, -(actualFraction - fraction))
 				: value.toFixed(correctFraction);
 
-			let friendlyNum = fixedNum.replace(_separatorChar, "");
+			let friendlyNum = fixedNum.replace(separatorChar, "");
 			// const superFriendlyNum = parseInt(friendlyNum).toString();
 
 			if (friendlyNum[0] === "-") {
