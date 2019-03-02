@@ -4,10 +4,10 @@ const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 
 function getSeparatorChar(): string {
 	// TODO: Detect locale and return correct separator.
-
-	// return ","; // Russia, Ukraine....
-
-	return ".";
+	const exampleNum = 1000.01;
+	const exampleStr = exampleNum.toLocaleString();
+	const separator = exampleStr[exampleStr.length - 3];
+	return separator;
 }
 
 
@@ -164,15 +164,6 @@ export class Financial implements FinancialLike {
 				const lengthenPart = "0".repeat(lengthenZeroCount);
 				return `${sign}0${separatorChar}${lengthenPart}${absoluteValue}`;
 			}
-
-			// if (num.value.length < 15) {
-			// 	const number = Number.parseInt(num.value) / Math.pow(10, num.fraction);
-			// 	return number.toFixed(num.fraction);
-			// } else {
-			// Вообще не понятно, что здесь происходит. Каждое выражение нужно присваивать в константе + давать имя константе человеческое
-			// 	const number = [num.value.slice(0, num.value.length - num.fraction), ".", num.value.slice(num.value.length - num.fraction)].join("");
-			// 	return number;
-			// }
 		}
 	}
 	public static wrap(num: FinancialLike): Financial {
@@ -278,7 +269,6 @@ export function financial(...args: Array<any>): Financial {
 				: value.toFixed(correctFraction);
 
 			let friendlyNum = fixedNum.replace(separatorChar, "");
-			// const superFriendlyNum = parseInt(friendlyNum).toString();
 
 			if (friendlyNum[0] === "-") {
 				while (friendlyNum[1] === "0" && friendlyNum.length > 1) {
