@@ -229,20 +229,15 @@ export function financial(...args: Array<any>): Financial {
 			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
 			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
 
-			// Negative/positive number
-			const numb = (value.startsWith("-"))
-				? - Math.abs(parseFloat(value))
-				: Math.abs(parseFloat(value));
-
 			let stringValue;
 			let spliteValue;
 
-			if (numb.toString().lastIndexOf("e") > -1) {
+			if (value.toString().lastIndexOf("e") > -1) {
 				stringValue = value.replace(separatorChar, "");
 				spliteValue = value.split(separatorChar);
 			} else {
-				stringValue = numb.toString().replace(separatorChar, "");
-				spliteValue = numb.toString().split(separatorChar);
+				stringValue = value.toString().replace(separatorChar, "");
+				spliteValue = value.toString().split(separatorChar);
 			}
 
 			const stringValueF = (stringValue.length > 15) ? stringValue : parseInt(stringValue).toString();
