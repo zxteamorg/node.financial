@@ -236,15 +236,24 @@ export function financial(...args: Array<any>): Financial {
 			if (!argsRegex.test(value)) { throw new Error("Invalid financial value. Expected decimal string"); }
 
 			let stringValue;
-			let spliteValue;
+			let arrayValue;
 
 			stringValue = value.replace(separatorChar, "");
-			spliteValue = value.split(separatorChar);
+			arrayValue = value.split(separatorChar);
 
-			const stringValueF = (stringValue.length > 15) ? stringValue : parseInt(stringValue).toString();
-			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;
+			const zeroRegex = /^[0]+$/;
+			const stringValueF = (stringValue.length > 15)
+				? zeroRegex.test(stringValue)
+					? "0"
+					: stringValue
+				: parseInt(stringValue).toString();
+			const fraction = (arrayValue.length > 1)
+				? zeroRegex.test(stringValue)
+					? 0
+					: arrayValue[1].length
+				: 0;
 
-			return new Financial(stringValueF, countValue);
+			return new Financial(stringValueF, fraction);
 		}
 	}
 	if (args.length === 2) {
