@@ -199,12 +199,12 @@ describe("Financial funtion tests", function () {
 			assert.equal(multiplyResult.value, "468374361246531532");
 			assert.equal(multiplyResult.fraction, 1);
 		});
-		it("Should initialize value with \"0\" via factory", function () {
+		it("Should initialize value \"0\" via factory", function () {
 			const zeroFinancial = financial("0");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
 		});
-		it("Should initialize value with \"0\" via parse", function () {
+		it("Should initialize value \"0\" via parse", function () {
 			const zeroFinancial = Financial.parse("0");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
@@ -328,15 +328,25 @@ describe("Financial funtion tests", function () {
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
-		it("(Bug 3.0.2) Should initialize value with \"0.0000000000000000\" via factory", function () {
+		it("(Bug 3.0.2) Should initialize value \"0.0000000000000000\" via factory", function () {
 			const zeroFinancial = financial("0.0000000000000000");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
 		});
-		it("(Bug 3.0.2) Should initialize value with \"0.0000000000000000\" via parse", function () {
+		it("(Bug 3.0.2) Should initialize value \"0.0000000000000000\" via parse", function () {
 			const zeroFinancial = Financial.parse("0.0000000000000000");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
+		});
+		it("(Bug 3.0.3) Should initialize value \"0.000000005982606\" via factory", function () {
+			const zeroFinancial = financial("0.000000005982606");
+			assert.equal(zeroFinancial.value, "5982606");
+			assert.equal(zeroFinancial.fraction, 15);
+		});
+		it("(Bug 3.0.3) Should initialize value \"0.000000005982606\" via parse", function () {
+			const zeroFinancial = Financial.parse("0.000000005982606");
+			assert.equal(zeroFinancial.value, "5982606");
+			assert.equal(zeroFinancial.fraction, 15);
 		});
 	});
 
