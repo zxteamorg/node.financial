@@ -1,4 +1,4 @@
-import { FinancialLike } from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 
@@ -18,10 +18,15 @@ export class Financial implements FinancialLike {
 	public static create(value: number, fraction: number): Financial {
 		return financial(value, fraction);
 	}
-	public static isFinancialLike(testNum: any): testNum is FinancialLike {
-		if (testNum && "value" in testNum && "fraction" in testNum) {
-			if (typeof testNum.value === "string" && typeof testNum.fraction === "number") {
-				return true;
+	public static isFinancialLike(probablyFinancal: any): probablyFinancal is FinancialLike {
+		if (typeof probablyFinancal === "object" && "value" in probablyFinancal && "fraction" in probablyFinancal) {
+			const { value, fraction } = probablyFinancal;
+			if (typeof value === "string" && typeof fraction === "number") {
+				if (valueRegExp.test(value)) {
+					if (Number.isSafeInteger(fraction) && fraction >= 0) {
+						return true;
+					}
+				}
 			}
 		}
 		return false;
@@ -226,19 +231,15 @@ export function financial(...args: Array<any>): Financial {
 			const friendlyValue: FinancialLike = value;
 			return new Financial(friendlyValue.value, friendlyValue.fraction);
 		} else if (typeof (value) === "string") {
+			// Implementation of financial(value: string): Financial;
 			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
-			if (!argsRegex.test(value)) { throw new Error("Invalid string"); }
+			if (!argsRegex.test(value)) { throw new Error("Invalid financial value. Expected decimal string"); }
 
 			let stringValue;
 			let spliteValue;
 
-			if (value.toString().lastIndexOf("e") > -1) {
-				stringValue = value.replace(separatorChar, "");
-				spliteValue = value.split(separatorChar);
-			} else {
-				stringValue = value.toString().replace(separatorChar, "");
-				spliteValue = value.toString().split(separatorChar);
-			}
+			stringValue = value.replace(separatorChar, "");
+			spliteValue = value.split(separatorChar);
 
 			const stringValueF = (stringValue.length > 15) ? stringValue : parseInt(stringValue).toString();
 			const countValue = (spliteValue.length > 1) ? spliteValue[1].length : 0;

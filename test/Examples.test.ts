@@ -1,6 +1,6 @@
 import { assert } from "chai";
 
-import { FinancialLike } from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 import { financial, Financial } from "../src/index";
 
 describe("Financial funtion tests", function () {
