@@ -348,6 +348,11 @@ describe("Financial funtion tests", function () {
 			assert.equal(zeroFinancial.value, "5982606");
 			assert.equal(zeroFinancial.fraction, 15);
 		});
+		it.skip("(Bug 3.0.3) Should initialize value \"-0\" via parse", function () {
+			const zeroFinancial = Financial.parse("-0");
+			assert.equal(zeroFinancial.value, "0");
+			assert.equal(zeroFinancial.fraction, 0);
+		});
 	});
 
 	describe("Negatove tests", function () {

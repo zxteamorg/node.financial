@@ -242,18 +242,19 @@ export function financial(...args: Array<any>): Financial {
 			arrayValue = value.split(separatorChar);
 
 			const zeroRegex = /^[0]+$/;
-			const stringValueF = (stringValue.length > 15)
-				? zeroRegex.test(stringValue)
-					? "0"
-					: stringValue
-				: parseInt(stringValue).toString();
+			const stringValueF = zeroRegex.test(stringValue) ? "0" : stringValue;
 			const fraction = (arrayValue.length > 1)
 				? zeroRegex.test(stringValue)
 					? 0
 					: arrayValue[1].length
 				: 0;
 
-			return new Financial(stringValueF, fraction);
+			let xValue = stringValueF;
+			if ((stringValueF.startsWith("0") && stringValueF.length > 1) ||
+			stringValueF.startsWith("-0") && stringValueF.length > 2) {
+				xValue = parseInt(xValue).toString();
+			}
+			return new Financial(xValue, fraction);
 		}
 	}
 	if (args.length === 2) {
