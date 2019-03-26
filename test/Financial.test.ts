@@ -199,6 +199,16 @@ describe("Financial funtion tests", function () {
 			assert.equal(multiplyResult.value, "468374361246531532");
 			assert.equal(multiplyResult.fraction, 1);
 		});
+		it("Should initialize value with \"0\" via factory", function(){
+			const zeroFinancial = financial("0");
+			assert.equal(zeroFinancial.value, "0");
+			assert.equal(zeroFinancial.fraction, 0);
+		});
+		it("Should initialize value with \"0\" via parse", function(){
+			const zeroFinancial = Financial.parse("0");
+			assert.equal(zeroFinancial.value, "0");
+			assert.equal(zeroFinancial.fraction, 0);
+		});
 		it("(Bug v0.0.1) Should work toString(): 0.00157292", function () {
 			const rawPrice = 0.00157292 * 100000000; // move point to 8 right
 			const rawPriceStr = rawPrice.toFixed(0);
@@ -317,6 +327,16 @@ describe("Financial funtion tests", function () {
 			const money = new Financial("123456789012345678901234567889009", 2);
 			const toString = money.toString();
 			assert.equal(toString, "1234567890123456789012345678890.09");
+		});
+		it("(Bug 3.0.2) Should initialize value with \"0.0000000000000000\" via factory", function(){
+			const zeroFinancial = financial("0.0000000000000000");
+			assert.equal(zeroFinancial.value, "0");
+			assert.equal(zeroFinancial.fraction, 0);
+		});
+		it("(Bug 3.0.2) Should initialize value with \"0.0000000000000000\" via parse", function(){
+			const zeroFinancial = Financial.parse("0.0000000000000000");
+			assert.equal(zeroFinancial.value, "0");
+			assert.equal(zeroFinancial.fraction, 0);
 		});
 	});
 
