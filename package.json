@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial.js",
-	"version": "3.0.4",
+	"version": "3.2.1",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",
 	"types": "./src/index.d.ts",
@@ -17,7 +17,7 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^3.0.2"
+		"@zxteam/contract": "^3.2.1"
 	},
 	"devDependencies": {
 		"@types/node": "^11.11.7",
