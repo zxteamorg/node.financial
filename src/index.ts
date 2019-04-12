@@ -15,8 +15,21 @@ export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 
-	public static create(value: number, fraction: number): Financial {
-		return financial(value, fraction);
+	public static equals(left: FinancialLike, right: FinancialLike): boolean {
+		if (left.value === right.value && right.fraction === right.fraction) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public static fromFloat(value: number, fractionDigits: number): Financial {
+		if (!Number.isFinite(value)) { throw new Error("Wrong value. Expected finite float value."); }
+		for (let c = 0; c < fractionDigits; ++c) { value *= 10; }
+		return new Financial(value.toFixed(0), fractionDigits);
+	}
+	public static fromInt(value: number): Financial {
+		if (!Number.isSafeInteger(value)) { throw new Error("Wrong value. Expected safe integer value."); }
+		return new Financial(value.toFixed(0), 0);
 	}
 	public static isFinancialLike(probablyFinancal: any): probablyFinancal is FinancialLike {
 		if (typeof probablyFinancal === "object" && "value" in probablyFinancal && "fraction" in probablyFinancal) {
@@ -30,13 +43,6 @@ export class Financial implements FinancialLike {
 			}
 		}
 		return false;
-	}
-	public static equals(left: FinancialLike, right: FinancialLike): boolean {
-		if (left.value === right.value && right.fraction === right.fraction) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 	public static parse(num: string): Financial {
 		return financial(num);
@@ -251,7 +257,7 @@ export function financial(...args: Array<any>): Financial {
 
 			let xValue = stringValueF;
 			if ((stringValueF.startsWith("0") && stringValueF.length > 1) ||
-			stringValueF.startsWith("-0") && stringValueF.length > 2) {
+				stringValueF.startsWith("-0") && stringValueF.length > 2) {
 				xValue = parseInt(xValue).toString();
 			}
 			return new Financial(xValue, fraction);
@@ -260,7 +266,10 @@ export function financial(...args: Array<any>): Financial {
 	if (args.length === 2) {
 		const value = args[0];
 		const fraction = args[1];
-		if (typeof (value) === "number" && typeof (fraction) === "number") {
+		if (typeof value === "number" && typeof fraction === "number") {
+			if (Number.isSafeInteger && fraction === 0) {
+				return Financial.fromInt(value);
+			}
 
 			const splitValue = (value.toString().lastIndexOf("e") > -1)
 				? value.toFixed(fraction).split(separatorChar)

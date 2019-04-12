@@ -3,20 +3,12 @@ import { assert } from "chai";
 import financial, { Financial } from "../src/index";
 
 interface TestCases {
-	create: Array<[[number, number], [string, number]]>;
+	fromFloat: Array<[[number, number], [string, number]]>;
+	fromInt: Array<[number, string]>;
 	parse: Array<[string, [string, number]]>;
 }
 
 const positiveTestCases: TestCases = {
-	create: [
-		[[0.000999, 6], ["999", 6]],
-		[[0.00000001, 8], ["1", 8]],
-		[[-0.5, 1], ["-5", 1]],
-		[[1001, 0], ["1001", 0]],
-		[[10010, 0], ["10010", 0]],
-		[[-999, 0], ["-999", 0]],
-		[[1001.101, 3], ["1001101", 3]]
-	],
 	parse: [
 		["0.000999", ["999", 6]],
 		["0.00000001", ["1", 8]],
@@ -25,21 +17,45 @@ const positiveTestCases: TestCases = {
 		["10010", ["10010", 0]],
 		["-999", ["-999", 0]],
 		["1001.1010000", ["1001101", 3]]
+	],
+	fromFloat: [
+		[[0.000999, 6], ["999", 6]],
+		[[0.00000001, 8], ["1", 8]],
+		[[-0.5, 1], ["-5", 1]],
+		[[1001, 0], ["1001", 0]],
+		[[10010, 0], ["10010", 0]],
+		[[-999, 0], ["-999", 0]],
+		[[1001.101, 3], ["1001101", 3]]
+	],
+	fromInt: [
+		[999, "999"],
+		[10010, "10010"]
 	]
 };
 
 describe("Financial funtion tests", function () {
 	describe("Positive Test Cases", function () {
-		describe("create", function () {
-			positiveTestCases.create.forEach(createCase => {
-				const [input, expectedResult] = createCase;
+		describe("fromFloat", function () {
+			positiveTestCases.fromFloat.forEach(fromFloatCase => {
+				const [input, expectedResult] = fromFloatCase;
 				const [inputValue, inputFraction] = input;
 				const [expectedValue, expectedFraction] = expectedResult;
 				// tslint:disable-next-line:max-line-length
 				it(`Should create by v:${inputValue} and f:${inputFraction} to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
-					const result = Financial.create(inputValue, inputFraction);
+					const result = Financial.fromFloat(inputValue, inputFraction);
 					assert.equal(result.value, expectedValue);
 					assert.equal(result.fraction, expectedFraction);
+				});
+			});
+		});
+		describe("fromInt", function () {
+			positiveTestCases.fromInt.forEach(fromIntCase => {
+				const [inputValue, expectedValue] = fromIntCase;
+				// tslint:disable-next-line:max-line-length
+				it(`Should create by v:${inputValue} to v:"${expectedValue}" and fraction:0`, function () {
+					const result = Financial.fromInt(inputValue);
+					assert.equal(result.value, expectedValue);
+					assert.equal(result.fraction, 0);
 				});
 			});
 		});
@@ -355,7 +371,7 @@ describe("Financial funtion tests", function () {
 		});
 	});
 
-	describe("Negatove tests", function () {
+	describe("Negative tests", function () {
 		it("Should NOT instance with value=\"123.123.123\"", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
