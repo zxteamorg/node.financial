@@ -12,6 +12,10 @@ interface TestCases {
 	round: Array<[FinancialLike, number, FinancialLike]>;
 	truncDown: Array<[FinancialLike, number, FinancialLike]>;
 	truncUp: Array<[FinancialLike, number, FinancialLike]>;
+	gt: Array<[FinancialLike, FinancialLike, boolean]>;
+	lt: Array<[FinancialLike, FinancialLike, boolean]>;
+	gte: Array<[FinancialLike, FinancialLike, boolean]>;
+	lte: Array<[FinancialLike, FinancialLike, boolean]>;
 }
 
 const positiveTestCases: TestCases = {
@@ -60,6 +64,52 @@ const positiveTestCases: TestCases = {
 		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1551", fraction: 3 }, 2, { value: "156", fraction: 2 }]
+	],
+	gt: [
+		[{ value: "6", fraction: 0 }, { value: "-2", fraction: 0 }, true],
+		[{ value: "34567234", fraction: 8 }, { value: "23451678", fraction: 8 }, true],
+		[{ value: "59834567234", fraction: 8 }, { value: "34623451678", fraction: 8 }, true],
+		[{ value: "6", fraction: 0 }, { value: "105", fraction: 1 }, false],
+		[{ value: "1", fraction: 7 }, { value: "3", fraction: 8 }, true],
+		[{ value: "-1", fraction: 7 }, { value: "3", fraction: 8 }, false],
+		[{ value: "-100002", fraction: 0 }, { value: "-100001", fraction: 0 }, false],
+		[{ value: "3", fraction: 5 }, { value: "3", fraction: 5 }, false],
+		[{ value: "6", fraction: 0 }, { value: "8", fraction: 0 }, false]
+	],
+	lt: [
+		[{ value: "6", fraction: 0 }, { value: "-2", fraction: 0 }, false],
+		[{ value: "34567234", fraction: 8 }, { value: "23451678", fraction: 8 }, false],
+		[{ value: "59834567234", fraction: 8 }, { value: "34623451678", fraction: 8 }, false],
+		[{ value: "6", fraction: 0 }, { value: "105", fraction: 1 }, true],
+		[{ value: "1", fraction: 7 }, { value: "3", fraction: 8 }, false],
+		[{ value: "-1", fraction: 7 }, { value: "3", fraction: 8 }, true],
+		[{ value: "-100002", fraction: 0 }, { value: "-100001", fraction: 0 }, true],
+		[{ value: "3", fraction: 5 }, { value: "3", fraction: 5 }, false],
+		[{ value: "6", fraction: 0 }, { value: "8", fraction: 0 }, true]
+	],
+	gte: [
+		[{ value: "6", fraction: 0 }, { value: "6", fraction: 0 }, true],
+		[{ value: "6", fraction: 0 }, { value: "3", fraction: 0 }, true],
+		[{ value: "6", fraction: 0 }, { value: "123", fraction: 0 }, false],
+		[{ value: "34567234", fraction: 8 }, { value: "23451678", fraction: 8 }, true],
+		[{ value: "59834567234", fraction: 8 }, { value: "34623451678", fraction: 8 }, true],
+		[{ value: "-10002", fraction: 0 }, { value: "-10002", fraction: 0 }, true],
+		[{ value: "-10002", fraction: 0 }, { value: "-10003", fraction: 0 }, true],
+		[{ value: "0", fraction: 0 }, { value: "0", fraction: 0 }, true],
+		[{ value: "1", fraction: 5 }, { value: "-1", fraction: 5 }, true],
+		[{ value: "3", fraction: 1 }, { value: "3", fraction: 1 }, true]
+	],
+	lte: [
+		[{ value: "6", fraction: 0 }, { value: "6", fraction: 0 }, true],
+		[{ value: "6", fraction: 0 }, { value: "3", fraction: 0 }, false],
+		[{ value: "59834567234", fraction: 8 }, { value: "34623451678", fraction: 8 }, false],
+		[{ value: "34567234", fraction: 8 }, { value: "23451678", fraction: 8 }, false],
+		[{ value: "6", fraction: 0 }, { value: "123", fraction: 0 }, true],
+		[{ value: "-10002", fraction: 0 }, { value: "-10002", fraction: 0 }, true],
+		[{ value: "-10002", fraction: 0 }, { value: "-10003", fraction: 0 }, false],
+		[{ value: "0", fraction: 0 }, { value: "0", fraction: 0 }, true],
+		[{ value: "1", fraction: 5 }, { value: "-1", fraction: 5 }, false],
+		[{ value: "3", fraction: 1 }, { value: "3", fraction: 1 }, true]
 	]
 };
 
@@ -144,6 +194,46 @@ describe("Financial funtion tests", function () {
 						const result = Financial.truncUp(input, newFraction);
 						assert.equal(result.value, expectedResult.value);
 						assert.equal(result.fraction, expectedResult.fraction);
+					});
+			});
+		});
+		describe("gt", function () {
+			positiveTestCases.gt.forEach(gtCase => {
+				const [first, second, boolean] = gtCase;
+				it(`Should gt financial "${JSON.stringify(first)}" > fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
+					function () {
+						const result = Financial.gt(first, second);
+						assert.equal(result, boolean);
+					});
+			});
+		});
+		describe("lt", function () {
+			positiveTestCases.lt.forEach(ltCase => {
+				const [first, second, boolean] = ltCase;
+				it(`Should lt financial "${JSON.stringify(first)}" < fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
+					function () {
+						const result = Financial.lt(first, second);
+						assert.equal(result, boolean);
+					});
+			});
+		});
+		describe("gte", function () {
+			positiveTestCases.gte.forEach(gteCase => {
+				const [first, second, boolean] = gteCase;
+				it(`Should gte financial "${JSON.stringify(first)}" >= fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
+					function () {
+						const result = Financial.gte(first, second);
+						assert.equal(result, boolean);
+					});
+			});
+		});
+		describe("lte", function () {
+			positiveTestCases.lte.forEach(lteCase => {
+				const [first, second, boolean] = lteCase;
+				it(`Should lte financial "${JSON.stringify(first)}" <= fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
+					function () {
+						const result = Financial.lte(first, second);
+						assert.equal(result, boolean);
 					});
 			});
 		});
@@ -466,130 +556,6 @@ describe("Financial funtion tests", function () {
 			const zeroFinancial = Financial.parse("-0");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
-		});
-		it("Should be '6' < '-2' = false. Call method lt().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("-2", 0);
-			const result = Financial.lt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '6' < '10.5' = true. Call method lt().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("105", 1);
-			const result = Financial.lt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '6' > '-2' = true. Call method gt().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("-2", 0);
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '0.0000001' > '0.00000003' = true. Call method gt().", function () {
-			const first = new Financial("1", 7);
-			const second = new Financial("3", 8);
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '-0.0000001' > '0.00000003' = false. Call method gt().", function () {
-			const first = new Financial("-1", 7);
-			const second = new Financial("3", 8);
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '-100002' > '-100001' = false. Call method gt().", function () {
-			const first = financial("-100002");
-			const second = financial("-100001");
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '-0.00001' > '0.00003' = false. Call method gt().", function () {
-			const first = new Financial("3", 5);
-			const second = new Financial("3", 5);
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '6' > '8' = false. Call method gt().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("8", 0);
-			const result = Financial.gt(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '6' <= '6' = true. Call method lte().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("6", 0);
-			const result = Financial.lte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '6' <= '3' = false. Call method lte().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("3", 0);
-			const result = Financial.lte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '6' >= '3' = true. Call method gte().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("3", 0);
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '6' >= '123' = false. Call method gte().", function () {
-			const first = new Financial("6", 0);
-			const second = new Financial("123", 0);
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, false);
-		});
-		it("Should be '-10002' >= '-10002' = true. Call method gte().", function () {
-			const first = financial("-10002");
-			const second = financial("-10002");
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '-10002' >= '-10003' = true. Call method gte().", function () {
-			const first = financial("-10002");
-			const second = financial("-10003");
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '0' >= '0' = true. Call method gte().", function () {
-			const first = financial("0");
-			const second = financial("0");
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '0.00001' >= '-0.00001' = true. Call method gte().", function () {
-			const first = financial("0.00001");
-			const second = financial("-0.00001");
-			const result = Financial.gte(first, second);
-			assert.isBoolean(result);
-			assert.equal(result, true);
-		});
-		it("Should be '0.1' + '0.2' >= '0.3' = true. Call method gte().", function () {
-			const firstX = financial("0.1");
-			const firstY = financial("0.2");
-			const second = financial("0.3");
-			const first = Financial.plus(firstX, firstY);
-			const result = Financial.gte(first, second);
-			const equals = Financial.equals(first, second);
-			assert.isBoolean(result);
-			assert.isBoolean(equals);
-			assert.equal(result, true);
-			assert.equal(result, equals);
 		});
 		it("Call static method wrap().", function () {
 			const wrap = Financial.wrap({ value: "1", fraction: 1 });
