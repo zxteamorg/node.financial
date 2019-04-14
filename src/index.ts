@@ -86,7 +86,7 @@ export class Financial implements FinancialLike {
 			const { value, fraction } = probablyFinancal;
 			if (typeof value === "string" && typeof fraction === "number") {
 				if (valueRegExp.test(value)) {
-					if (Number.isSafeInteger(fraction) && fraction >= 0) {
+					if (heplers.verifyFraction(fraction)) {
 						return true;
 					}
 				}
@@ -153,6 +153,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.round() for JS float
 	 */
 	public static round(num: FinancialLike, fraction: number): FinancialLike {
+		if (!heplers.verifyFraction(fraction)) {
+			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		}
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.round(financial(num).toFloat() * multiplier) / multiplier;
 		return financial(roundNumber, fraction);
@@ -194,6 +197,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.trunc() for JS float
 	 */
 	public static truncDown(num: FinancialLike, fraction: number): FinancialLike {
+		if (!heplers.verifyFraction(fraction)) {
+			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		}
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.floor(financial(num).toFloat() * multiplier) / multiplier;
 		return financial(roundNumber, fraction);
@@ -204,6 +210,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.ceil() for JS float
 	 */
 	public static truncUp(num: FinancialLike, fraction: number): FinancialLike {
+		if (!heplers.verifyFraction(fraction)) {
+			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		}
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.ceil(financial(num).toFloat() * multiplier) / multiplier;
 		return financial(roundNumber, fraction);
@@ -354,3 +363,13 @@ export function financial(...args: Array<any>): Financial {
 	throw new Error("Unknown argument(s): " + args.join(", "));
 }
 export default financial;
+
+namespace heplers {
+	export function verifyFraction(fraction: number): boolean {
+		if (Number.isSafeInteger(fraction) && fraction >= 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+}

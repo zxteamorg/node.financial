@@ -54,21 +54,27 @@ const positiveTestCases: TestCases = {
 		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "3", fraction: 1 }, 1, { value: "3", fraction: 1 }],
 		[{ value: "3", fraction: 1 }, 3, { value: "3", fraction: 1 }],
-		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }]
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }],
+		[{ value: "1759", fraction: 3 }, 0, { value: "2", fraction: 0 }],
+		[{ value: "1759", fraction: 3 }, 8, { value: "1759", fraction: 3 }]
 	],
 	truncDown: [
 		[{ value: "1559", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "1555", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }],
-		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }]
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }],
+		[{ value: "1859", fraction: 3 }, 0, { value: "1", fraction: 0 }],
+		[{ value: "1759", fraction: 3 }, 8, { value: "1759", fraction: 3 }]
 	],
 	truncUp: [
 		[{ value: "1559", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1551", fraction: 3 }, 2, { value: "156", fraction: 2 }],
-		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83475", fraction: 5 }]
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83475", fraction: 5 }],
+		[{ value: "1259", fraction: 3 }, 0, { value: "2", fraction: 0 }],
+		[{ value: "1759", fraction: 3 }, 8, { value: "1759", fraction: 3 }]
 	],
 	gt: [
 		[{ value: "6", fraction: 0 }, { value: "-2", fraction: 0 }, true],
@@ -658,6 +664,39 @@ describe("Financial funtion tests", function () {
 				Financial.fromInt(NaN);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong value. Expected safe integer value."));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Wrong argument fraction on method round", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				const number = financial(123, 2.2);
+				const finNumber = Financial.round(number, -1.45);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Wrong argument fraction on method truncDown", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				const number = financial(123, 2.2);
+				const finNumber = Financial.truncDown(number, -1.45);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Wrong argument fraction on method truncUp", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				const number = financial(123, 2.2);
+				const finNumber = Financial.truncUp(number, -1.45);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
 				return;
 			}
 			assert.fail("Should never happened");
