@@ -51,19 +51,24 @@ const positiveTestCases: TestCases = {
 		[{ value: "1559", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "155", fraction: 2 }],
-		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }]
+		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "3", fraction: 1 }, 1, { value: "3", fraction: 1 }],
+		[{ value: "3", fraction: 1 }, 3, { value: "3", fraction: 1 }],
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }]
 	],
 	truncDown: [
 		[{ value: "1559", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "1555", fraction: 3 }, 2, { value: "155", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "155", fraction: 2 }],
-		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }]
+		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }]
 	],
 	truncUp: [
 		[{ value: "1559", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
 		[{ value: "1554", fraction: 3 }, 2, { value: "156", fraction: 2 }],
-		[{ value: "1551", fraction: 3 }, 2, { value: "156", fraction: 2 }]
+		[{ value: "1551", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83475", fraction: 5 }]
 	],
 	gt: [
 		[{ value: "6", fraction: 0 }, { value: "-2", fraction: 0 }, true],

@@ -153,7 +153,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.round() for JS float
 	 */
 	public static round(num: FinancialLike, fraction: number): FinancialLike {
-		throw new Error("Not implemented yet.");
+		const multiplier = Number("1".padEnd(fraction + 1, "0"));
+		const roundNumber = Math.round(financial(num).toFloat() * multiplier) / multiplier;
+		return financial(roundNumber, fraction);
 	}
 	public static subtract(left: FinancialLike, right: FinancialLike): Financial {
 		const summaryLength = left.value.length + right.value.length;
@@ -192,7 +194,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.trunc() for JS float
 	 */
 	public static truncDown(num: FinancialLike, fraction: number): FinancialLike {
-		throw new Error("Not implemented yet.");
+		const multiplier = Number("1".padEnd(fraction + 1, "0"));
+		const roundNumber = Math.floor(financial(num).toFloat() * multiplier) / multiplier;
+		return financial(roundNumber, fraction);
 	}
 	/**
 	 * Change fraction value by truncate to upper value.
@@ -200,7 +204,9 @@ export class Financial implements FinancialLike {
 	 * An analog Math.ceil() for JS float
 	 */
 	public static truncUp(num: FinancialLike, fraction: number): FinancialLike {
-		throw new Error("Not implemented yet.");
+		const multiplier = Number("1".padEnd(fraction + 1, "0"));
+		const roundNumber = Math.ceil(financial(num).toFloat() * multiplier) / multiplier;
+		return financial(roundNumber, fraction);
 	}
 	public static toInt(num: FinancialLike): number {
 		return parseInt(num.toString());
@@ -273,9 +279,6 @@ export function financial(wrap: FinancialLike): Financial;
 export function financial(value: number, fractionDigits: number): Financial;
 export function financial(value: string): Financial;
 export function financial(...args: Array<any>): Financial {
-	if (!Array.isArray(args)) {
-		throw new Error("Wrong arguments: Expected an array");
-	}
 
 	const separatorChar = getSeparatorChar();
 
