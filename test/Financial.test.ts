@@ -520,6 +520,17 @@ describe("Financial funtion tests", function () {
 			assert.isBoolean(Financial.isFinancialLike(wrap));
 			assert.equal(Financial.isFinancialLike(wrap), true);
 		});
+		it("Should instance with value=1 fraction=1", function () {
+			const first = financial(1, 1);
+			assert.equal(first.fraction, 0);
+			assert.equal(first.value, "1");
+			assert.equal(first.toString(), "1");
+			assert.equal(first.toInt(), 1);
+		});
+		it("Should be is not isFinancialLike", function () {
+			const result = Financial.isFinancialLike([]);
+			assert.equal(result, false);
+		});
 	});
 
 	describe("Negative tests", function () {
@@ -559,6 +570,46 @@ describe("Financial funtion tests", function () {
 				new Financial("00055000", 8);
 			} catch (e) {
 				//expected
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Unknown argument(s)", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				financial({} as any);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Unknown argument(s):"));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Invalid financial value.", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				financial("0,213");
+			} catch (err) {
+				assert((<any>err).message.startsWith("Invalid financial value. Expected decimal string"));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Wrong value is finite float.", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				Financial.fromFloat(NaN, 0);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong value. Expected finite float value."));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("Should be execution error Wrong value is safe integer.", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				Financial.fromInt(NaN);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong value. Expected safe integer value."));
 				return;
 			}
 			assert.fail("Should never happened");
