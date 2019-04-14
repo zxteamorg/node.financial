@@ -9,6 +9,9 @@ interface TestCases {
 	fromInt: Array<[number, string]>;
 	multiply: Array<[FinancialLike, FinancialLike, [string, number]]>;
 	parse: Array<[string, [string, number]]>;
+	round: Array<[FinancialLike, number, FinancialLike]>;
+	truncDown: Array<[FinancialLike, number, FinancialLike]>;
+	truncUp: Array<[FinancialLike, number, FinancialLike]>;
 }
 
 const positiveTestCases: TestCases = {
@@ -39,6 +42,24 @@ const positiveTestCases: TestCases = {
 		["10010", ["10010", 0]],
 		["-999", ["-999", 0]],
 		["1001.1010000", ["1001101", 3]]
+	],
+	round: [
+		[{ value: "1559", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "1554", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }]
+	],
+	truncDown: [
+		[{ value: "1559", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "1555", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "1554", fraction: 3 }, 2, { value: "155", fraction: 2 }],
+		[{ value: "1551", fraction: 3 }, 2, { value: "155", fraction: 2 }]
+	],
+	truncUp: [
+		[{ value: "1559", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "1555", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "1554", fraction: 3 }, 2, { value: "156", fraction: 2 }],
+		[{ value: "1551", fraction: 3 }, 2, { value: "156", fraction: 2 }]
 	]
 };
 
@@ -91,6 +112,39 @@ describe("Financial funtion tests", function () {
 					assert.equal(result.value, expectedValue);
 					assert.equal(result.fraction, expectedFraction);
 				});
+			});
+		});
+		describe("round", function () {
+			positiveTestCases.round.forEach(roundCase => {
+				const [input, newFraction, expectedResult] = roundCase;
+				it(`Should round financial "${JSON.stringify(input)}" for new fraction ${newFraction} to value:"${JSON.stringify(expectedResult)}"`,
+					function () {
+						const result = Financial.round(input, newFraction);
+						assert.equal(result.value, expectedResult.value);
+						assert.equal(result.fraction, expectedResult.fraction);
+					});
+			});
+		});
+		describe("truncDown", function () {
+			positiveTestCases.truncDown.forEach(truncDownCase => {
+				const [input, newFraction, expectedResult] = truncDownCase;
+				it(`Should truncDown financial "${JSON.stringify(input)}" for new fraction ${newFraction} to value:"${JSON.stringify(expectedResult)}"`,
+					function () {
+						const result = Financial.truncDown(input, newFraction);
+						assert.equal(result.value, expectedResult.value);
+						assert.equal(result.fraction, expectedResult.fraction);
+					});
+			});
+		});
+		describe("truncUp", function () {
+			positiveTestCases.truncUp.forEach(truncUpCase => {
+				const [input, newFraction, expectedResult] = truncUpCase;
+				it(`Should truncUp financial "${JSON.stringify(input)}" for new fraction ${newFraction} to value:"${JSON.stringify(expectedResult)}"`,
+					function () {
+						const result = Financial.truncUp(input, newFraction);
+						assert.equal(result.value, expectedResult.value);
+						assert.equal(result.fraction, expectedResult.fraction);
+					});
 			});
 		});
 	});

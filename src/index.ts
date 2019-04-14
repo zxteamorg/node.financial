@@ -10,11 +10,55 @@ function getSeparatorChar(): string {
 	return separator;
 }
 
+export const enum ROUND_MODE {
+	TRUNC_UP = "TRUNC_UP",
+	TRUNC_DOWN = "TRUNC_DOWN",
+	ROUND = "ROUND"
+}
+
 
 export class Financial implements FinancialLike {
 	private readonly _value: string;
 	private readonly _fraction: number;
 
+	public static add(left: FinancialLike, right: FinancialLike): Financial {
+		const summaryLength = left.value.length + right.value.length;
+		const fraction = Math.max(left.fraction, right.fraction);
+		const diffFraction = left.fraction - right.fraction;
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Number.parseInt(left.value);
+			const friendlyRightValue = Number.parseInt(right.value);
+			let result: number;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue + (friendlyRightValue * rightZero);
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * leftZero) + friendlyRightValue;
+			} else {
+				result = friendlyLeftValue + friendlyRightValue;
+			}
+
+			return new Financial(result.toString(), fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			let result: BigInt;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue + (friendlyRightValue * BigInt(rightZero));
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * BigInt(leftZero)) + friendlyRightValue;
+			} else {
+				result = friendlyLeftValue + friendlyRightValue;
+			}
+
+			return new Financial(result.toString(), fraction);
+		}
+	}
 	public static equals(left: FinancialLike, right: FinancialLike): boolean {
 		if (left.value === right.value && left.fraction === right.fraction) {
 			return true;
@@ -59,71 +103,14 @@ export class Financial implements FinancialLike {
 	public static parse(num: string): Financial {
 		return financial(num);
 	}
-	public static plus(left: FinancialLike, right: FinancialLike): Financial {
-		const summaryLength = left.value.length + right.value.length;
-		const fraction = Math.max(left.fraction, right.fraction);
-		const diffFraction = left.fraction - right.fraction;
-		if (summaryLength < 15) {
-			// 15 symbols total length is safe to multiply in IEEE-754 range
-			const friendlyLeftValue = Number.parseInt(left.value);
-			const friendlyRightValue = Number.parseInt(right.value);
-			let result: number;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue + (friendlyRightValue * rightZero);
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * leftZero) + friendlyRightValue;
-			} else {
-				result = friendlyLeftValue + friendlyRightValue;
-			}
-
-			return new Financial(result.toString(), fraction);
-		} else {
-			// Use BigInt arithmetic instead
-			const friendlyLeftValue = BigInt(left.value);
-			const friendlyRightValue = BigInt(right.value);
-			let result: BigInt;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue + (friendlyRightValue * BigInt(rightZero));
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * BigInt(leftZero)) + friendlyRightValue;
-			} else {
-				result = friendlyLeftValue + friendlyRightValue;
-			}
-
-			return new Financial(result.toString(), fraction);
-		}
-	}
-	public static minus(left: FinancialLike, right: FinancialLike): Financial {
-		const summaryLength = left.value.length + right.value.length;
-		const fraction = Math.max(left.fraction, right.fraction);
-		if (summaryLength < 15) {
-			// 15 symbols total length is safe to multiply in IEEE-754 range
-			const friendlyLeftValue = Financial.toFloat(left);
-			const friendlyRightValue = Financial.toFloat(right);
-			const result = friendlyLeftValue - friendlyRightValue;
-			return financial(result, fraction);
-		} else {
-			// Use BigInt arithmetic instead
-			const friendlyLeftValue = BigInt(left.value);
-			const friendlyRightValue = BigInt(right.value);
-			const diffFraction = left.fraction - right.fraction;
-			let result: BigInt;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue - (friendlyRightValue * BigInt(rightZero));
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * BigInt(leftZero)) - friendlyRightValue;
-			} else {
-				result = friendlyLeftValue - friendlyRightValue;
-			}
-			return new Financial(result.toString(), fraction);
-		}
-	}
+	/**
+	 * @deprecated Use add() instead
+	 */
+	public static plus(left: FinancialLike, right: FinancialLike): Financial { return Financial.add(left, right); }
+	/**
+	 * @deprecated Use subtract() instead
+	 */
+	public static minus(left: FinancialLike, right: FinancialLike): Financial { return Financial.subtract(left, right); }
 	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
 		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
 		// IEEE-754 maximum integer value is +/- 9007199254740991
@@ -160,9 +147,60 @@ export class Financial implements FinancialLike {
 		const fraction = Math.max(left.fraction, right.fraction);
 		return financial(result.toFixed(fraction));
 	}
+	/**
+	 * Change fraction value by rounding.
+	 * Returns the value of a number rounded to the nearest value with fraction.
+	 * An analog Math.round() for JS float
+	 */
+	public static round(num: FinancialLike, fraction: number): FinancialLike {
+		throw new Error("Not implemented yet.");
+	}
+	public static subtract(left: FinancialLike, right: FinancialLike): Financial {
+		const summaryLength = left.value.length + right.value.length;
+		const fraction = Math.max(left.fraction, right.fraction);
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Financial.toFloat(left);
+			const friendlyRightValue = Financial.toFloat(right);
+			const result = friendlyLeftValue - friendlyRightValue;
+			return financial(result, fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			const diffFraction = left.fraction - right.fraction;
+			let result: BigInt;
+			if (diffFraction > 0) {
+				const rightZero = Math.pow(10, diffFraction);
+				result = friendlyLeftValue - (friendlyRightValue * BigInt(rightZero));
+			} else if (diffFraction < 0) {
+				const leftZero = Math.pow(10, Math.abs(diffFraction));
+				result = (friendlyLeftValue * BigInt(leftZero)) - friendlyRightValue;
+			} else {
+				result = friendlyLeftValue - friendlyRightValue;
+			}
+			return new Financial(result.toString(), fraction);
+		}
+	}
 	public static toFloat(num: FinancialLike): number {
 		const string = num.toString();
 		return parseFloat(string);
+	}
+	/**
+	 * Change fraction value by truncate.
+	 * Returns the value of a Financial rounded to the nearest Financial with different fraction.
+	 * An analog Math.trunc() for JS float
+	 */
+	public static truncDown(num: FinancialLike, fraction: number): FinancialLike {
+		throw new Error("Not implemented yet.");
+	}
+	/**
+	 * Change fraction value by truncate to upper value.
+	 * Return the smallest value greater than or equal to a given
+	 * An analog Math.ceil() for JS float
+	 */
+	public static truncUp(num: FinancialLike, fraction: number): FinancialLike {
+		throw new Error("Not implemented yet.");
 	}
 	public static toInt(num: FinancialLike): number {
 		return parseInt(num.toString());
