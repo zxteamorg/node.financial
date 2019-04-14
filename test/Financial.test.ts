@@ -1,23 +1,17 @@
 import { assert } from "chai";
 
+import { Financial as FinancialLike } from "@zxteam/contract";
+
 import financial, { Financial } from "../src/index";
 
 interface TestCases {
 	fromFloat: Array<[[number, number], [string, number]]>;
 	fromInt: Array<[number, string]>;
+	multiply: Array<[FinancialLike, FinancialLike, [string, number]]>;
 	parse: Array<[string, [string, number]]>;
 }
 
 const positiveTestCases: TestCases = {
-	parse: [
-		["0.000999", ["999", 6]],
-		["0.00000001", ["1", 8]],
-		["-0.5", ["-5", 1]],
-		["1001", ["1001", 0]],
-		["10010", ["10010", 0]],
-		["-999", ["-999", 0]],
-		["1001.1010000", ["1001101", 3]]
-	],
 	fromFloat: [
 		[[0.000999, 6], ["999", 6]],
 		[[0.00000001, 8], ["1", 8]],
@@ -30,6 +24,21 @@ const positiveTestCases: TestCases = {
 	fromInt: [
 		[999, "999"],
 		[10010, "10010"]
+	],
+	multiply: [
+		[{ value: "42", fraction: 0 }, { value: "-1", fraction: 0 }, ["-42", 0]],
+		[{ value: "42", fraction: 0 }, { value: "-2", fraction: 0 }, ["-84", 0]],
+		[{ value: "-42", fraction: 0 }, { value: "-2", fraction: 0 }, ["84", 0]],
+		[{ value: "4212345678", fraction: 8 }, { value: "-1", fraction: 0 }, ["-4212345678", 8]]
+	],
+	parse: [
+		["0.000999", ["999", 6]],
+		["0.00000001", ["1", 8]],
+		["-0.5", ["-5", 1]],
+		["1001", ["1001", 0]],
+		["10010", ["10010", 0]],
+		["-999", ["-999", 0]],
+		["1001.1010000", ["1001101", 3]]
 	]
 };
 
@@ -57,6 +66,20 @@ describe("Financial funtion tests", function () {
 					assert.equal(result.value, expectedValue);
 					assert.equal(result.fraction, 0);
 				});
+			});
+		});
+		describe("multiply", function () {
+			positiveTestCases.multiply.forEach(multiplyCase => {
+				const [left, right, expectedResult] = multiplyCase;
+				const [expectedValue, expectedFraction] = expectedResult;
+				it(
+					// tslint:disable-next-line: max-line-length
+					`Should multiply values "${JSON.stringify(left)}" and "${JSON.stringify(right)}" to v:"${expectedValue}" and fraction:${expectedFraction}`,
+					function () {
+						const result = Financial.multiply(left, right);
+						assert.equal(result.value, expectedValue);
+						assert.equal(result.fraction, expectedFraction);
+					});
 			});
 		});
 		describe("parse", function () {
