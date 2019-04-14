@@ -16,7 +16,7 @@ export class Financial implements FinancialLike {
 	private readonly _fraction: number;
 
 	public static equals(left: FinancialLike, right: FinancialLike): boolean {
-		if (left.value === right.value && right.fraction === right.fraction) {
+		if (left.value === right.value && left.fraction === right.fraction) {
 			return true;
 		} else {
 			return false;
@@ -31,6 +31,12 @@ export class Financial implements FinancialLike {
 		if (!Number.isSafeInteger(value)) { throw new Error("Wrong value. Expected safe integer value."); }
 		return new Financial(value.toFixed(0), 0);
 	}
+	public static gt(left: FinancialLike, right: FinancialLike): boolean {
+		return (financial(left).toFloat() > financial(right).toFloat());
+	}
+	public static gte(left: FinancialLike, right: FinancialLike): boolean {
+		return (financial(left).toFloat() >= financial(right).toFloat());
+	}
 	public static isFinancialLike(probablyFinancal: any): probablyFinancal is FinancialLike {
 		if (typeof probablyFinancal === "object" && "value" in probablyFinancal && "fraction" in probablyFinancal) {
 			const { value, fraction } = probablyFinancal;
@@ -43,6 +49,12 @@ export class Financial implements FinancialLike {
 			}
 		}
 		return false;
+	}
+	public static lt(left: FinancialLike, right: FinancialLike): boolean {
+		return (financial(left).toFloat() < financial(right).toFloat());
+	}
+	public static lte(left: FinancialLike, right: FinancialLike): boolean {
+		return (financial(left).toFloat() <= financial(right).toFloat());
 	}
 	public static parse(num: string): Financial {
 		return financial(num);

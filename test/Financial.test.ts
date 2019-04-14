@@ -85,6 +85,20 @@ describe("Financial funtion tests", function () {
 			const result = Financial.plus(first, second);
 			assert.equal(result.toString(), "1.2");
 		});
+		it("Should be '1.11111112' + '1.1111111' = '2.22222222' Call method plus().", function () {
+			const firstX = financial("1.11111112");
+			const second = financial("1.1111111");
+			const first = Financial.plus(firstX, second);
+			assert.equal(first.toString(), "2.22222222");
+			assert.equal(first.toFloat(), 2.22222222);
+		});
+		it("Should be '1.11111112' + '1.1' = '2.21111112' Call method plus().", function () {
+			const firstX = financial("1.11111112");
+			const second = financial("1.1");
+			const first = Financial.plus(firstX, second);
+			assert.equal(first.toString(), "2.21111112");
+			assert.equal(first.toFloat(), 2.21111112);
+		});
 		it("Should be '-0.5' + '0.7' = '1.2'", function () {
 			const first = new Financial("-5", 1);
 			const second = new Financial("7", 1);
@@ -120,6 +134,13 @@ describe("Financial funtion tests", function () {
 			const second = new Financial("7", 0);
 			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "-5");
+		});
+		it("Should be '1.11111112' - '1.1111111' = '0.00000002'. Call method minus().", function () {
+			const firstX = financial("1.11111112");
+			const second = financial("1.1111111");
+			const first = Financial.minus(firstX, second);
+			assert.equal(first.toString(), "0.00000002");
+			assert.equal(first.toFloat(), 0.00000002);
 		});
 		it("Should be '3' * '2' = '6'", function () {
 			const first = new Financial("3", 0);
@@ -368,6 +389,136 @@ describe("Financial funtion tests", function () {
 			const zeroFinancial = Financial.parse("-0");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
+		});
+		it("Should be '6' < '-2' = false. Call method lt().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("-2", 0);
+			const result = Financial.lt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '6' < '10.5' = true. Call method lt().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("105", 1);
+			const result = Financial.lt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '6' > '-2' = true. Call method gt().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("-2", 0);
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '0.0000001' > '0.00000003' = true. Call method gt().", function () {
+			const first = new Financial("1", 7);
+			const second = new Financial("3", 8);
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '-0.0000001' > '0.00000003' = false. Call method gt().", function () {
+			const first = new Financial("-1", 7);
+			const second = new Financial("3", 8);
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '-100002' > '-100001' = false. Call method gt().", function () {
+			const first = financial("-100002");
+			const second = financial("-100001");
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '-0.00001' > '0.00003' = false. Call method gt().", function () {
+			const first = new Financial("3", 5);
+			const second = new Financial("3", 5);
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '6' > '8' = false. Call method gt().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("8", 0);
+			const result = Financial.gt(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '6' <= '6' = true. Call method lte().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("6", 0);
+			const result = Financial.lte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '6' <= '3' = false. Call method lte().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("3", 0);
+			const result = Financial.lte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '6' >= '3' = true. Call method gte().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("3", 0);
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '6' >= '123' = false. Call method gte().", function () {
+			const first = new Financial("6", 0);
+			const second = new Financial("123", 0);
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, false);
+		});
+		it("Should be '-10002' >= '-10002' = true. Call method gte().", function () {
+			const first = financial("-10002");
+			const second = financial("-10002");
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '-10002' >= '-10003' = true. Call method gte().", function () {
+			const first = financial("-10002");
+			const second = financial("-10003");
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '0' >= '0' = true. Call method gte().", function () {
+			const first = financial("0");
+			const second = financial("0");
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '0.00001' >= '-0.00001' = true. Call method gte().", function () {
+			const first = financial("0.00001");
+			const second = financial("-0.00001");
+			const result = Financial.gte(first, second);
+			assert.isBoolean(result);
+			assert.equal(result, true);
+		});
+		it("Should be '0.1' + '0.2' >= '0.3' = true. Call method gte().", function () {
+			const firstX = financial("0.1");
+			const firstY = financial("0.2");
+			const second = financial("0.3");
+			const first = Financial.plus(firstX, firstY);
+			const result = Financial.gte(first, second);
+			const equals = Financial.equals(first, second);
+			assert.isBoolean(result);
+			assert.isBoolean(equals);
+			assert.equal(result, true);
+			assert.equal(result, equals);
+		});
+		it("Call static method wrap().", function () {
+			const wrap = Financial.wrap({ value: "1", fraction: 1 });
+			assert.isObject(wrap);
+			assert.isBoolean(Financial.isFinancialLike(wrap));
+			assert.equal(Financial.isFinancialLike(wrap), true);
 		});
 	});
 
