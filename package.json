@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial.js",
-	"version": "3.2.9",
+	"version": "3.2.10",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",
 	"types": "./src/index.d.ts",

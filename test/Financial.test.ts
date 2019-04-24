@@ -40,10 +40,11 @@ const positiveTestCases: TestCases = {
 		[{ value: "4212345678", fraction: 8 }, { value: "-1", fraction: 0 }, ["-4212345678", 8]]
 	],
 	divide: [
-		// Test-case from CoinGet: 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.132352941176471 BCN
-		[{ value: "242644184325", fraction: 10 }, { value: "17", fraction: 8 }, ["142731873132352941176471", 15]],
+		// Test-case from CoinGet: 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.1323529482 BCN
+		[{ value: "242644184325", fraction: 10 }, { value: "17", fraction: 8 }, ["1427318731323529482", 10]],
 		// Test-case from CoinGet: 0 BTC need to divide to BCN price 0.00000017 should be equal 0.0
-		[{ value: "0", fraction: 0 }, { value: "17", fraction: 8 }, ["0", 0]]
+		[{ value: "0", fraction: 0 }, { value: "17", fraction: 8 }, ["0", 0]],
+		[{ value: "11230707245", fraction: 9 }, { value: "1", fraction: 0 }, ["11230707245", 9]]
 	],
 	parse: [
 		["0.000999", ["999", 6]],
@@ -590,10 +591,10 @@ describe("Financial funtion tests", function () {
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
 		});
-		it("(Bug 3.2.9) 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.132352941176471 BCN", function () {
+		it("(Bug 3.2.9) 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.1323529482 BCN", function () {
 			const result = Financial.divide({ value: "242644184325", fraction: 10 }, { value: "17", fraction: 8 });
-			assert.equal(result.value, "142731873132352941176471");
-			assert.equal(result.fraction, 15);
+			assert.equal(result.value, "1427318731323529482");
+			assert.equal(result.fraction, 10);
 		});
 		it("(Bug 3.2.9) 0 BTC need to divide to BCN price 0.00000017 should be equal 0.0 BCN", function () {
 			const result = Financial.divide({ value: "0", fraction: 0 }, { value: "17", fraction: 8 });

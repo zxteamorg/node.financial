@@ -134,9 +134,8 @@ export class Financial implements FinancialLike {
 	public static divide(left: FinancialLike, right: FinancialLike): Financial {
 		if (right.value === "0") {
 			throw new Error("Division by zero");
-		}
-		if (left.value.length > 10 || right.value.length > 10) {
-			throw new Error("Not implemented yet");
+		} else if (left.value === "0") {
+			return financial("0");
 		}
 
 		const first = Financial.toFloat(left);
@@ -188,7 +187,7 @@ export class Financial implements FinancialLike {
 		}
 	}
 	public static toFloat(num: FinancialLike): number {
-		const string = num.toString();
+		const string = Financial.toString(num);
 		return parseFloat(string);
 	}
 	/**
