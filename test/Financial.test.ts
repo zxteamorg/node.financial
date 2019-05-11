@@ -17,6 +17,7 @@ interface TestCases {
 	lt: Array<[FinancialLike, FinancialLike, boolean]>;
 	gte: Array<[FinancialLike, FinancialLike, boolean]>;
 	lte: Array<[FinancialLike, FinancialLike, boolean]>;
+	mod: Array<[FinancialLike, FinancialLike, FinancialLike]>;
 }
 
 const positiveTestCases: TestCases = {
@@ -130,6 +131,16 @@ const positiveTestCases: TestCases = {
 		[{ value: "0", fraction: 0 }, { value: "0", fraction: 0 }, true],
 		[{ value: "1", fraction: 5 }, { value: "-1", fraction: 5 }, false],
 		[{ value: "3", fraction: 1 }, { value: "3", fraction: 1 }, true]
+	],
+	mod: [
+		[{ value: "10", fraction: 0 }, { value: "3", fraction: 0 }, { value: "1", fraction: 0 }],
+		[{ value: "9", fraction: 0 }, { value: "3", fraction: 0 }, { value: "0", fraction: 0 }],
+		[{ value: "10123", fraction: 3 }, { value: "3", fraction: 0 }, { value: "1123", fraction: 3 }],
+		[{ value: "60090", fraction: 2 }, { value: "30030", fraction: 2 }, { value: "3", fraction: 1 }],
+		[{ value: "0", fraction: 0 }, { value: "333", fraction: 1 }, { value: "0", fraction: 0 }],
+		[{ value: "-10", fraction: 0 }, { value: "3", fraction: 1 }, { value: "-1", fraction: 1 }],
+		[{ value: "1", fraction: 0 }, { value: "3", fraction: 0 }, { value: "1", fraction: 0 }],
+		[{ value: "34512334485", fraction: 8 }, { value: "33225516", fraction: 8 }, { value: "24248877", fraction: 8 }]
 	]
 };
 
@@ -268,6 +279,17 @@ describe("Financial funtion tests", function () {
 					function () {
 						const result = Financial.lte(first, second);
 						assert.equal(result, boolean);
+					});
+			});
+		});
+		describe("mod", function () {
+			positiveTestCases.mod.forEach(modCase => {
+				const [first, second, result] = modCase;
+				it(`Should mod financial "${JSON.stringify(first)}" / fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(result)}"`,
+					function () {
+						const modResult = Financial.mod(first, second);
+						assert.equal(modResult.fraction, result.fraction);
+						assert.equal(modResult.value, result.value);
 					});
 			});
 		});
@@ -478,18 +500,6 @@ describe("Financial funtion tests", function () {
 			assert.equal(instanceOverFactory.value, "6009");
 			assert.equal(instanceOverConstructor.fraction, 1);
 			assert.equal(instanceOverFactory.fraction, 1);
-		});
-		it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
-			const first = financial(0, 0);
-			const second = financial(0, 0);
-			let expectedError;
-			try {
-				Financial.divide(first, second);
-			} catch (e) {
-				expectedError = e;
-			}
-			assert.instanceOf(expectedError, Error);
-			assert.equal(expectedError.message, "Division by zero");
 		});
 		it("(Bug 2.0.2) Should normalize via constructor from to 1000,4 to 1,1", function () {
 			const instanceOverConstructor = new Financial("1000", 4); // setup number 0.1
@@ -723,16 +733,40 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-		it("Should be execution error Wrong argument fraction on method truncUp", function () {
-			try {
-				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2.2);
-				const finNumber = Financial.truncUp(number, -1.45);
-			} catch (err) {
-				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
-				return;
-			}
-			assert.fail("Should never happened");
-		});
+	});
+	it("Should be execution error Wrong argument fraction on method truncUp", function () {
+		try {
+			// tslint:disable-next-line no-unused-expression
+			const number = financial(123, 2.2);
+			const finNumber = Financial.truncUp(number, -1.45);
+		} catch (err) {
+			assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
+			return;
+		}
+		assert.fail("Should never happened");
+	});
+	it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
+		const first = financial(0, 0);
+		const second = financial(0, 0);
+		let expectedError;
+		try {
+			Financial.divide(first, second);
+		} catch (e) {
+			expectedError = e;
+		}
+		assert.instanceOf(expectedError, Error);
+		assert.equal(expectedError.message, "Division by zero");
+	});
+	it("(Bug 2.0.1) Should raise error when Modulus by zero occurs", function () {
+		const first = financial(0, 0);
+		const second = financial(0, 0);
+		let expectedError;
+		try {
+			Financial.mod(first, second);
+		} catch (e) {
+			expectedError = e;
+		}
+		assert.instanceOf(expectedError, Error);
+		assert.equal(expectedError.message, "Modulus by zero");
 	});
 });

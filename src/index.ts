@@ -94,6 +94,18 @@ export class Financial implements FinancialLike {
 		}
 		return false;
 	}
+	public static mod(left: FinancialLike, right: FinancialLike): FinancialLike {
+		if (right.value === "0") {
+			throw new Error("Modulus by zero");
+		} else if (left.value === "0") {
+			return financial("0");
+		}
+
+		const num = financial(left).toFloat() % financial(right).toFloat();
+		const fraction = Math.max(left.fraction, right.fraction);
+		const stringNum = num.toFixed(fraction);
+		return financial(stringNum);
+	}
 	public static lt(left: FinancialLike, right: FinancialLike): boolean {
 		return (financial(left).toFloat() < financial(right).toFloat());
 	}
