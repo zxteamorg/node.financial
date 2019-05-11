@@ -1,4 +1,4 @@
-import { Financial as FinancialLike } from "@zxteam/contract";
+import * as zxteam from "@zxteam/contract";
 
 const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 
@@ -17,11 +17,13 @@ export const enum ROUND_MODE {
 }
 
 
-export class Financial implements FinancialLike {
+export class Financial implements zxteam.Financial {
+	public static readonly ZERO: zxteam.Financial = Financial.fromInt(0);
+
 	private readonly _value: string;
 	private readonly _fraction: number;
 
-	public static add(left: FinancialLike, right: FinancialLike): Financial {
+	public static add(left: zxteam.Financial, right: zxteam.Financial): Financial {
 		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
 		const diffFraction = left.fraction - right.fraction;
@@ -59,7 +61,7 @@ export class Financial implements FinancialLike {
 			return new Financial(result.toString(), fraction);
 		}
 	}
-	public static equals(left: FinancialLike, right: FinancialLike): boolean {
+	public static equals(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		if (left.value === right.value && left.fraction === right.fraction) {
 			return true;
 		} else {
@@ -75,13 +77,13 @@ export class Financial implements FinancialLike {
 		if (!Number.isSafeInteger(value)) { throw new Error("Wrong value. Expected safe integer value."); }
 		return new Financial(value.toFixed(0), 0);
 	}
-	public static gt(left: FinancialLike, right: FinancialLike): boolean {
+	public static gt(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		return (financial(left).toFloat() > financial(right).toFloat());
 	}
-	public static gte(left: FinancialLike, right: FinancialLike): boolean {
+	public static gte(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		return (financial(left).toFloat() >= financial(right).toFloat());
 	}
-	public static isFinancialLike(probablyFinancal: any): probablyFinancal is FinancialLike {
+	public static isFinancial(probablyFinancal: any): probablyFinancal is zxteam.Financial {
 		if (typeof probablyFinancal === "object" && "value" in probablyFinancal && "fraction" in probablyFinancal) {
 			const { value, fraction } = probablyFinancal;
 			if (typeof value === "string" && typeof fraction === "number") {
@@ -94,22 +96,28 @@ export class Financial implements FinancialLike {
 		}
 		return false;
 	}
-	public static mod(left: FinancialLike, right: FinancialLike): FinancialLike {
-		if (right.value === "0") {
+	public static isZero(num: zxteam.Financial): boolean {
+		return Financial.equals(num, Financial.ZERO);
+	}
+	public static mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
+		if (Financial.isZero(right)) {
 			throw new Error("Modulus by zero");
-		} else if (left.value === "0") {
-			return financial("0");
+		} else if (Financial.isZero(left)) {
+			return Financial.ZERO;
 		}
 
-		const num = financial(left).toFloat() % financial(right).toFloat();
-		const fraction = Math.max(left.fraction, right.fraction);
-		const stringNum = num.toFixed(fraction);
-		return financial(stringNum);
+		const friendlyLeft: number = Financial.wrap(left).toFloat();
+		const friendlyRight: number = Financial.wrap(right).toFloat();
+
+		const remainder: number = friendlyLeft % friendlyRight;
+
+		const fraction: number = Math.max(left.fraction, right.fraction);
+		return Financial.fromFloat(remainder, fraction);
 	}
-	public static lt(left: FinancialLike, right: FinancialLike): boolean {
+	public static lt(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		return (financial(left).toFloat() < financial(right).toFloat());
 	}
-	public static lte(left: FinancialLike, right: FinancialLike): boolean {
+	public static lte(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		return (financial(left).toFloat() <= financial(right).toFloat());
 	}
 	public static parse(num: string): Financial {
@@ -118,12 +126,12 @@ export class Financial implements FinancialLike {
 	/**
 	 * @deprecated Use add() instead
 	 */
-	public static plus(left: FinancialLike, right: FinancialLike): Financial { return Financial.add(left, right); }
+	public static plus(left: zxteam.Financial, right: zxteam.Financial): Financial { return Financial.add(left, right); }
 	/**
 	 * @deprecated Use subtract() instead
 	 */
-	public static minus(left: FinancialLike, right: FinancialLike): Financial { return Financial.subtract(left, right); }
-	public static multiply(left: FinancialLike, right: FinancialLike): Financial {
+	public static minus(left: zxteam.Financial, right: zxteam.Financial): Financial { return Financial.subtract(left, right); }
+	public static multiply(left: zxteam.Financial, right: zxteam.Financial): Financial {
 		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
 		// IEEE-754 maximum integer value is +/- 9007199254740991
 
@@ -143,7 +151,7 @@ export class Financial implements FinancialLike {
 		}
 
 	}
-	public static divide(left: FinancialLike, right: FinancialLike): Financial {
+	public static divide(left: zxteam.Financial, right: zxteam.Financial): Financial {
 		if (right.value === "0") {
 			throw new Error("Division by zero");
 		} else if (left.value === "0") {
@@ -163,7 +171,7 @@ export class Financial implements FinancialLike {
 	 * Returns the value of a number rounded to the nearest value with fraction.
 	 * An analog Math.round() for JS float
 	 */
-	public static round(num: FinancialLike, fraction: number): FinancialLike {
+	public static round(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -171,7 +179,7 @@ export class Financial implements FinancialLike {
 		const roundNumber = Math.round(financial(num).toFloat() * multiplier) / multiplier;
 		return financial(roundNumber, fraction);
 	}
-	public static subtract(left: FinancialLike, right: FinancialLike): Financial {
+	public static subtract(left: zxteam.Financial, right: zxteam.Financial): Financial {
 		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
 		if (summaryLength < 15) {
@@ -198,7 +206,7 @@ export class Financial implements FinancialLike {
 			return new Financial(result.toString(), fraction);
 		}
 	}
-	public static toFloat(num: FinancialLike): number {
+	public static toFloat(num: zxteam.Financial): number {
 		const string = Financial.toString(num);
 		return parseFloat(string);
 	}
@@ -207,7 +215,7 @@ export class Financial implements FinancialLike {
 	 * Returns the value of a Financial rounded to the nearest Financial with different fraction.
 	 * An analog Math.trunc() for JS float
 	 */
-	public static truncDown(num: FinancialLike, fraction: number): FinancialLike {
+	public static truncDown(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -220,7 +228,7 @@ export class Financial implements FinancialLike {
 	 * Return the smallest value greater than or equal to a given
 	 * An analog Math.ceil() for JS float
 	 */
-	public static truncUp(num: FinancialLike, fraction: number): FinancialLike {
+	public static truncUp(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -228,10 +236,10 @@ export class Financial implements FinancialLike {
 		const roundNumber = Math.ceil(financial(num).toFloat() * multiplier) / multiplier;
 		return financial(roundNumber, fraction);
 	}
-	public static toInt(num: FinancialLike): number {
+	public static toInt(num: zxteam.Financial): number {
 		return parseInt(num.toString());
 	}
-	public static toString(num: FinancialLike): string {
+	public static toString(num: zxteam.Financial): string {
 		const { value, fraction } = num;
 		if (fraction === 0) {
 			return num.value;
@@ -253,7 +261,7 @@ export class Financial implements FinancialLike {
 			}
 		}
 	}
-	public static wrap(num: FinancialLike): Financial {
+	public static wrap(num: zxteam.Financial): Financial {
 		return financial(num);
 	}
 
@@ -281,7 +289,7 @@ export class Financial implements FinancialLike {
 	public get value(): string { return this._value; }
 	public get fraction(): number { return this._fraction; }
 
-	public equalsTo(num: FinancialLike): boolean {
+	public equalsTo(num: zxteam.Financial): boolean {
 		return Financial.equals(this, num);
 	}
 	public toFloat(): number {
@@ -295,7 +303,7 @@ export class Financial implements FinancialLike {
 	}
 }
 
-export function financial(wrap: FinancialLike): Financial;
+export function financial(wrap: zxteam.Financial): Financial;
 export function financial(value: number, fractionDigits: number): Financial;
 export function financial(value: string): Financial;
 export function financial(...args: Array<any>): Financial {
@@ -306,8 +314,8 @@ export function financial(...args: Array<any>): Financial {
 		const value = args[0];
 
 		if (typeof (value) === "object" && typeof (value.value) === "string" && typeof (value.fraction) === "number") {
-			// Implementation of financial(wrap: FinancialLike): Financial;
-			const friendlyValue: FinancialLike = value;
+			// Implementation of financial(wrap: zxteam.Financial): Financial;
+			const friendlyValue: zxteam.Financial = value;
 			return new Financial(friendlyValue.value, friendlyValue.fraction);
 		} else if (typeof (value) === "string") {
 			// Implementation of financial(value: string): Financial;
