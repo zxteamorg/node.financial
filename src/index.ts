@@ -151,19 +151,19 @@ export class Financial implements zxteam.Financial {
 		}
 
 	}
-	public static divide(left: zxteam.Financial, right: zxteam.Financial): Financial {
-		if (right.value === "0") {
+	public static divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
+		if (Financial.isZero(right)) {
 			throw new Error("Division by zero");
-		} else if (left.value === "0") {
-			return financial("0");
+		} else if (Financial.isZero(left)) {
+			return Financial.ZERO;
 		}
 
-		const first = Financial.toFloat(left);
-		const second = Financial.toFloat(right);
+		const friendlyLeft: number = Financial.wrap(left).toFloat();
+		const friendlyRight: number = Financial.wrap(right).toFloat();
 
-		const result = first / second;
+		const result: number = friendlyLeft / friendlyRight;
 
-		const fraction = Math.max(left.fraction, right.fraction);
+		const fraction: number = Math.max(left.fraction, right.fraction);
 		return financial(result.toFixed(fraction));
 	}
 	/**

@@ -614,8 +614,8 @@ describe("Financial funtion tests", function () {
 		it("Call static method wrap().", function () {
 			const wrap = Financial.wrap({ value: "1", fraction: 1 });
 			assert.isObject(wrap);
-			assert.isBoolean(Financial.isFinancialLike(wrap));
-			assert.equal(Financial.isFinancialLike(wrap), true);
+			assert.isBoolean(Financial.isFinancial(wrap));
+			assert.equal(Financial.isFinancial(wrap), true);
 		});
 		it("Should instance with value=1 fraction=1", function () {
 			const first = financial(1, 1);
@@ -625,7 +625,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(first.toInt(), 1);
 		});
 		it("Should be is not isFinancialLike", function () {
-			const result = Financial.isFinancialLike([]);
+			const result = Financial.isFinancial([]);
 			assert.equal(result, false);
 		});
 	});
