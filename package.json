@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial.js",
-	"version": "4.0.2",
+	"version": "4.0.3",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",
 	"types": "./src/index.d.ts",
@@ -21,7 +21,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^11.13.10",
-		"@zxnode/build": "^0.0.33"
+		"@zxnode/build": "^0.0.34"
 	},
 	"engines": {
 		"node": ">=11"
@@ -37,7 +37,7 @@
 	"homepage": "https://github.com/zxteamorg/financial.js#readme",
 	"scripts": {
 		"build": "zxbuild clean dist",
-		"test": "nyc --exclude submodules --exclude test --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive"
+		"test": "nyc --exclude submodules --exclude test --reporter=lcov --extension=\".ts\" --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive"
 	},
 	"private": true
 }

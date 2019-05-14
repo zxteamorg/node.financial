@@ -18,6 +18,7 @@ export const enum ROUND_MODE {
 
 
 export class Financial implements zxteam.Financial {
+	public static readonly FinancialStringRegExp = /^(-?)(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$/;
 	public static readonly ZERO: zxteam.Financial = Financial.fromInt(0);
 
 	private readonly _value: string;

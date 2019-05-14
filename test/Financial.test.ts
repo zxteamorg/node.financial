@@ -1,23 +1,22 @@
+import * as zxteam from "@zxteam/contract";
+
 import { assert } from "chai";
-
-import { Financial as FinancialLike } from "@zxteam/contract";
-
 import financial, { Financial } from "../src/index";
 
 interface TestCases {
 	fromFloat: Array<[[number, number], [string, number]]>;
 	fromInt: Array<[number, string]>;
-	multiply: Array<[FinancialLike, FinancialLike, [string, number]]>;
-	divide: Array<[FinancialLike, FinancialLike, [string, number]]>;
+	multiply: Array<[zxteam.Financial, zxteam.Financial, [string, number]]>;
+	divide: Array<[zxteam.Financial, zxteam.Financial, [string, number]]>;
 	parse: Array<[string, [string, number]]>;
-	round: Array<[FinancialLike, number, FinancialLike]>;
-	truncDown: Array<[FinancialLike, number, FinancialLike]>;
-	truncUp: Array<[FinancialLike, number, FinancialLike]>;
-	gt: Array<[FinancialLike, FinancialLike, boolean]>;
-	lt: Array<[FinancialLike, FinancialLike, boolean]>;
-	gte: Array<[FinancialLike, FinancialLike, boolean]>;
-	lte: Array<[FinancialLike, FinancialLike, boolean]>;
-	mod: Array<[FinancialLike, FinancialLike, FinancialLike]>;
+	round: Array<[zxteam.Financial, number, zxteam.Financial]>;
+	truncDown: Array<[zxteam.Financial, number, zxteam.Financial]>;
+	truncUp: Array<[zxteam.Financial, number, zxteam.Financial]>;
+	gt: Array<[zxteam.Financial, zxteam.Financial, boolean]>;
+	lt: Array<[zxteam.Financial, zxteam.Financial, boolean]>;
+	gte: Array<[zxteam.Financial, zxteam.Financial, boolean]>;
+	lte: Array<[zxteam.Financial, zxteam.Financial, boolean]>;
+	mod: Array<[zxteam.Financial, zxteam.Financial, zxteam.Financial]>;
 }
 
 const positiveTestCases: TestCases = {
@@ -624,7 +623,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(first.toString(), "1");
 			assert.equal(first.toInt(), 1);
 		});
-		it("Should be is not isFinancialLike", function () {
+		it("Should be is not isFinancial", function () {
 			const result = Financial.isFinancial([]);
 			assert.equal(result, false);
 		});
