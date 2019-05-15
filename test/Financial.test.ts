@@ -38,13 +38,18 @@ const positiveTestCases: TestCases = {
 		[{ value: "42", fraction: 0 }, { value: "-2", fraction: 0 }, ["-84", 0]],
 		[{ value: "-42", fraction: 0 }, { value: "-2", fraction: 0 }, ["84", 0]],
 		[{ value: "4212345678", fraction: 8 }, { value: "-1", fraction: 0 }, ["-4212345678", 8]]
+		// [{ value: "123456789012345123456789012345", fraction: 15 }, { value: "-2", fraction: 0 }, ["-24691357802469024691357802469", 14]]
 	],
 	divide: [
 		// Test-case from CoinGet: 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.1323529482 BCN
 		[{ value: "242644184325", fraction: 10 }, { value: "17", fraction: 8 }, ["1427318731323529482", 10]],
 		// Test-case from CoinGet: 0 BTC need to divide to BCN price 0.00000017 should be equal 0.0
 		[{ value: "0", fraction: 0 }, { value: "17", fraction: 8 }, ["0", 0]],
-		[{ value: "11230707245", fraction: 9 }, { value: "1", fraction: 0 }, ["11230707245", 9]]
+		[{ value: "11230707245", fraction: 9 }, { value: "1", fraction: 0 }, ["11230707245", 9]],
+		[{ value: "1333", fraction: 0 }, { value: "21", fraction: 0 }, ["6347619048", 8]],
+		[{ value: "1333", fraction: 0 }, { value: "210001", fraction: 4 }, ["6347588821", 8]],
+		[{ value: "13330001", fraction: 4 }, { value: "21000001", fraction: 6 }, ["6347619222", 8]]
+		// [{ value: "123456789012345123456789012345", fraction: 0 }, { value: "212345678", fraction: 0 }, ["5813953463764170", 15]]
 	],
 	parse: [
 		["0.000999", ["999", 6]],
@@ -64,7 +69,10 @@ const positiveTestCases: TestCases = {
 		[{ value: "3", fraction: 1 }, 3, { value: "3", fraction: 1 }],
 		[{ value: "-83475643", fraction: 8 }, 5, { value: "-83476", fraction: 5 }],
 		[{ value: "1759", fraction: 3 }, 0, { value: "2", fraction: 0 }],
-		[{ value: "1759", fraction: 3 }, 8, { value: "1759", fraction: 3 }]
+		[{ value: "1759", fraction: 3 }, 8, { value: "1759", fraction: 3 }],
+		[{ value: "15012341", fraction: 5 }, 4, { value: "1501234", fraction: 4 }],
+		[{ value: "1427318731323529482", fraction: 10 }, 10, { value: "1427318731323529482", fraction: 10 }],
+		[{ value: "14273187313235", fraction: 5 }, 5, { value: "14273187313235", fraction: 5 }]
 	],
 	truncDown: [
 		[{ value: "1559", fraction: 3 }, 2, { value: "155", fraction: 2 }],

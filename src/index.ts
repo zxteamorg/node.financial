@@ -9,6 +9,13 @@ function getSeparatorChar(): string {
 	const separator = exampleStr[exampleStr.length - 3];
 	return separator;
 }
+function getFraction(maxFraction: number): number {
+	const defaultFraction = 8;
+	return (defaultFraction > maxFraction) ? defaultFraction : maxFraction;
+}
+function getDefaultRound(num: Financial, fraction: number): zxteam.Financial {
+	return Financial.round(num, fraction);
+}
 
 export const enum ROUND_MODE {
 	TRUNC_UP = "TRUNC_UP",
@@ -164,8 +171,10 @@ export class Financial implements zxteam.Financial {
 
 		const result: number = friendlyLeft / friendlyRight;
 
-		const fraction: number = Math.max(left.fraction, right.fraction);
-		return financial(result.toFixed(fraction));
+		const maxFraction: number = Math.max(left.fraction, right.fraction);
+		const fraction: number = getFraction(maxFraction);
+		const value: string = result.toFixed(fraction);
+		return getDefaultRound(financial(value), fraction);
 	}
 	/**
 	 * Change fraction value by rounding.
@@ -178,7 +187,7 @@ export class Financial implements zxteam.Financial {
 		}
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.round(financial(num).toFloat() * multiplier) / multiplier;
-		return financial(roundNumber, fraction);
+		return financial(roundNumber.toFixed(fraction));
 	}
 	public static subtract(left: zxteam.Financial, right: zxteam.Financial): Financial {
 		const summaryLength = left.value.length + right.value.length;
