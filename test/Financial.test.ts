@@ -747,7 +747,7 @@ describe("Financial funtion tests", function () {
 		it("Should be execution error Wrong argument fraction on method round", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2.2);
+				const number = financial(123, 2);
 				const finNumber = Financial.round(number, -1.45);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
@@ -758,7 +758,7 @@ describe("Financial funtion tests", function () {
 		it("Should be execution error Wrong argument fraction on method truncDown", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2.2);
+				const number = financial(123, 2);
 				const finNumber = Financial.truncDown(number, -1.45);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
@@ -766,40 +766,40 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-	});
-	it("Should be execution error Wrong argument fraction on method truncUp", function () {
-		try {
-			// tslint:disable-next-line no-unused-expression
-			const number = financial(123, 2.2);
-			const finNumber = Financial.truncUp(number, -1.45);
-		} catch (err) {
-			assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
-			return;
-		}
-		assert.fail("Should never happened");
-	});
-	it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
-		const first = financial(0, 0);
-		const second = financial(0, 0);
-		let expectedError;
-		try {
-			Financial.divide(first, second);
-		} catch (e) {
-			expectedError = e;
-		}
-		assert.instanceOf(expectedError, Error);
-		assert.equal(expectedError.message, "Division by zero");
-	});
-	it("(Bug 2.0.1) Should raise error when Modulus by zero occurs", function () {
-		const first = financial(0, 0);
-		const second = financial(0, 0);
-		let expectedError;
-		try {
-			Financial.mod(first, second);
-		} catch (e) {
-			expectedError = e;
-		}
-		assert.instanceOf(expectedError, Error);
-		assert.equal(expectedError.message, "Modulus by zero");
+		it("Should be execution error Wrong argument fraction on method truncUp", function () {
+			try {
+				// tslint:disable-next-line no-unused-expression
+				const number = financial(123, 2);
+				const finNumber = Financial.truncUp(number, -1.45);
+			} catch (err) {
+				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
+				return;
+			}
+			assert.fail("Should never happened");
+		});
+		it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
+			const first = financial(0, 0);
+			const second = financial(0, 0);
+			let expectedError;
+			try {
+				Financial.divide(first, second);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Division by zero");
+		});
+		it("(Bug 2.0.1) Should raise error when Modulus by zero occurs", function () {
+			const first = financial(0, 0);
+			const second = financial(0, 0);
+			let expectedError;
+			try {
+				Financial.mod(first, second);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Modulus by zero");
+		});
 	});
 });

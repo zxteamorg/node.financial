@@ -84,6 +84,37 @@ export class Financial implements zxteam.Financial {
 		if (!Number.isSafeInteger(value)) { throw new Error("Wrong value. Expected safe integer value."); }
 		return new Financial(value.toFixed(0), 0);
 	}
+	public static fromString(value: string): Financial {
+		const separatorChar = getSeparatorChar();
+		const argsRegex = /^[+-]?\d+(\.\d+)?$/;
+		if (!argsRegex.test(value)) { throw new Error("Invalid financial value. Expected decimal string"); }
+
+		let valueString;
+		let valueSplitToArray;
+
+		valueString = value.replace(separatorChar, "");
+		valueSplitToArray = value.split(separatorChar);
+
+		const zeroRegex = /^[0]+$/;
+		const valueStringClear = zeroRegex.test(valueString) ? "0" : valueString;
+
+		// Calculation fraction
+		const friendlyFraction = (valueSplitToArray.length > 1)
+			? zeroRegex.test(valueString)
+				? 0
+				: valueSplitToArray[1].length
+			: 0;
+
+		let friendlyValue = valueStringClear;
+
+		// Remove zero
+		if ((valueStringClear.startsWith("0") && valueStringClear.length > 1) ||
+			valueStringClear.startsWith("-0") && valueStringClear.length > 2) {
+			friendlyValue = parseInt(friendlyValue).toString();
+		}
+
+		return new Financial(friendlyValue, friendlyFraction);
+	}
 	public static gt(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		return (financial(left).toFloat() > financial(right).toFloat());
 	}
@@ -317,77 +348,33 @@ export function financial(value: number, fractionDigits: number): Financial;
 export function financial(value: string): Financial;
 export function financial(...args: Array<any>): Financial {
 
-	const separatorChar = getSeparatorChar();
-
 	if (args.length === 1) {
 		const value = args[0];
 
-		if (typeof (value) === "object" && typeof (value.value) === "string" && typeof (value.fraction) === "number") {
+		if (Financial.isFinancial(value)) {
 			// Implementation of financial(wrap: zxteam.Financial): Financial;
 			const friendlyValue: zxteam.Financial = value;
 			return new Financial(friendlyValue.value, friendlyValue.fraction);
+
 		} else if (typeof (value) === "string") {
 			// Implementation of financial(value: string): Financial;
-			const argsRegex = /^[+-]?\d+(\.\d+)?$/;
-			if (!argsRegex.test(value)) { throw new Error("Invalid financial value. Expected decimal string"); }
-
-			let stringValue;
-			let arrayValue;
-
-			stringValue = value.replace(separatorChar, "");
-			arrayValue = value.split(separatorChar);
-
-			const zeroRegex = /^[0]+$/;
-			const stringValueF = zeroRegex.test(stringValue) ? "0" : stringValue;
-			const fraction = (arrayValue.length > 1)
-				? zeroRegex.test(stringValue)
-					? 0
-					: arrayValue[1].length
-				: 0;
-
-			let xValue = stringValueF;
-			if ((stringValueF.startsWith("0") && stringValueF.length > 1) ||
-				stringValueF.startsWith("-0") && stringValueF.length > 2) {
-				xValue = parseInt(xValue).toString();
-			}
-			return new Financial(xValue, fraction);
+			return Financial.fromString(value);
 		}
 	}
+
 	if (args.length === 2) {
 		const value = args[0];
 		const fraction = args[1];
+
 		if (typeof value === "number" && typeof fraction === "number") {
+			// Implementation of two numbers
 			if (Number.isSafeInteger && fraction === 0) {
 				return Financial.fromInt(value);
 			}
-
-			const splitValue = (value.toString().lastIndexOf("e") > -1)
-				? value.toFixed(fraction).split(separatorChar)
-				: value.toString().split(separatorChar);
-
-			const actualFraction = (splitValue.length > 1) ? splitValue[1].length : 0;
-			const correctFraction = (actualFraction <= fraction) ? actualFraction : fraction;
-			const diffFraction = actualFraction - fraction;
-
-			const fixedNum = (diffFraction > 0)
-				? value.toString().slice(0, -(actualFraction - fraction))
-				: value.toFixed(correctFraction);
-
-			let friendlyNum = fixedNum.replace(separatorChar, "");
-
-			if (friendlyNum[0] === "-") {
-				while (friendlyNum[1] === "0" && friendlyNum.length > 1) {
-					friendlyNum = (-friendlyNum.slice(1)).toString();
-				}
-			} else if (friendlyNum[0] === "0") {
-				while (friendlyNum[0] === "0" && friendlyNum.length > 1) {
-					friendlyNum = friendlyNum.slice(1);
-				}
-			}
-
-			return new Financial(friendlyNum, correctFraction);
+			return Financial.fromFloat(value, fraction);
 		}
 	}
+
 	throw new Error("Unknown argument(s): " + args.join(", "));
 }
 export default financial;

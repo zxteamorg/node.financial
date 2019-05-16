@@ -119,7 +119,7 @@ describe("Financial funtion tests", function () {
 		it("Should avoid approximation as number (equalsTo)", function () {
 			const percent = -6.818181818181825;
 			const money = financial(percent, 8);
-			assert.equal(money.toFloat(), -6.81818181);
+			assert.equal(money.toFloat(), -6.81818182);
 		});
 		it("Should avoid approximation as number (toFloat)", function () {
 			const money = financial(600.90, 2);
@@ -178,8 +178,8 @@ describe("Financial funtion tests", function () {
 		});
 		it("Should be skip two last char 89", function () {
 			const a = financial(1.9123456789, 8);
-			assert.equal(a.toString(), "1.91234567");
-			assert.equal(a.toFloat(), 1.91234567);
+			assert.equal(a.toString(), "1.91234568");
+			assert.equal(a.toFloat(), 1.91234568);
 		});
 		it("Should work FinancialLike value: 1000001001, fraction: 8 toString()", function () {
 			const financialLike: FinancialLike = {
