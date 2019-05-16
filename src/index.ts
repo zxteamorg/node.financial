@@ -32,42 +32,79 @@ export class Financial implements zxteam.Financial {
 	private readonly _fraction: number;
 
 	public static add(left: zxteam.Financial, right: zxteam.Financial): Financial {
-		const summaryLength = left.value.length + right.value.length;
-		const fraction = Math.max(left.fraction, right.fraction);
-		const diffFraction = left.fraction - right.fraction;
-		if (summaryLength < 15) {
-			// 15 symbols total length is safe to multiply in IEEE-754 range
-			const friendlyLeftValue = Number.parseInt(left.value);
-			const friendlyRightValue = Number.parseInt(right.value);
-			let result: number;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue + (friendlyRightValue * rightZero);
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * leftZero) + friendlyRightValue;
-			} else {
-				result = friendlyLeftValue + friendlyRightValue;
-			}
+		const maxFraction = (left.fraction >= right.fraction) ? left.fraction : right.fraction;
 
-			return new Financial(result.toString(), fraction);
-		} else {
-			// Use BigInt arithmetic instead
-			const friendlyLeftValue = BigInt(left.value);
-			const friendlyRightValue = BigInt(right.value);
-			let result: BigInt;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue + (friendlyRightValue * BigInt(rightZero));
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * BigInt(leftZero)) + friendlyRightValue;
-			} else {
-				result = friendlyLeftValue + friendlyRightValue;
-			}
+		const leftValue = (left.fraction !== 0)
+			? (maxFraction === left.fraction)
+				? left.value
+				: left.value + new Array(maxFraction - left.fraction).fill(0).join("")
+			: left.value + "" + new Array(maxFraction).fill(0).join("");
 
-			return new Financial(result.toString(), fraction);
+		const rightValue = (right.fraction !== 0)
+			? (maxFraction === right.fraction)
+				? right.value
+				: right.value + new Array(maxFraction - right.fraction).fill(0).join("")
+			: right.value + "" + new Array(maxFraction).fill(0).join("");
+
+		const leftValueArray = leftValue.split("");
+		const rightValueArray = rightValue.split("");
+
+		const friendlyValue: Array<string> = [];
+
+		if (leftValue.startsWith("-") || rightValue.startsWith("-")) {
+			const leftMinus: zxteam.Financial
+				= (leftValue.startsWith("-"))
+					? { value: leftValue.slice(1), fraction: maxFraction }
+					: { value: leftValue, fraction: maxFraction };
+
+			const rightMinus: zxteam.Financial
+				= (rightValue.startsWith("-"))
+					? { value: rightValue.slice(1), fraction: maxFraction }
+					: { value: rightValue, fraction: maxFraction };
+			const result = Financial.subtract(leftMinus, rightMinus);
+			const valueMinus = (result.value.startsWith("-")) ? result.value.slice(1) : "-" + result.value;
+			const fractionMinus = result.fraction;
+			return Financial.wrap({ value: valueMinus, fraction: fractionMinus });
+
 		}
+
+		const countInt = (leftValueArray.length >= rightValueArray.length) ? leftValueArray.length : rightValueArray.length;
+		let bit: number = 0;
+		for (let i = 0; i < countInt; i++) {
+
+			const leftNum = leftValueArray.splice(-1, 1)[0];
+			const rightNum = rightValueArray.splice(-1, 1)[0];
+
+			if (rightNum === undefined) {
+				const num = (parseInt(leftNum) + bit).toString();
+				if (num.length === 1) {
+					friendlyValue.unshift(num);
+					bit = 0;
+					continue;
+				} else {
+					friendlyValue.unshift(num[1]);
+					bit = parseInt(num[0]);
+					continue;
+				}
+			}
+			const sumNum = parseInt(leftNum) + bit + parseInt(rightNum);
+
+			if (sumNum > 9) {
+				const spliceNum = sumNum.toString().split("");
+				friendlyValue.unshift(spliceNum[1]);
+				bit = parseInt(spliceNum[0]);
+			} else {
+				friendlyValue.unshift(sumNum.toString());
+				bit = 0;
+			}
+		}
+
+		if (bit) {
+			friendlyValue.unshift(bit.toString());
+		}
+		const value = friendlyValue.join("");
+		const xfinancial = { value, fraction: maxFraction };
+		return Financial.wrap(xfinancial);
 	}
 	public static equals(left: zxteam.Financial, right: zxteam.Financial): boolean {
 		if (left.value === right.value && left.fraction === right.fraction) {
@@ -190,31 +227,111 @@ export class Financial implements zxteam.Financial {
 		return financial(roundNumber.toFixed(fraction));
 	}
 	public static subtract(left: zxteam.Financial, right: zxteam.Financial): Financial {
-		const summaryLength = left.value.length + right.value.length;
-		const fraction = Math.max(left.fraction, right.fraction);
-		if (summaryLength < 15) {
-			// 15 symbols total length is safe to multiply in IEEE-754 range
-			const friendlyLeftValue = Financial.toFloat(left);
-			const friendlyRightValue = Financial.toFloat(right);
-			const result = friendlyLeftValue - friendlyRightValue;
-			return financial(result, fraction);
-		} else {
-			// Use BigInt arithmetic instead
-			const friendlyLeftValue = BigInt(left.value);
-			const friendlyRightValue = BigInt(right.value);
-			const diffFraction = left.fraction - right.fraction;
-			let result: BigInt;
-			if (diffFraction > 0) {
-				const rightZero = Math.pow(10, diffFraction);
-				result = friendlyLeftValue - (friendlyRightValue * BigInt(rightZero));
-			} else if (diffFraction < 0) {
-				const leftZero = Math.pow(10, Math.abs(diffFraction));
-				result = (friendlyLeftValue * BigInt(leftZero)) - friendlyRightValue;
-			} else {
-				result = friendlyLeftValue - friendlyRightValue;
-			}
-			return new Financial(result.toString(), fraction);
+		const maxFraction = (left.fraction >= right.fraction) ? left.fraction : right.fraction;
+
+		const leftValue = (left.fraction !== 0)
+			? (maxFraction === left.fraction)
+				? left.value
+				: left.value + new Array(maxFraction - left.fraction).fill(0).join("")
+			: left.value + "" + new Array(maxFraction).fill(0).join("");
+
+		const rightValue = (right.fraction !== 0)
+			? (maxFraction === right.fraction)
+				? right.value
+				: right.value + new Array(maxFraction - right.fraction).fill(0).join("")
+			: right.value + "" + new Array(maxFraction).fill(0).join("");
+
+		const leftValueArray = leftValue.split("");
+		const rightValueArray = rightValue.split("");
+
+		let isMinus = false;
+		if (leftValueArray.length < rightValueArray.length) {
+			isMinus = true;
 		}
+
+		const countInt = (leftValueArray.length >= rightValueArray.length) ? leftValueArray.length : rightValueArray.length;
+
+		const friendlyValue: Array<string> = [];
+
+		if (leftValue.startsWith("-")) {
+			const leftMinus: zxteam.Financial
+				= (leftValue.startsWith("-"))
+					? { value: leftValue.slice(1), fraction: left.fraction }
+					: { value: leftValue, fraction: left.fraction };
+
+			const rightMinus: zxteam.Financial
+				= (rightValue.startsWith("-"))
+					? { value: rightValue.slice(1), fraction: right.fraction }
+					: { value: rightValue, fraction: right.fraction };
+			const result = Financial.plus(leftMinus, rightMinus);
+			const valueMinus = "-" + result.value;
+			const fractionMinus = result.fraction;
+			return Financial.wrap({ value: valueMinus, fraction: fractionMinus });
+		}
+		let nextBit: number = 0;
+		for (let i = 0; i < countInt; i++) {
+			let bit: number = nextBit;
+
+			let leftNum = leftValueArray.splice(-1, 1)[0];
+			let rightNum = rightValueArray.splice(-1, 1)[0];
+
+			if (parseInt(leftNum) < parseInt(rightNum) && leftValueArray.length > 0) {
+				leftNum = "1" + leftNum;
+				nextBit = 1;
+			}
+
+			if (leftNum === undefined) {
+				if (friendlyValue[0].startsWith("-")) { continue; }
+				friendlyValue.unshift(rightNum);
+				continue;
+			}
+			if (rightNum === undefined) {
+				let num;
+				if (bit) {
+					if (parseInt(leftNum) === 0) {
+						num = parseInt("1" + leftNum) - 1;
+						friendlyValue.unshift(num.toString());
+						nextBit = 1;
+						continue;
+					} else {
+						num = parseInt(leftNum) - 1;
+						friendlyValue.unshift(num.toString());
+						nextBit = 0;
+						continue;
+					}
+				} else {
+					friendlyValue.unshift(leftNum.toString());
+					continue;
+				}
+			}
+
+			if (leftNum === "0" && bit) {
+				leftNum = (10).toString();
+			}
+			const minusPartLeft = parseInt(leftNum) - bit;
+			if (minusPartLeft === 0) { friendlyValue.unshift(rightNum); nextBit = 0; continue; }
+
+			const sumNum = (minusPartLeft - parseInt(rightNum)).toString();
+
+			if (sumNum.startsWith("-")) {
+				friendlyValue.unshift(sumNum.toString());
+				nextBit = 0;
+			} else {
+				friendlyValue.unshift(sumNum.toString());
+			}
+		}
+
+
+		let value = friendlyValue.join("");
+		while (value[0] === "0" && value.length > 1) {
+			value = value.slice(1);
+		}
+		if (isMinus && !value.startsWith("-")) {
+			value = "-" + value;
+		}
+
+		const xfinancial = { value, fraction: maxFraction };
+		return Financial.wrap(xfinancial);
 	}
 	public static toFloat(num: zxteam.Financial): number {
 		const string = Financial.toString(num);
