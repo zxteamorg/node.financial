@@ -23,7 +23,6 @@ export const enum ROUND_MODE {
 	ROUND = "ROUND"
 }
 
-
 export class Financial implements zxteam.Financial {
 	public static readonly FinancialStringRegExp = /^(-?)(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$/;
 	public static readonly ZERO: zxteam.Financial = Financial.fromInt(0);
@@ -66,7 +65,7 @@ export class Financial implements zxteam.Financial {
 				result = friendlyLeftValue + friendlyRightValue;
 			}
 
-			return new Financial(result.toString(), fraction);
+			return Financial.wrap({ value: result.toString(), fraction });
 		}
 	}
 	public static equals(left: zxteam.Financial, right: zxteam.Financial): boolean {

@@ -353,6 +353,19 @@ describe("Financial funtion tests", function () {
 			const result = Financial.minus(first, second);
 			assert.equal(result.toString(), "1");
 		});
+		it("Should be '835798327958372985473298547983754' - '835798327958372985473298547983750' = '4'", function () {
+			const first = new Financial("835798327958372985473298547983754", 0);
+			const second = new Financial("835798327958372985473298547983750", 0);
+			const result = Financial.minus(first, second);
+			assert.equal(result.toString(), "4");
+		});
+		it("Should be '835798327958372985473298547983754'" +
+			"'835798327958372985473298547983760' = '1671596655916745970946597095967514'", function () {
+				const first = new Financial("835798327958372985473298547983754", 0);
+				const second = new Financial("835798327958372985473298547983760", 0);
+				const result = Financial.plus(first, second);
+				assert.equal(result.toString(), "1671596655916745970946597095967514");
+			});
 		it("Should be '-3' - '2' = '-5'", function () {
 			const first = new Financial("-3", 0);
 			const second = new Financial("2", 0);
@@ -383,6 +396,19 @@ describe("Financial funtion tests", function () {
 			const second = new Financial("2", 0);
 			const result = Financial.multiply(first, second);
 			assert.equal(result.toString(), "-6");
+		});
+		it("Should be '4398621354876378456537864871263' * '47382687236478236874628734'" +
+			"= '208418499929801586779933357274718591590228107483830671042'", function () {
+				const first = new Financial("4398621354876378456537864871263", 0);
+				const second = new Financial("47382687236478236874628734", 0);
+				const result = Financial.multiply(first, second);
+				assert.equal(result.toString(), "208418499929801586779933357274718591590228107483830671042");
+			});
+		it("Should be '4398621354876378456537864871263' / '47382687236478236874628734' = '92831.82553416'", function () {
+			const first = new Financial("4398621354876378456537864871263", 0);
+			const second = new Financial("47382687236478236874628734", 0);
+			const result = Financial.divide(first, second);
+			assert.equal(result.toString(), "92831.82553416");
 		});
 		it("Should be '6' / '2' = '3'", function () {
 			const first = new Financial("6", 0);
