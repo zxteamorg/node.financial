@@ -17,9 +17,11 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^4.0.0"
+		"@zxteam/contract": "^4.0.0",
+		"lodash": "^4.17.11"
 	},
 	"devDependencies": {
+		"@types/lodash": "^4.14.129",
 		"@types/node": "^11.13.10",
 		"@zxnode/build": "^0.0.34"
 	},
@@ -38,6 +40,7 @@
 	"scripts": {
 		"build": "zxbuild clean dist",
 		"test": "nyc --exclude submodules --exclude test --reporter=lcov --extension=\".ts\" --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive",
+		"test:only": "mocha --require source-map-support/register \"test/**/*.test.js\" --recursive",
 		"build-and-test": "npm run build && npm run test"
 	},
 	"private": true

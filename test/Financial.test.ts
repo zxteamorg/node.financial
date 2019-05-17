@@ -152,6 +152,58 @@ const positiveTestCases: TestCases = {
 };
 
 describe("Financial funtion tests", function () {
+	describe("FinancialOperation tests", function () {
+		describe("add()", function () {
+			const positiveStrings = [
+				["2", "3", "5"]
+			];
+			const positiveFinancials = [
+				[{ value: "2", fraction: 0 }, { value: "3", fraction: 0 }, { value: "5", fraction: 0 }]
+			];
+
+			positiveStrings.forEach((positiveString) => {
+				const [left, right, expectedResult] = positiveString;
+				it(`Should be ${left} + ${right} = ${expectedResult}`, function () {
+					const result = financial.add(left, right);
+					assert.equal(result, expectedResult);
+				});
+			});
+
+			positiveFinancials.forEach((positiveFinancial) => {
+				const [left, right, expectedResult] = positiveFinancial;
+				it(`Should be '${JSON.stringify(left)}' + '${JSON.stringify(right)}' = '${JSON.stringify(expectedResult)}'`, function () {
+					const result = financial.add(left, right);
+					assert.deepEqual(result, expectedResult);
+				});
+			});
+		});
+		describe("subtract()", function () {
+			const positiveStrings = [
+				["5", "3", "2"]
+			];
+			const positiveFinancials = [
+				[{ value: "5", fraction: 0 }, { value: "3", fraction: 0 }, { value: "2", fraction: 0 }]
+			];
+
+			positiveStrings.forEach((positiveString) => {
+				const [left, right, expectedResult] = positiveString;
+				it(`Should be ${left} + ${right} = ${expectedResult}`, function () {
+					const result = financial.subtract(left, right);
+					assert.equal(result, expectedResult);
+				});
+			});
+
+			positiveFinancials.forEach((positiveFinancial) => {
+				const [left, right, expectedResult] = positiveFinancial;
+				it(`Should be '${JSON.stringify(left)}' + '${JSON.stringify(right)}' = '${JSON.stringify(expectedResult)}'`, function () {
+					const result = financial.subtract(left, right);
+					assert.deepEqual(result, expectedResult);
+				});
+			});
+		});
+	});
+
+
 	describe("Positive Test Cases", function () {
 		describe("fromFloat", function () {
 			positiveTestCases.fromFloat.forEach(fromFloatCase => {
@@ -306,133 +358,133 @@ describe("Financial funtion tests", function () {
 		it("Should be '2' + '3' = '5'", function () {
 			const first = new Financial("2", 0);
 			const second = new Financial("3", 0);
-			const result = Financial.plus(first, second);
-			assert.equal(result.toString(), "5");
+			const result = Financial.add(first, second);
+			assert.equal(Financial.toString(result), "5");
 		});
 		it("Should be '0.5' + '0.7' = '1.2'", function () {
 			const first = new Financial("5", 1);
 			const second = new Financial("7", 1);
-			const result = Financial.plus(first, second);
-			assert.equal(result.toString(), "1.2");
+			const result = Financial.add(first, second);
+			assert.equal(Financial.toString(result), "1.2");
 		});
 		it("Should be '1.11111112' + '1.1111111' = '2.22222222' Call method plus().", function () {
-			const firstX = financial("1.11111112");
-			const second = financial("1.1111111");
-			const first = Financial.plus(firstX, second);
-			assert.equal(first.toString(), "2.22222222");
-			assert.equal(first.toFloat(), 2.22222222);
+			const firstX = Financial.parse("1.11111112");
+			const second = Financial.parse("1.1111111");
+			const first = Financial.add(firstX, second);
+			assert.equal(Financial.toString(first), "2.22222222");
+			assert.equal(Financial.toFloat(first), 2.22222222);
 		});
 		it("Should be '1.11111112' + '1.1' = '2.21111112' Call method plus().", function () {
-			const firstX = financial("1.11111112");
-			const second = financial("1.1");
-			const first = Financial.plus(firstX, second);
-			assert.equal(first.toString(), "2.21111112");
-			assert.equal(first.toFloat(), 2.21111112);
+			const firstX = Financial.parse("1.11111112");
+			const second = Financial.parse("1.1");
+			const first = Financial.add(firstX, second);
+			assert.equal(Financial.toString(first), "2.21111112");
+			assert.equal(Financial.toFloat(first), 2.21111112);
 		});
 		it("Should be '-0.5' + '0.7' = '1.2'", function () {
 			const first = new Financial("-5", 1);
 			const second = new Financial("7", 1);
-			const result = Financial.plus(first, second);
-			assert.equal(result.toString(), "0.2");
+			const result = Financial.add(first, second);
+			assert.equal(Financial.toString(result), "0.2");
 		});
 		it("Should be '0.50221199' + '0.00000001' = '0.50221200'", function () {
 			const first = new Financial("50221199", 8);
 			const second = new Financial("1", 8);
-			const result = Financial.plus(first, second);
-			assert.equal(result.toString(), "0.502212");
+			const result = Financial.add(first, second);
+			assert.equal(Financial.toString(result), "0.502212");
 		});
 		it("Should be '-0.50221199' + '0.00000001' = '-0.50221198'", function () {
 			const first = new Financial("-50221199", 8);
 			const second = new Financial("1", 8);
-			const result = Financial.plus(first, second);
-			assert.equal(result.toString(), "-0.50221198");
+			const result = Financial.add(first, second);
+			assert.equal(Financial.toString(result), "-0.50221198");
 		});
 		it("Should be '3' - '2' = '1'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
-			const result = Financial.minus(first, second);
-			assert.equal(result.toString(), "1");
+			const result = Financial.subtract(first, second);
+			assert.equal(Financial.toString(result), "1");
 		});
 		it("Should be '835798327958372985473298547983754' - '835798327958372985473298547983750' = '4'", function () {
 			const first = new Financial("835798327958372985473298547983754", 0);
 			const second = new Financial("835798327958372985473298547983750", 0);
-			const result = Financial.minus(first, second);
-			assert.equal(result.toString(), "4");
+			const result = Financial.subtract(first, second);
+			assert.equal(Financial.toString(result), "4");
 		});
 		it("Should be '835798327958372985473298547983754'" +
 			"'835798327958372985473298547983760' = '1671596655916745970946597095967514'", function () {
 				const first = new Financial("835798327958372985473298547983754", 0);
 				const second = new Financial("835798327958372985473298547983760", 0);
-				const result = Financial.plus(first, second);
-				assert.equal(result.toString(), "1671596655916745970946597095967514");
+				const result = Financial.add(first, second);
+				assert.equal(Financial.toString(result), "1671596655916745970946597095967514");
 			});
 		it("Should be '-3' - '2' = '-5'", function () {
 			const first = new Financial("-3", 0);
 			const second = new Financial("2", 0);
-			const result = Financial.minus(first, second);
-			assert.equal(result.toString(), "-5");
+			const result = Financial.subtract(first, second);
+			assert.equal(Financial.toString(result), "-5");
 		});
 		it("Should be '2' - '7' = '-5'", function () {
 			const first = new Financial("2", 0);
 			const second = new Financial("7", 0);
-			const result = Financial.minus(first, second);
-			assert.equal(result.toString(), "-5");
+			const result = Financial.subtract(first, second);
+			assert.equal(Financial.toString(result), "-5");
 		});
 		it("Should be '1.11111112' - '1.1111111' = '0.00000002'. Call method minus().", function () {
-			const firstX = financial("1.11111112");
-			const second = financial("1.1111111");
-			const first = Financial.minus(firstX, second);
-			assert.equal(first.toString(), "0.00000002");
-			assert.equal(first.toFloat(), 0.00000002);
+			const firstX = Financial.parse("1.11111112");
+			const second = Financial.parse("1.1111111");
+			const first = Financial.subtract(firstX, second);
+			assert.equal(Financial.toString(first), "0.00000002");
+			assert.equal(Financial.toFloat(first), 0.00000002);
 		});
 		it("Should be '3' * '2' = '6'", function () {
 			const first = new Financial("3", 0);
 			const second = new Financial("2", 0);
 			const result = Financial.multiply(first, second);
-			assert.equal(result.toString(), "6");
+			assert.equal(Financial.toString(result), "6");
 		});
 		it("Should be '-3' * '2' = '6'", function () {
 			const first = new Financial("-3", 0);
 			const second = new Financial("2", 0);
 			const result = Financial.multiply(first, second);
-			assert.equal(result.toString(), "-6");
+			assert.equal(Financial.toString(result), "-6");
 		});
 		it("Should be '4398621354876378456537864871263' * '47382687236478236874628734'" +
 			"= '208418499929801586779933357274718591590228107483830671042'", function () {
 				const first = new Financial("4398621354876378456537864871263", 0);
 				const second = new Financial("47382687236478236874628734", 0);
 				const result = Financial.multiply(first, second);
-				assert.equal(result.toString(), "208418499929801586779933357274718591590228107483830671042");
+				assert.equal(Financial.toString(result), "208418499929801586779933357274718591590228107483830671042");
 			});
 		it("Should be '4398621354876378456537864871263' / '47382687236478236874628734' = '92831.82553416'", function () {
 			const first = new Financial("4398621354876378456537864871263", 0);
 			const second = new Financial("47382687236478236874628734", 0);
 			const result = Financial.divide(first, second);
-			assert.equal(result.toString(), "92831.82553416");
+			assert.equal(Financial.toString(result), "92831.82553416");
 		});
 		it("Should be '6' / '2' = '3'", function () {
 			const first = new Financial("6", 0);
 			const second = new Financial("2", 0);
 			const result = Financial.divide(first, second);
-			assert.equal(result.toString(), "3");
+			assert.equal(Financial.toString(result), "3");
 		});
 		it("Should be '-6' / '2' = '-3'", function () {
 			const first = new Financial("-6", 0);
 			const second = new Financial("2", 0);
 			const result = Financial.divide(first, second);
-			assert.equal(result.toString(), "-3");
+			assert.equal(Financial.toString(result), "-3");
 		});
 		it("Should be '6' / '-2' = '-3'", function () {
 			const first = new Financial("6", 0);
 			const second = new Financial("-2", 0);
 			const result = Financial.divide(first, second);
-			assert.equal(result.toString(), "-3");
+			assert.equal(Financial.toString(result), "-3");
 		});
 		it("Should plus 0.001 + 0.000001 = 0.001001", function () {
 			const amount = new Financial("1", 3); // setup number 0.001
 			const commission = new Financial("1", 6); // setup number 0.000001
 
-			const sum = Financial.plus(amount, commission); // 0.001001
+			const sum = Financial.add(amount, commission); // 0.001001
 			assert.equal(sum.value, "1001");
 			assert.equal(sum.fraction, 6);
 		});
@@ -440,7 +492,7 @@ describe("Financial funtion tests", function () {
 			const amount = new Financial("1", 3); // setup number 0.001
 			const commission = new Financial("1", 6); // setup number 0.000001
 
-			const sum = Financial.minus(amount, commission); // 0.000999
+			const sum = Financial.subtract(amount, commission); // 0.000999
 			assert.equal(sum.value, "999");
 			assert.equal(sum.fraction, 6);
 		});
@@ -469,12 +521,12 @@ describe("Financial funtion tests", function () {
 			assert.equal(fraction, 6);
 		});
 		it("Should normalize via factory from to 0.1000 to 1,1", function () {
-			const instanceOverConstructor = financial("0.1000"); // setup number 0.1
+			const instanceOverConstructor = Financial.parse("0.1000"); // setup number 0.1
 			assert.equal(instanceOverConstructor.value, "1");
 			assert.equal(instanceOverConstructor.fraction, 1);
 		});
 		it("Should normalize via factory from to 10.00 to 10,0", function () {
-			const instanceOverConstructor = financial("10.00"); // setup number 10
+			const instanceOverConstructor = Financial.parse("10.00"); // setup number 10
 			assert.equal(instanceOverConstructor.value, "10");
 			assert.equal(instanceOverConstructor.fraction, 0);
 		});
@@ -493,7 +545,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(multiplyResult.fraction, 1);
 		});
 		it("Should initialize value \"0\" via factory", function () {
-			const zeroFinancial = financial("0");
+			const zeroFinancial = Financial.parse("0");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
 		});
@@ -507,7 +559,7 @@ describe("Financial funtion tests", function () {
 			const rawPriceStr = rawPrice.toFixed(0);
 			assert.equal(rawPriceStr, "157292");
 			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
+			const result = Financial.toString(price);
 			assert.equal(result, "0.00157292");
 		});
 		it("(Bug v0.0.1) Should work toString(): 0.00000152", function () {
@@ -515,7 +567,7 @@ describe("Financial funtion tests", function () {
 			const rawPriceStr = rawPrice.toFixed(0);
 			assert.equal(rawPriceStr, "152");
 			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
+			const result = Financial.toString(price);
 			assert.equal(result, "0.00000152");
 		});
 		it("(Bug v0.0.1) Should work toString(): -0.00000152", function () {
@@ -523,12 +575,12 @@ describe("Financial funtion tests", function () {
 			const rawPriceStr = rawPrice.toFixed(0);
 			assert.equal(rawPriceStr, "-152");
 			const price = new Financial(rawPriceStr, 8);
-			const result = price.toString();
+			const result = Financial.toString(price);
 			assert.equal(result, "-0.00000152");
 		});
 		it("(Bug 2.0.0) Should works same Financial constructor and financial factory", function () {
 			const instanceOverConstructor = new Financial("60090", 2);
-			const instanceOverFactory = financial(600.90, 2);
+			const instanceOverFactory = Financial.fromFloat(600.90, 2);
 			assert.equal(instanceOverConstructor.value, "6009");
 			assert.equal(instanceOverFactory.value, "6009");
 			assert.equal(instanceOverConstructor.fraction, 1);
@@ -569,7 +621,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(result.fraction, 9);
 		});
 		it("(Bug 2.0.3) Should truncate 0.00452 to value 0 and fraction 0", function () {
-			const a = financial(0.00452, 2);
+			const a = Financial.fromFloat(0.00452, 2);
 
 			assert.equal(a.value, "0");
 			assert.equal(a.fraction, 0);
@@ -595,22 +647,22 @@ describe("Financial funtion tests", function () {
 			// TODO: THIS TEST IS INCORRECT
 			// The number value 1234567890123456789012345678890.09 cannot be presented as IEEE-754 without rounding.
 
-			const money = financial(1234567890123456789012345678890.09, 2);
-			const toString = money.toString();
+			const money = Financial.fromFloat(1234567890123456789012345678890.09, 2);
+			const toString = Financial.toString(money);
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
 		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(string)", function () {
-			const money = financial("1234567890123456789012345678890.09");
-			const toString = money.toString();
+			const money = Financial.parse("1234567890123456789012345678890.09");
+			const toString = Financial.toString(money);
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
 		it("(Bug 2.0.5) Should avoid approximation as long number (toString)(string, number)", function () {
 			const money = new Financial("123456789012345678901234567889009", 2);
-			const toString = money.toString();
+			const toString = Financial.toString(money);
 			assert.equal(toString, "1234567890123456789012345678890.09");
 		});
 		it("(Bug 3.0.2) Should initialize value \"0.0000000000000000\" via factory", function () {
-			const zeroFinancial = financial("0.0000000000000000");
+			const zeroFinancial = Financial.parse("0.0000000000000000");
 			assert.equal(zeroFinancial.value, "0");
 			assert.equal(zeroFinancial.fraction, 0);
 		});
@@ -620,7 +672,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(zeroFinancial.fraction, 0);
 		});
 		it("(Bug 3.0.3) Should initialize value \"0.000000005982606\" via factory", function () {
-			const zeroFinancial = financial("0.000000005982606");
+			const zeroFinancial = Financial.parse("0.000000005982606");
 			assert.equal(zeroFinancial.value, "5982606");
 			assert.equal(zeroFinancial.fraction, 15);
 		});
@@ -651,11 +703,11 @@ describe("Financial funtion tests", function () {
 			assert.equal(Financial.isFinancial(wrap), true);
 		});
 		it("Should instance with value=1 fraction=1", function () {
-			const first = financial(1, 1);
+			const first = Financial.fromFloat(1, 1);
 			assert.equal(first.fraction, 0);
 			assert.equal(first.value, "1");
-			assert.equal(first.toString(), "1");
-			assert.equal(first.toInt(), 1);
+			assert.equal(Financial.toString(first), "1");
+			assert.equal(Financial.toInt(first), 1);
 		});
 		it("Should be is not isFinancial", function () {
 			const result = Financial.isFinancial([]);
@@ -704,20 +756,11 @@ describe("Financial funtion tests", function () {
 			}
 			assert.fail("Should never happened");
 		});
-		it("Should be execution error Unknown argument(s)", function () {
-			try {
-				// tslint:disable-next-line no-unused-expression
-				financial({} as any);
-			} catch (err) {
-				assert((<any>err).message.startsWith("Unknown argument(s):"));
-				return;
-			}
-			assert.fail("Should never happened");
-		});
+
 		it("Should be execution error Invalid financial value.", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				financial("0,213");
+				Financial.parse("0,213");
 			} catch (err) {
 				assert((<any>err).message.startsWith("Invalid financial value. Expected decimal string"));
 				return;
@@ -747,7 +790,7 @@ describe("Financial funtion tests", function () {
 		it("Should be execution error Wrong argument fraction on method round", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2);
+				const number = Financial.fromFloat(123, 2);
 				const finNumber = Financial.round(number, -1.45);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
@@ -758,7 +801,7 @@ describe("Financial funtion tests", function () {
 		it("Should be execution error Wrong argument fraction on method truncDown", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2);
+				const number = Financial.fromFloat(123, 2);
 				const finNumber = Financial.truncDown(number, -1.45);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
@@ -769,7 +812,7 @@ describe("Financial funtion tests", function () {
 		it("Should be execution error Wrong argument fraction on method truncUp", function () {
 			try {
 				// tslint:disable-next-line no-unused-expression
-				const number = financial(123, 2);
+				const number = Financial.fromFloat(123, 2);
 				const finNumber = Financial.truncUp(number, -1.45);
 			} catch (err) {
 				assert((<any>err).message.startsWith("Wrong argument fraction. Expected integer >= 0"));
@@ -778,8 +821,8 @@ describe("Financial funtion tests", function () {
 			assert.fail("Should never happened");
 		});
 		it("(Bug 2.0.1) Should raise error when division by zero occurs", function () {
-			const first = financial(0, 0);
-			const second = financial(0, 0);
+			const first = Financial.fromFloat(0, 0);
+			const second = Financial.fromFloat(0, 0);
 			let expectedError;
 			try {
 				Financial.divide(first, second);
@@ -790,8 +833,8 @@ describe("Financial funtion tests", function () {
 			assert.equal(expectedError.message, "Division by zero");
 		});
 		it("(Bug 2.0.1) Should raise error when Modulus by zero occurs", function () {
-			const first = financial(0, 0);
-			const second = financial(0, 0);
+			const first = Financial.fromFloat(0, 0);
+			const second = Financial.fromFloat(0, 0);
 			let expectedError;
 			try {
 				Financial.mod(first, second);
