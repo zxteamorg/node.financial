@@ -1,4 +1,4 @@
-## Financial.JS
+# Financial.JS
 
 Finance JS is a data type for storing decimal values and manipulate its via mathematical functions according infinite-precision arithmetic. It should be used when it is important to preserve exact precision, for example with monetary data.
 
@@ -20,78 +20,21 @@ const result = left + right;
 console.log(result); // 1.2345678901234568e+29 (while expected 123456789012345678901234567891)
 ```
 
-### Usage
+## Usage
 
-#### Load financial.js in node.js:
-```JAVASCRIPT
-// load financial.js
-import { financial, Financial } from "@zxteam/financial.js";
-```
+Financial.js can be used in node.js.
 
-#### Function plus
-Add two values, left + right.
-##### Syntax
-```JAVASCRIPT
-const result: Financial = Financial.plus(left: Financial, right: Financial);
-```
-##### Examples
-```JAVASCRIPT
-const left = financial("200.3");
-const right = financial("600.5");
-const result = Financial.plus(left, right);		// return Financial
-console.log(result.toString());					// "800.8"
-console.log(result.toFloat());					// 800.8
+Install financial.js using npm:
+```BASH
+npm i @zxteam/financial.js
 ```
 
-#### Function minus
-Minus two values, left - right.
-##### Syntax
-```JAVASCRIPT
-const result: Financial = Financial.minus(left: Financial, right: Financial);
-```
-##### Examples
-```JAVASCRIPT
-const left = financial("500.5");
-const right = financial("250.7");
-const result = Financial.minus(left, right);		// return Financial
-console.log(result.toString());						// "249.8"
-console.log(result.toFloat());						// 249.8
-```
+### Examples
 
-
-#### Function multiply
-Multiply two values, left * right.
-##### Syntax
-```JAVASCRIPT
-const result: Financial = Financial.multiply(left: Financial, right: Financial);
-```
-##### Examples
-```JAVASCRIPT
-const left = financial("357.5");
-const right = financial("2.5");
-const result = Financial.multiply(left, right);		// return Financial
-console.log(result.toString());						// "893.75"
-console.log(result.toFloat());						// 893.75
-```
-
-#### Function divide
-Divide two values, left / right.
-##### Syntax
-```JAVASCRIPT
-const result: Financial = Financial.divide(left: Financial, right: Financial);
-```
-##### Examples
-```JAVASCRIPT
-const left = financial("500");
-const right = financial("10");
-const result = Financial.divide(left, right);		// return Financial
-console.log(result.toString());						// "50"
-console.log(result.toFloat());						// 50
-```
-
-## Examples
 You can see a lot of examples in unit tests. Here we show some points only.
+
 ### Avoid approximation
+
 ```JAVASCRIPT
 import { financial, Financial } from "financial.js";
 
@@ -104,6 +47,7 @@ console.log(Financial.equalsTo(totalMoney, totalSpent)); // true
 console.log(totalSpent.toString()); // 600.9
 ```
 ### Avoid digits limit
+
 ```JAVASCRIPT
 import { financial, Financial } from "@zxteam/financial.js";
 
@@ -112,3 +56,65 @@ const right = financial("1");
 const result = Financial.plus(left, right);
 console.log(result.toString()); // 123456789012345678901234567891
 ```
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md)
+- [Examples](docs/functions.md#example)
+- [Overview](docs/functions.md)
+
+## Build
+
+First clone the project from github:
+
+```BASH
+git clone https://dev.zxteam.net/pub/node/financial.js.git
+cd financial.js
+```
+
+Install the project dependencies:
+```BASH
+npm install
+```
+
+Then, the project can be build by executing the build script via npm:
+```BASH
+npm run build
+```
+
+This will build the library financial.js from the source files and
+put them in the folder /.dist
+
+## Test
+
+To execute tests for the library, install the project dependencies once:
+```BASH
+npm install
+```
+
+Then, the tests can be executed:
+```BASH
+npm run test
+```
+
+To see the coverage results, open the generated report in your browser:
+
+```BASH
+./coverage/lcov-report/index.html
+```
+
+## License
+
+Copyright [2018-2019] ZXTeam.org
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
