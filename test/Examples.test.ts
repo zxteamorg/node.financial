@@ -5,20 +5,20 @@ import { financial, Financial } from "../src/index";
 
 describe("Financial examples funtion tests", function () {
 	it("Financial.add(left, right)", () => {
-		const left = financial("200.3");
-		const right = financial("600.5");
+		const left = Financial.parse("200.3");
+		const right = Financial.parse("600.5");
 		const result = Financial.add(left, right); // return Financial
 		// console.log(result.toString());            // "800.8"
 		// console.log(result.toFloat());             // 800.8
 
-		assert.equal(result.toString(), "800.8");
-		assert.equal(result.toFloat(), 800.8);
+		assert.equal(Financial.toString(result), "800.8");
+		assert.equal(Financial.toFloat(result), 800.8);
 		assert.equal(result.value, "8008");
 		assert.equal(result.fraction, 1);
 	});
 	it("Financial.equals(left, right)", () => {
-		const left = financial("200.3");
-		const right = financial("600.5");
+		const left = Financial.parse("200.3");
+		const right = Financial.parse("600.5");
 		const result = Financial.equals(left, right); // return boolean
 		// console.log(result);                        // false
 
@@ -33,8 +33,8 @@ describe("Financial examples funtion tests", function () {
 
 		assert.equal(simpleFinancial.value, "15055");
 		assert.equal(simpleFinancial.fraction, fraction);
-		assert.equal(simpleFinancial.toString(), value.toString());
-		assert.equal(simpleFinancial.toFloat(), value);
+		assert.equal(Financial.toString(simpleFinancial), value.toString());
+		assert.equal(Financial.toFloat(simpleFinancial), value);
 	});
 	it("Financial.fromInt(value)", () => {
 		const value = 42;
@@ -44,31 +44,31 @@ describe("Financial examples funtion tests", function () {
 
 		assert.equal(simpleFinancial.value, "42");
 		assert.equal(simpleFinancial.fraction, 0);
-		assert.equal(simpleFinancial.toString(), value.toString());
-		assert.equal(simpleFinancial.toFloat(), value);
+		assert.equal(Financial.toString(simpleFinancial), value.toString());
+		assert.equal(Financial.toFloat(simpleFinancial), value);
 	});
 	it("Financial.fromString(value)", () => {
 		const value = "101.5";
-		const simpleFinancial = Financial.fromString(value);
+		const simpleFinancial = Financial.parse(value);
 		// console.log(simpleFinancial.toString());   // "101.5"
 		// console.log(simpleFinancial.toFloat());    // 101.5
 
 		assert.equal(simpleFinancial.value, "1015");
 		assert.equal(simpleFinancial.fraction, 1);
-		assert.equal(simpleFinancial.toString(), value);
-		assert.equal(simpleFinancial.toFloat(), parseFloat(value));
+		assert.equal(Financial.toString(simpleFinancial), value);
+		assert.equal(Financial.toFloat(simpleFinancial), parseFloat(value));
 	});
 	it("Financial.gt(left, right)", () => {
-		const left = financial("200.3");
-		const right = financial("600.5");
+		const left = Financial.parse("200.3");
+		const right = Financial.parse("600.5");
 		const result = Financial.gt(left, right); // left > right = false
 		// console.log(result);                   // false
 
 		assert.equal(result, false);
 	});
 	it("Financial.gte(left, right)", () => {
-		const left = financial("200.3");
-		const right = financial("600.5");
+		const left = Financial.parse("200.3");
+		const right = Financial.parse("600.5");
 		const result = Financial.gte(left, right); // left >= right = false
 		// console.log(result);                    // false
 
@@ -93,8 +93,8 @@ describe("Financial examples funtion tests", function () {
 		assert.equal(isZero, true);
 	});
 	it("Financial.mod(left, right)", () => {
-		const left = financial("200.3");
-		const right = financial("600.5");
+		const left = Financial.parse("200.3");
+		const right = Financial.parse("600.5");
 		const remainder = Financial.mod(left, right);
 		console.log(remainder); //
 		Financial.toString(remainder);
