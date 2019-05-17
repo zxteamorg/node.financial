@@ -60,7 +60,7 @@ console.log(result.toString()); // 123456789012345678901234567891
 ## Documentation
 
 - [Getting Started](docs/getting-started.md)
-- [Examples](docs/functions.md#example)
+- [Examples](docs/functions.md#examples)
 - [Overview](docs/functions.md)
 
 ## Build
