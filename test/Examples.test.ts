@@ -1,7 +1,7 @@
 import { assert } from "chai";
 
 import { Financial as FinancialLike } from "@zxteam/contract";
-import { financial, Financial } from "../src/index";
+import { Financial } from "../src/index";
 
 describe("Financial examples funtion tests", function () {
 	it("Financial.add(left, right)", () => {
@@ -77,8 +77,8 @@ describe("Financial examples funtion tests", function () {
 	it("Financial.isFinancial(probablyFinancal)", () => {
 		const financialLike = { value: "5", fraction: 0 };
 		const financialFake = {};
-		const resultTrue = financial.isFinancial(financialLike);
-		const resultFalse = financial.isFinancial(financialFake);
+		const resultTrue = Financial.isFinancial(financialLike);
+		const resultFalse = Financial.isFinancial(financialFake);
 		// console.log(resultTrue);  // true
 		// console.log(resultFalse); // false
 
@@ -148,20 +148,20 @@ describe("Financial funtion tests", function () {
 			const totalMoney = Financial.parse("600.90");
 			const pricePerItem = Financial.parse("200.3005");
 
-			const result = financial.add(totalMoney, pricePerItem);
+			const result = Financial.add(totalMoney, pricePerItem);
 
 			assert.equal(Financial.toString(result), "801.2005");
 		});
 		it("Should avoid digits limit (plus)", function () {
 			const first = Financial.parse("123456789012345678901234567890");
 			const second = Financial.parse("1");
-			const result = financial.add(first, second);
+			const result = Financial.add(first, second);
 			assert.equal(Financial.toString(result), "123456789012345678901234567891");
 		});
 		it("Should avoid digits limit and fraction (plus)", function () {
 			const first = Financial.parse("123456789012345678901234567890.01");
 			const second = Financial.parse("1.002");
-			const result = financial.add(first, second);
+			const result = Financial.add(first, second);
 			assert.equal(result.value, "123456789012345678901234567891012");
 			assert.equal(result.fraction, 3);
 		});

@@ -36,25 +36,25 @@ You can see a lot of examples in unit tests. Here we show some points only.
 ### Avoid approximation
 
 ```JAVASCRIPT
-import { financial, Financial } from "financial.js";
+import { financial } from "financial.js";
 
-const totalMoney = financial(600.90, 2);
-const pricePerItem = financial(200.30, 2);
-const buyItems = financial(3);
-const totalSpent = Financial.multiply(pricePerItem, buyItems);
+const totalMoney = financial.fromFloat(600.90, 2);
+const pricePerItem = financial.fromFloat(200.30, 2);
+const buyItems = financial.fromInt(3);
+const totalSpent = financial.multiply(pricePerItem, buyItems);
 
-console.log(Financial.equalsTo(totalMoney, totalSpent)); // true
-console.log(totalSpent.toString()); // 600.9
+console.log(financial.equalsTo(totalMoney, totalSpent)); // true
+console.log(financial.toString(totalSpent));             // 600.9
 ```
 ### Avoid digits limit
 
 ```JAVASCRIPT
-import { financial, Financial } from "@zxteam/financial.js";
+import { financial } from "@zxteam/financial.js";
 
-const left = financial("123456789012345678901234567890");
-const right = financial("1");
-const result = Financial.plus(left, right);
-console.log(result.toString()); // 123456789012345678901234567891
+const left = "123456789012345678901234567890";
+const right = "1";
+const result = financial.plus(left, right);
+console.log(result); // 123456789012345678901234567891
 ```
 
 ## Documentation

@@ -13,21 +13,37 @@ npm install @zxteam/financial.js
 Financial.js can be used in node.js.
 ```JAVASCRIPT
 // load financial.js
-import { financial, Financial } from "@zxteam/financial.js";
+import { financial } from "@zxteam/financial.js";
 
-// use financial.js
-const left = financial("10");
-const right = financial("2");
+// use financial.js through string value
+const leftStr = "10";
+const rightStr = "2";
 
-const plus = Financial.plus(left, right);
-console.log(plus.toString()); // "12"
+const plusStr = financial.plus(leftStr, rightStr);
+console.log(plusStr); // "12"
 
-const minus = Financial.minus(left, right);
-console.log(minus.toString()); // "8"
+const minusStr = financial.minus(leftStr, rightStr);
+console.log(minusStr); // "8"
 
-const multiply = Financial.multiply(left, right);
-console.log(multiply.toString()); // "20"
+const multiplyStr = financial.multiply(leftStr, rightStr);
+console.log(multiplyStr); // "20"
 
-const divide = Financial.divide(left, right);
-console.log(divide.toString()); // "5"
+const divideStr = financial.divide(leftStr, rightStr);
+console.log(divideStr); // "5"
+
+// use financial.js through financial class
+const left = financial.fromInt("10");
+const right = financial.fromInt("2");
+
+const plus = financial.plus(left, right);
+console.log(financial.toString(plus)); // "12"
+
+const minus = financial.minus(left, right);
+console.log(financial.toString(minus)); // "8"
+
+const multiply = financial.multiply(left, right);
+console.log(financial.toString(multiply)); // "20"
+
+const divide = financial.divide(left, right);
+console.log(financial.toString(divide)); // "5"
 ```

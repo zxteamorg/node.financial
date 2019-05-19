@@ -21,7 +21,7 @@ function getRoundMode(): ROUND_MODE {
 }
 
 // WRONG SIGRANURE !!! See bellow getRoundMode()
-function getDefaultRound(num: zxteam.Financial, fraction: number): zxteam.Financial {
+function round(num: zxteam.Financial, fraction: number): zxteam.Financial {
 	return Financial.round(num, fraction);
 }
 
@@ -280,7 +280,7 @@ export class Financial implements zxteam.Financial {
 		const maxFraction: number = Math.max(left.fraction, right.fraction);
 		const fraction: number = getFraction(maxFraction);
 		const value: string = result.toFixed(fraction);
-		return getDefaultRound(Financial.parse(value), fraction);
+		return round(Financial.parse(value), fraction);
 	}
 
 	/**
