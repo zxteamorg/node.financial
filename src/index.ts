@@ -16,7 +16,6 @@ function getFraction(maxFraction: number): number {
 	return (defaultFraction > maxFraction) ? defaultFraction : maxFraction;
 }
 
-
 function getRoundMode(): ROUND_MODE {
 	throw new Error("Not implemented yet");
 }
@@ -36,12 +35,62 @@ export interface FinancialOperation {
 	add(left: string, right: string): string;
 	add(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
 
-	// TODO
+	equals(left: string, right: string): boolean;
+	equals(left: zxteam.Financial, right: zxteam.Financial): boolean;
+
+	fromFloat(value: number, fractionDigits: number): zxteam.Financial;
+
+	fromInt(value: number): zxteam.Financial;
+
+	gt(left: string, right: string): boolean;
+	gt(left: zxteam.Financial, right: zxteam.Financial): boolean;
+
+	gte(left: string, right: string): boolean;
+	gte(left: zxteam.Financial, right: zxteam.Financial): boolean;
+
+	isFinancial(probablyFinancal: any): probablyFinancal is zxteam.Financial;
+
+	isZero(num: string): boolean;
+	isZero(num: zxteam.Financial): boolean;
+
+	mod(left: string, right: string): string;
+	mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+
+	lt(left: string, right: string): boolean;
+	lt(left: zxteam.Financial, right: zxteam.Financial): boolean;
+
+	lte(left: string, right: string): boolean;
+	lte(left: zxteam.Financial, right: zxteam.Financial): boolean;
+
+	parse(value: string): zxteam.Financial;
+
+	multiply(left: string, right: string): string;
+	multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+
+	divide(left: string, right: string): string;
+	divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+
+	round(num: string, fraction: number): string;
+	round(num: zxteam.Financial, fraction: number): zxteam.Financial;
 
 	subtract(left: string, right: string): string;
 	subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
-}
 
+	toFloat(num: zxteam.Financial): number;
+
+	truncDown(num: string, fraction: number): string;
+	truncDown(num: zxteam.Financial, fraction: number): zxteam.Financial;
+
+	truncUp(num: string, fraction: number): string;
+	truncUp(num: zxteam.Financial, fraction: number): zxteam.Financial;
+
+	toInt(num: zxteam.Financial): number;
+
+	toString(num: zxteam.Financial): string;
+
+	wrap(num: zxteam.Financial): zxteam.Financial;
+
+}
 
 export class Financial implements zxteam.Financial {
 	public static readonly FinancialStringRegExp = /^(-?)(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$/;
@@ -100,13 +149,13 @@ export class Financial implements zxteam.Financial {
 		}
 	}
 
-	public static fromFloat(value: number, fractionDigits: number): Financial {
+	public static fromFloat(value: number, fractionDigits: number): zxteam.Financial {
 		if (!Number.isFinite(value)) { throw new Error("Wrong value. Expected finite float value."); }
 		for (let c = 0; c < fractionDigits; ++c) { value *= 10; }
 		return new Financial(value.toFixed(0), fractionDigits);
 	}
 
-	public static fromInt(value: number): Financial {
+	public static fromInt(value: number): zxteam.Financial {
 		if (!Number.isSafeInteger(value)) { throw new Error("Wrong value. Expected safe integer value."); }
 		return new Financial(value.toFixed(0), 0);
 	}
@@ -137,7 +186,7 @@ export class Financial implements zxteam.Financial {
 		return Financial.equals(num, Financial.ZERO);
 	}
 
-	public static mod(left: zxteam.Financial, right: zxteam.Financial): Financial {
+	public static mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		if (Financial.isZero(right)) {
 			throw new Error("Modulus by zero");
 		} else if (Financial.isZero(left)) {
@@ -190,12 +239,12 @@ export class Financial implements zxteam.Financial {
 			friendlyValue = parseInt(friendlyValue).toString();
 		}
 
-		const financalValue = new  Financial(friendlyValue, friendlyFraction);
+		const financalValue = new Financial(friendlyValue, friendlyFraction);
 
 		return { value: financalValue.value, fraction: financalValue.fraction };
 	}
 
-	public static multiply(left: zxteam.Financial, right: zxteam.Financial): Financial {
+	public static multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
 		// IEEE-754 maximum integer value is +/- 9007199254740991
 
@@ -216,7 +265,7 @@ export class Financial implements zxteam.Financial {
 
 	}
 
-	public static divide(left: zxteam.Financial, right: zxteam.Financial): Financial {
+	public static divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		if (Financial.isZero(right)) {
 			throw new Error("Division by zero");
 		} else if (Financial.isZero(left)) {
@@ -239,7 +288,7 @@ export class Financial implements zxteam.Financial {
 	 * Returns the value of a number rounded to the nearest value with fraction.
 	 * An analog Math.round() for JS float
 	 */
-	public static round(num: zxteam.Financial, fraction: number): Financial {
+	public static round(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -248,7 +297,7 @@ export class Financial implements zxteam.Financial {
 		return Financial.parse(roundNumber.toFixed(fraction));
 	}
 
-	public static subtract(left: zxteam.Financial, right: zxteam.Financial): Financial {
+	public static subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
 		if (summaryLength < 15) {
@@ -286,7 +335,7 @@ export class Financial implements zxteam.Financial {
 	 * Returns the value of a Financial rounded to the nearest Financial with different fraction.
 	 * An analog Math.trunc() for JS float
 	 */
-	public static truncDown(num: zxteam.Financial, fraction: number): Financial {
+	public static truncDown(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -300,7 +349,7 @@ export class Financial implements zxteam.Financial {
 	 * Return the smallest value greater than or equal to a given
 	 * An analog Math.ceil() for JS float
 	 */
-	public static truncUp(num: zxteam.Financial, fraction: number): Financial {
+	public static truncUp(num: zxteam.Financial, fraction: number): zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
@@ -336,7 +385,7 @@ export class Financial implements zxteam.Financial {
 		}
 	}
 
-	public static wrap(num: zxteam.Financial): Financial {
+	public static wrap(num: zxteam.Financial): zxteam.Financial {
 		return new Financial(num.value, num.fraction);
 	}
 
@@ -411,11 +460,166 @@ export const financial: FinancialOperation = Object.freeze({
 		throw new Error("Wrong arguments passed");
 	},
 
+	equals(left: any, right: any): boolean {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.equals(Financial.parse(left), Financial.parse(right));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.equals(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	fromFloat(value: number, fractionDigits: number): zxteam.Financial {
+		return Financial.fromFloat(value, fractionDigits);
+	},
+
+	fromInt(value: number): zxteam.Financial {
+		return Financial.fromInt(value);
+	},
+
+	gt(left: any, right: any): boolean {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.gt(Financial.parse(left), Financial.parse(right));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.gt(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	gte(left: any, right: any): boolean {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.gte(Financial.parse(left), Financial.parse(right));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.gte(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	isFinancial(probablyFinancal: any): probablyFinancal is zxteam.Financial {
+		return Financial.isFinancial(probablyFinancal);
+	},
+
+	isZero(num: any): boolean {
+		if (_.isString(num)) {
+			return Financial.isZero(Financial.parse(num));
+		} else if (Financial.isFinancial(num)) {
+			return Financial.isZero(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	mod(left: any, right: any): any {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.toString(Financial.mod(Financial.parse(left), Financial.parse(right)));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.mod(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	lt(left: any, right: any): boolean {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.lt(Financial.parse(left), Financial.parse(right));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.lt(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	lte(left: any, right: any): boolean {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.lte(Financial.parse(left), Financial.parse(right));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.lte(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	parse(value: string): zxteam.Financial {
+		if (_.isString(value)) {
+			return Financial.parse(value);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	multiply(left: any, right: any): any {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.toString(Financial.multiply(Financial.parse(left), Financial.parse(right)));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.multiply(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	divide(left: any, right: any): any {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.toString(Financial.divide(Financial.parse(left), Financial.parse(right)));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.divide(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	round(num: any, fraction: number): any {
+		if (_.isString(num) && _.isNumber(fraction)) {
+			return Financial.toString(Financial.round(Financial.parse(num), fraction));
+		} else if (Financial.isFinancial(num) && _.isNumber(fraction)) {
+			return Financial.round(num, fraction);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
 	subtract(left: any, right: any): any {
 		if (_.isString(left) && _.isString(right)) {
 			return Financial.toString(Financial.subtract(Financial.parse(left), Financial.parse(right)));
 		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
 			return Financial.subtract(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	toFloat(num: zxteam.Financial): number {
+		if (Financial.isFinancial(num)) {
+			return Financial.toFloat(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	truncDown(num: any, fraction: number): any {
+		if (_.isString(num) && _.isNumber(fraction)) {
+			return Financial.toString(Financial.truncDown(Financial.parse(num), fraction));
+		} else if (Financial.isFinancial(num) && _.isNumber(fraction)) {
+			return Financial.truncDown(num, fraction);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	truncUp(num: any, fraction: number): any {
+		if (_.isString(num) && _.isNumber(fraction)) {
+			return Financial.toString(Financial.truncUp(Financial.parse(num), fraction));
+		} else if (Financial.isFinancial(num) && _.isNumber(fraction)) {
+			return Financial.truncUp(num, fraction);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	toInt(num: zxteam.Financial): number {
+		if (Financial.isFinancial(num)) {
+			return Financial.toInt(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	toString(num: zxteam.Financial): string {
+		if (Financial.isFinancial(num)) {
+			return Financial.toString(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	wrap(num: zxteam.Financial): zxteam.Financial {
+		if (Financial.isFinancial(num)) {
+			return Financial.wrap(num);
 		}
 		throw new Error("Wrong arguments passed");
 	}

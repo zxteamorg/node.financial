@@ -77,8 +77,8 @@ describe("Financial examples funtion tests", function () {
 	it("Financial.isFinancial(probablyFinancal)", () => {
 		const financialLike = { value: "5", fraction: 0 };
 		const financialFake = {};
-		const resultTrue = Financial.isFinancial(financialLike);
-		const resultFalse = Financial.isFinancial(financialFake);
+		const resultTrue = financial.isFinancial(financialLike);
+		const resultFalse = financial.isFinancial(financialFake);
 		// console.log(resultTrue);  // true
 		// console.log(resultFalse); // false
 
