@@ -713,6 +713,12 @@ describe("Financial funtion tests", function () {
 			const result = financial.isFinancial([]);
 			assert.equal(result, false);
 		});
+		it("Should be Financial convert to string", function () {
+			const num = financial.parse("50");
+			const fin = new Financial(num.value, num.fraction);
+			const result = fin.toString();
+			assert.equal(result, "50");
+		});
 	});
 
 	describe("Negative tests", function () {
@@ -843,6 +849,228 @@ describe("Financial funtion tests", function () {
 			}
 			assert.instanceOf(expectedError, Error);
 			assert.equal(expectedError.message, "Modulus by zero");
+		});
+		it("Should wrong arguments and throw error in function add", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.add(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function divide", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.divide(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function equals", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.equals(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function gt", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.gt(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function gte", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.gte(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function isZero", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.isZero(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function lt", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.lt(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function lte", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.lte(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function mod", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.mod(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function multiply", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.multiply(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function parse", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.parse(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function round", function () {
+			const num: any = 23;
+			const fraction: any = 23;
+			let expectedError;
+			try {
+				financial.round(num, fraction);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function subtract", function () {
+			const left: any = 23;
+			const right: any = 23;
+			let expectedError;
+			try {
+				financial.subtract(left, right);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function toFloat", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.toFloat(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function toInt", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.toInt(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function toString", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.toString(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function truncDown", function () {
+			const num: any = 23;
+			const fraction: any = 23;
+			let expectedError;
+			try {
+				financial.truncDown(num, fraction);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function truncUp", function () {
+			const num: any = 23;
+			const fraction: any = 23;
+			let expectedError;
+			try {
+				financial.truncUp(num, fraction);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
+		});
+		it("Should wrong arguments and throw error in function wrap", function () {
+			const num: any = 23;
+			let expectedError;
+			try {
+				financial.wrap(num);
+			} catch (e) {
+				expectedError = e;
+			}
+			assert.instanceOf(expectedError, Error);
+			assert.equal(expectedError.message, "Wrong arguments passed");
 		});
 	});
 });

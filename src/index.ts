@@ -15,14 +15,22 @@ function getFraction(maxFraction: number): number {
 	const defaultFraction = 8;
 	return (defaultFraction > maxFraction) ? defaultFraction : maxFraction;
 }
-
 function getRoundMode(): ROUND_MODE {
-	throw new Error("Not implemented yet");
+	// TODO
+	return ROUND_MODE.ROUND;
 }
-
-// WRONG SIGRANURE !!! See bellow getRoundMode()
-function round(num: zxteam.Financial, fraction: number): zxteam.Financial {
-	return Financial.round(num, fraction);
+function switchRound(num: zxteam.Financial, mode: ROUND_MODE): zxteam.Financial {
+	const fraction = num.fraction;
+	switch (mode) {
+		case ROUND_MODE.ROUND:
+			return Financial.round(num, getFraction(fraction));
+		case ROUND_MODE.TRUNC_DOWN:
+			return Financial.truncDown(num, getFraction(fraction));
+		case ROUND_MODE.TRUNC_UP:
+			return Financial.truncUp(num, getFraction(fraction));
+		default:
+			throw Error(`Don't support round mode: ${mode}`);
+	}
 }
 
 export const enum ROUND_MODE {
@@ -34,6 +42,9 @@ export const enum ROUND_MODE {
 export interface FinancialOperation {
 	add(left: string, right: string): string;
 	add(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+
+	divide(left: string, right: string): string;
+	divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
 
 	equals(left: string, right: string): boolean;
 	equals(left: zxteam.Financial, right: zxteam.Financial): boolean;
@@ -53,22 +64,19 @@ export interface FinancialOperation {
 	isZero(num: string): boolean;
 	isZero(num: zxteam.Financial): boolean;
 
-	mod(left: string, right: string): string;
-	mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
-
 	lt(left: string, right: string): boolean;
 	lt(left: zxteam.Financial, right: zxteam.Financial): boolean;
 
 	lte(left: string, right: string): boolean;
 	lte(left: zxteam.Financial, right: zxteam.Financial): boolean;
 
-	parse(value: string): zxteam.Financial;
+	mod(left: string, right: string): string;
+	mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
 
 	multiply(left: string, right: string): string;
 	multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
 
-	divide(left: string, right: string): string;
-	divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	parse(value: string): zxteam.Financial;
 
 	round(num: string, fraction: number): string;
 	round(num: zxteam.Financial, fraction: number): zxteam.Financial;
@@ -78,18 +86,17 @@ export interface FinancialOperation {
 
 	toFloat(num: zxteam.Financial): number;
 
+	toInt(num: zxteam.Financial): number;
+
+	toString(num: zxteam.Financial): string;
+
 	truncDown(num: string, fraction: number): string;
 	truncDown(num: zxteam.Financial, fraction: number): zxteam.Financial;
 
 	truncUp(num: string, fraction: number): string;
 	truncUp(num: zxteam.Financial, fraction: number): zxteam.Financial;
 
-	toInt(num: zxteam.Financial): number;
-
-	toString(num: zxteam.Financial): string;
-
 	wrap(num: zxteam.Financial): zxteam.Financial;
-
 }
 
 export class Financial implements zxteam.Financial {
@@ -99,7 +106,7 @@ export class Financial implements zxteam.Financial {
 	public readonly value: string;
 	public readonly fraction: number;
 
-	public static add(left: zxteam.Financial, right: zxteam.Financial): Financial {
+	public static add(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		const summaryLength = left.value.length + right.value.length;
 		const fraction = Math.max(left.fraction, right.fraction);
 		const diffFraction = left.fraction - right.fraction;
@@ -139,6 +146,24 @@ export class Financial implements zxteam.Financial {
 			const financialValue = new Financial(result.toString(), fraction);
 			return { value: financialValue.value, fraction: financialValue.fraction };
 		}
+	}
+
+	public static divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
+		if (Financial.isZero(right)) {
+			throw new Error("Division by zero");
+		} else if (Financial.isZero(left)) {
+			return Financial.ZERO;
+		}
+
+		const friendlyLeft: number = Financial.toFloat(left);
+		const friendlyRight: number = Financial.toFloat(right);
+
+		const result: number = friendlyLeft / friendlyRight;
+
+		const maxFraction: number = Math.max(left.fraction, right.fraction);
+		const fraction: number = getFraction(maxFraction);
+		const value: string = result.toFixed(fraction);
+		return switchRound(Financial.parse(value), getRoundMode());
 	}
 
 	public static equals(left: zxteam.Financial, right: zxteam.Financial): boolean {
@@ -186,6 +211,14 @@ export class Financial implements zxteam.Financial {
 		return Financial.equals(num, Financial.ZERO);
 	}
 
+	public static lt(left: zxteam.Financial, right: zxteam.Financial): boolean {
+		return (Financial.toFloat(left) < Financial.toFloat(right));
+	}
+
+	public static lte(left: zxteam.Financial, right: zxteam.Financial): boolean {
+		return (Financial.toFloat(left) <= Financial.toFloat(right));
+	}
+
 	public static mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
 		if (Financial.isZero(right)) {
 			throw new Error("Modulus by zero");
@@ -202,12 +235,25 @@ export class Financial implements zxteam.Financial {
 		return Financial.fromFloat(remainder, fraction);
 	}
 
-	public static lt(left: zxteam.Financial, right: zxteam.Financial): boolean {
-		return (Financial.toFloat(left) < Financial.toFloat(right));
-	}
+	public static multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
+		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
+		// IEEE-754 maximum integer value is +/- 9007199254740991
 
-	public static lte(left: zxteam.Financial, right: zxteam.Financial): boolean {
-		return (Financial.toFloat(left) <= Financial.toFloat(right));
+		const summaryLength = left.value.length + right.value.length;
+		if (summaryLength < 15) {
+			// 15 symbols total length is safe to multiply in IEEE-754 range
+			const friendlyLeftValue = Number.parseInt(left.value);
+			const friendlyRightValue = Number.parseInt(right.value);
+			const result = friendlyLeftValue * friendlyRightValue;
+			return new Financial(result.toString(), left.fraction + right.fraction);
+		} else {
+			// Use BigInt arithmetic instead
+			const friendlyLeftValue = BigInt(left.value);
+			const friendlyRightValue = BigInt(right.value);
+			const result = friendlyLeftValue * friendlyRightValue;
+			return new Financial(result.toString(), left.fraction + right.fraction);
+		}
+
 	}
 
 	public static parse(value: string): zxteam.Financial {
@@ -242,45 +288,6 @@ export class Financial implements zxteam.Financial {
 		const financalValue = new Financial(friendlyValue, friendlyFraction);
 
 		return { value: financalValue.value, fraction: financalValue.fraction };
-	}
-
-	public static multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
-		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
-		// IEEE-754 maximum integer value is +/- 9007199254740991
-
-		const summaryLength = left.value.length + right.value.length;
-		if (summaryLength < 15) {
-			// 15 symbols total length is safe to multiply in IEEE-754 range
-			const friendlyLeftValue = Number.parseInt(left.value);
-			const friendlyRightValue = Number.parseInt(right.value);
-			const result = friendlyLeftValue * friendlyRightValue;
-			return new Financial(result.toString(), left.fraction + right.fraction);
-		} else {
-			// Use BigInt arithmetic instead
-			const friendlyLeftValue = BigInt(left.value);
-			const friendlyRightValue = BigInt(right.value);
-			const result = friendlyLeftValue * friendlyRightValue;
-			return new Financial(result.toString(), left.fraction + right.fraction);
-		}
-
-	}
-
-	public static divide(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
-		if (Financial.isZero(right)) {
-			throw new Error("Division by zero");
-		} else if (Financial.isZero(left)) {
-			return Financial.ZERO;
-		}
-
-		const friendlyLeft: number = Financial.toFloat(left);
-		const friendlyRight: number = Financial.toFloat(right);
-
-		const result: number = friendlyLeft / friendlyRight;
-
-		const maxFraction: number = Math.max(left.fraction, right.fraction);
-		const fraction: number = getFraction(maxFraction);
-		const value: string = result.toFixed(fraction);
-		return round(Financial.parse(value), fraction);
 	}
 
 	/**
@@ -330,6 +337,33 @@ export class Financial implements zxteam.Financial {
 		return parseFloat(string);
 	}
 
+	public static toInt(num: zxteam.Financial): number {
+		return Number.parseInt(Financial.toString(num));
+	}
+
+	public static toString(num: zxteam.Financial): string {
+		const { value, fraction } = num;
+		if (fraction === 0) {
+			return num.value;
+		} else {
+			const separatorChar = getSeparatorChar();
+			const isNegative = value.length > 0 && value[0] === "-";
+			const sign = isNegative ? "-" : "";
+			const absoluteValue = isNegative ? value.substr(1) : value;
+			const absoluteValueLen = absoluteValue.length;
+			if (fraction < absoluteValueLen) {
+				const delimerPosition = absoluteValueLen - fraction;
+				const wholePart = absoluteValue.substr(0, delimerPosition);
+				const fractionPart = absoluteValue.substr(delimerPosition);
+				return `${sign}${wholePart}${separatorChar}${fractionPart}`;
+			} else {
+				const lengthenZeroCount = fraction - absoluteValueLen;
+				const lengthenPart = "0".repeat(lengthenZeroCount);
+				return `${sign}0${separatorChar}${lengthenPart}${absoluteValue}`;
+			}
+		}
+	}
+
 	/**
 	 * Change fraction value by truncate.
 	 * Returns the value of a Financial rounded to the nearest Financial with different fraction.
@@ -356,33 +390,6 @@ export class Financial implements zxteam.Financial {
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.ceil(Financial.toFloat(num) * multiplier) / multiplier;
 		return Financial.fromFloat(roundNumber, fraction);
-	}
-
-	public static toInt(num: zxteam.Financial): number {
-		return Number.parseInt(Financial.toString(num));
-	}
-
-	public static toString(num: zxteam.Financial): string {
-		const { value, fraction } = num;
-		if (fraction === 0) {
-			return num.value;
-		} else {
-			const separatorChar = getSeparatorChar();
-			const isNegative = value.length > 0 && value[0] === "-";
-			const sign = isNegative ? "-" : "";
-			const absoluteValue = isNegative ? value.substr(1) : value;
-			const absoluteValueLen = absoluteValue.length;
-			if (fraction < absoluteValueLen) {
-				const delimerPosition = absoluteValueLen - fraction;
-				const wholePart = absoluteValue.substr(0, delimerPosition);
-				const fractionPart = absoluteValue.substr(delimerPosition);
-				return `${sign}${wholePart}${separatorChar}${fractionPart}`;
-			} else {
-				const lengthenZeroCount = fraction - absoluteValueLen;
-				const lengthenPart = "0".repeat(lengthenZeroCount);
-				return `${sign}0${separatorChar}${lengthenPart}${absoluteValue}`;
-			}
-		}
 	}
 
 	public static wrap(num: zxteam.Financial): zxteam.Financial {
@@ -418,44 +425,21 @@ export class Financial implements zxteam.Financial {
 	}
 }
 
-// export function financial(...args: Array<any>): Financial {
-
-// 	if (args.length === 1) {
-// 		const value = args[0];
-
-// 		if (Financial.isFinancial(value)) {
-// 			// Implementation of financial(wrap: zxteam.Financial): Financial;
-// 			const friendlyValue: zxteam.Financial = value;
-// 			return new Financial(friendlyValue.value, friendlyValue.fraction);
-
-// 		} else if (typeof (value) === "string") {
-// 			// Implementation of financial(value: string): Financial;
-// 			return Financial.fromString(value);
-// 		}
-// 	}
-
-// 	if (args.length === 2) {
-// 		const value = args[0];
-// 		const fraction = args[1];
-
-// 		if (typeof value === "number" && typeof fraction === "number") {
-// 			// Implementation of two numbers
-// 			if (Number.isSafeInteger && fraction === 0) {
-// 				return Financial.fromInt(value);
-// 			}
-// 			return Financial.fromFloat(value, fraction);
-// 		}
-// 	}
-
-// 	throw new Error("Unknown argument(s): " + args.join(", "));
-// }
-
 export const financial: FinancialOperation = Object.freeze({
 	add(left: any, right: any): any {
 		if (_.isString(left) && _.isString(right)) {
 			return Financial.toString(Financial.add(Financial.parse(left), Financial.parse(right)));
 		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
 			return Financial.add(left, right);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	divide(left: any, right: any): any {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.toString(Financial.divide(Financial.parse(left), Financial.parse(right)));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.divide(left, right);
 		}
 		throw new Error("Wrong arguments passed");
 	},
@@ -508,15 +492,6 @@ export const financial: FinancialOperation = Object.freeze({
 		throw new Error("Wrong arguments passed");
 	},
 
-	mod(left: any, right: any): any {
-		if (_.isString(left) && _.isString(right)) {
-			return Financial.toString(Financial.mod(Financial.parse(left), Financial.parse(right)));
-		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
-			return Financial.mod(left, right);
-		}
-		throw new Error("Wrong arguments passed");
-	},
-
 	lt(left: any, right: any): boolean {
 		if (_.isString(left) && _.isString(right)) {
 			return Financial.lt(Financial.parse(left), Financial.parse(right));
@@ -535,9 +510,11 @@ export const financial: FinancialOperation = Object.freeze({
 		throw new Error("Wrong arguments passed");
 	},
 
-	parse(value: string): zxteam.Financial {
-		if (_.isString(value)) {
-			return Financial.parse(value);
+	mod(left: any, right: any): any {
+		if (_.isString(left) && _.isString(right)) {
+			return Financial.toString(Financial.mod(Financial.parse(left), Financial.parse(right)));
+		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
+			return Financial.mod(left, right);
 		}
 		throw new Error("Wrong arguments passed");
 	},
@@ -551,11 +528,9 @@ export const financial: FinancialOperation = Object.freeze({
 		throw new Error("Wrong arguments passed");
 	},
 
-	divide(left: any, right: any): any {
-		if (_.isString(left) && _.isString(right)) {
-			return Financial.toString(Financial.divide(Financial.parse(left), Financial.parse(right)));
-		} else if (Financial.isFinancial(left) && Financial.isFinancial(right)) {
-			return Financial.divide(left, right);
+	parse(value: string): zxteam.Financial {
+		if (_.isString(value)) {
+			return Financial.parse(value);
 		}
 		throw new Error("Wrong arguments passed");
 	},
@@ -585,6 +560,20 @@ export const financial: FinancialOperation = Object.freeze({
 		throw new Error("Wrong arguments passed");
 	},
 
+	toInt(num: zxteam.Financial): number {
+		if (Financial.isFinancial(num)) {
+			return Financial.toInt(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
+	toString(num: zxteam.Financial): string {
+		if (Financial.isFinancial(num)) {
+			return Financial.toString(num);
+		}
+		throw new Error("Wrong arguments passed");
+	},
+
 	truncDown(num: any, fraction: number): any {
 		if (_.isString(num) && _.isNumber(fraction)) {
 			return Financial.toString(Financial.truncDown(Financial.parse(num), fraction));
@@ -599,20 +588,6 @@ export const financial: FinancialOperation = Object.freeze({
 			return Financial.toString(Financial.truncUp(Financial.parse(num), fraction));
 		} else if (Financial.isFinancial(num) && _.isNumber(fraction)) {
 			return Financial.truncUp(num, fraction);
-		}
-		throw new Error("Wrong arguments passed");
-	},
-
-	toInt(num: zxteam.Financial): number {
-		if (Financial.isFinancial(num)) {
-			return Financial.toInt(num);
-		}
-		throw new Error("Wrong arguments passed");
-	},
-
-	toString(num: zxteam.Financial): string {
-		if (Financial.isFinancial(num)) {
-			return Financial.toString(num);
 		}
 		throw new Error("Wrong arguments passed");
 	},
