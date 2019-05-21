@@ -17,7 +17,7 @@ function getFraction(maxFraction: number): number {
 }
 function getRoundMode(): ROUND_MODE {
 	// TODO
-	return ROUND_MODE.ROUND;
+	return ROUND_MODE.TRUNC_DOWN;
 }
 function switchRound(num: zxteam.Financial, mode: ROUND_MODE): zxteam.Financial {
 	const fraction = num.fraction;
@@ -155,15 +155,39 @@ export class Financial implements zxteam.Financial {
 			return Financial.ZERO;
 		}
 
-		const friendlyLeft: number = Financial.toFloat(left);
-		const friendlyRight: number = Financial.toFloat(right);
-
-		const result: number = friendlyLeft / friendlyRight;
-
 		const maxFraction: number = Math.max(left.fraction, right.fraction);
 		const fraction: number = getFraction(maxFraction);
-		const value: string = result.toFixed(fraction);
-		return switchRound(Financial.parse(value), getRoundMode());
+
+		const summaryLength = left.value.length + right.value.length;
+		if (summaryLength < 15) {
+			const friendlyLeft: number = Financial.toFloat(left);
+			const friendlyRight: number = Financial.toFloat(right);
+
+			const result: number = friendlyLeft / friendlyRight;
+
+			const stringResult = result.toFixed(fraction + 1).toString();
+			const separator = getSeparatorChar();
+			const splitResult = stringResult.split(separator);
+			const value = splitResult[0] + separator + splitResult[1].substr(0, fraction);
+			// const value: string = result.toFixed(fraction);
+			return switchRound(Financial.parse(value), getRoundMode());
+		} else {
+			// Use BigInt arithmetic instead
+			const bigLeftValue = BigInt(left.value);
+			const bigRightValue = BigInt(right.value);
+
+			const lessRightFraction = (left.fraction > right.fraction) ? (left.fraction - right.fraction) : 0;
+			const lessleftFraction = (right.fraction > left.fraction) ? (right.fraction - left.fraction) : 0;
+
+			const leftFractionPlus = "1" + new Array(maxFraction + fraction + lessleftFraction).fill(0).join("");
+			const rightFractionPlus = "1" + new Array(maxFraction + lessRightFraction).fill(0).join("");
+
+			const friendlyLeftValue = bigLeftValue * BigInt(leftFractionPlus);
+			const friendlyRightValue = bigRightValue * BigInt(rightFractionPlus);
+
+			const result = friendlyLeftValue / friendlyRightValue;
+			return new Financial(result.toString(), fraction);
+		}
 	}
 
 	public static equals(left: zxteam.Financial, right: zxteam.Financial): boolean {
@@ -375,7 +399,7 @@ export class Financial implements zxteam.Financial {
 		}
 		const multiplier = Number("1".padEnd(fraction + 1, "0"));
 		const roundNumber = Math.floor(Financial.toFloat(num) * multiplier) / multiplier;
-		return Financial.fromFloat(roundNumber, fraction);
+		return Financial.parse(roundNumber.toFixed(fraction));
 	}
 
 	/**

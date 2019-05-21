@@ -34,22 +34,22 @@ const positiveTestCases: TestCases = {
 		[10010, "10010"]
 	],
 	multiply: [
+		[{ value: "123456789012345123456789012345", fraction: 15 }, { value: "-2", fraction: 0 }, ["-24691357802469024691357802469", 14]],
 		[{ value: "42", fraction: 0 }, { value: "-1", fraction: 0 }, ["-42", 0]],
 		[{ value: "42", fraction: 0 }, { value: "-2", fraction: 0 }, ["-84", 0]],
 		[{ value: "-42", fraction: 0 }, { value: "-2", fraction: 0 }, ["84", 0]],
 		[{ value: "4212345678", fraction: 8 }, { value: "-1", fraction: 0 }, ["-4212345678", 8]]
-		// [{ value: "123456789012345123456789012345", fraction: 15 }, { value: "-2", fraction: 0 }, ["-24691357802469024691357802469", 14]]
 	],
 	divide: [
+		[{ value: "13330001", fraction: 4 }, { value: "21000001", fraction: 6 }, ["6347619221", 8]],
+		[{ value: "1333", fraction: 0 }, { value: "21", fraction: 0 }, ["6347619048", 8]],
+		[{ value: "123456789012345123456789012345", fraction: 0 }, { value: "212345678", fraction: 0 }, ["58139534637641705830616911517", 8]],
 		// Test-case from CoinGet: 24.2644184325 BTC need to divive to BCN price 0.00000017 should be equal 142731873.1323529482 BCN
 		[{ value: "242644184325", fraction: 10 }, { value: "17", fraction: 8 }, ["1427318731323529482", 10]],
 		// Test-case from CoinGet: 0 BTC need to divide to BCN price 0.00000017 should be equal 0.0
 		[{ value: "0", fraction: 0 }, { value: "17", fraction: 8 }, ["0", 0]],
 		[{ value: "11230707245", fraction: 9 }, { value: "1", fraction: 0 }, ["11230707245", 9]],
-		[{ value: "1333", fraction: 0 }, { value: "21", fraction: 0 }, ["6347619048", 8]],
-		[{ value: "1333", fraction: 0 }, { value: "210001", fraction: 4 }, ["6347588821", 8]],
-		[{ value: "13330001", fraction: 4 }, { value: "21000001", fraction: 6 }, ["6347619222", 8]]
-		// [{ value: "123456789012345123456789012345", fraction: 0 }, { value: "212345678", fraction: 0 }, ["5813953463764170", 15]]
+		[{ value: "1333", fraction: 0 }, { value: "210001", fraction: 4 }, ["6347588821", 8]]
 	],
 	parse: [
 		["0.000999", ["999", 6]],
@@ -153,30 +153,6 @@ const positiveTestCases: TestCases = {
 
 describe("Financial funtion tests", function () {
 	describe("FinancialOperation tests", function () {
-		describe("add()", function () {
-			const positiveStrings = [
-				["2", "3", "5"]
-			];
-			const positiveFinancials = [
-				[{ value: "2", fraction: 0 }, { value: "3", fraction: 0 }, { value: "5", fraction: 0 }]
-			];
-
-			positiveStrings.forEach((positiveString) => {
-				const [left, right, expectedResult] = positiveString;
-				it(`Should be ${left} + ${right} = ${expectedResult}`, function () {
-					const result = financial.add(left, right);
-					assert.equal(result, expectedResult);
-				});
-			});
-
-			positiveFinancials.forEach((positiveFinancial) => {
-				const [left, right, expectedResult] = positiveFinancial;
-				it(`Should be '${JSON.stringify(left)}' + '${JSON.stringify(right)}' = '${JSON.stringify(expectedResult)}'`, function () {
-					const result = financial.add(left, right);
-					assert.deepEqual(result, expectedResult);
-				});
-			});
-		});
 		describe("subtract()", function () {
 			const positiveStrings = [
 				["5", "3", "2"]
@@ -203,32 +179,8 @@ describe("Financial funtion tests", function () {
 		});
 	});
 
-
 	describe("Positive Test Cases", function () {
-		describe("fromFloat", function () {
-			positiveTestCases.fromFloat.forEach(fromFloatCase => {
-				const [input, expectedResult] = fromFloatCase;
-				const [inputValue, inputFraction] = input;
-				const [expectedValue, expectedFraction] = expectedResult;
-				// tslint:disable-next-line:max-line-length
-				it(`Should create by v:${inputValue} and f:${inputFraction} to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
-					const result = Financial.fromFloat(inputValue, inputFraction);
-					assert.equal(result.value, expectedValue);
-					assert.equal(result.fraction, expectedFraction);
-				});
-			});
-		});
-		describe("fromInt", function () {
-			positiveTestCases.fromInt.forEach(fromIntCase => {
-				const [inputValue, expectedValue] = fromIntCase;
-				// tslint:disable-next-line:max-line-length
-				it(`Should create by v:${inputValue} to v:"${expectedValue}" and fraction:0`, function () {
-					const result = Financial.fromInt(inputValue);
-					assert.equal(result.value, expectedValue);
-					assert.equal(result.fraction, 0);
-				});
-			});
-		});
+
 		describe("multiply", function () {
 			positiveTestCases.multiply.forEach(multiplyCase => {
 				const [left, right, expectedResult] = multiplyCase;
@@ -238,20 +190,6 @@ describe("Financial funtion tests", function () {
 					`Should multiply values "${JSON.stringify(left)}" and "${JSON.stringify(right)}" to v:"${expectedValue}" and fraction:${expectedFraction}`,
 					function () {
 						const result = Financial.multiply(left, right);
-						assert.equal(result.value, expectedValue);
-						assert.equal(result.fraction, expectedFraction);
-					});
-			});
-		});
-		describe("divide", function () {
-			positiveTestCases.divide.forEach(divideCase => {
-				const [left, right, expectedResult] = divideCase;
-				const [expectedValue, expectedFraction] = expectedResult;
-				it(
-					// tslint:disable-next-line: max-line-length
-					`Should divide values "${JSON.stringify(left)}" and "${JSON.stringify(right)}" to v:"${expectedValue}" and fraction:${expectedFraction}`,
-					function () {
-						const result = Financial.divide(left, right);
 						assert.equal(result.value, expectedValue);
 						assert.equal(result.fraction, expectedFraction);
 					});
@@ -301,32 +239,13 @@ describe("Financial funtion tests", function () {
 					});
 			});
 		});
-		describe("gt", function () {
-			positiveTestCases.gt.forEach(gtCase => {
-				const [first, second, boolean] = gtCase;
-				it(`Should gt financial "${JSON.stringify(first)}" > fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
-					function () {
-						const result = Financial.gt(first, second);
-						assert.equal(result, boolean);
-					});
-			});
-		});
+
 		describe("lt", function () {
 			positiveTestCases.lt.forEach(ltCase => {
 				const [first, second, boolean] = ltCase;
 				it(`Should lt financial "${JSON.stringify(first)}" < fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
 					function () {
 						const result = Financial.lt(first, second);
-						assert.equal(result, boolean);
-					});
-			});
-		});
-		describe("gte", function () {
-			positiveTestCases.gte.forEach(gteCase => {
-				const [first, second, boolean] = gteCase;
-				it(`Should gte financial "${JSON.stringify(first)}" >= fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
-					function () {
-						const result = Financial.gte(first, second);
 						assert.equal(result, boolean);
 					});
 			});
@@ -460,7 +379,7 @@ describe("Financial funtion tests", function () {
 			const first = new Financial("4398621354876378456537864871263", 0);
 			const second = new Financial("47382687236478236874628734", 0);
 			const result = Financial.divide(first, second);
-			assert.equal(Financial.toString(result), "92831.82553416");
+			assert.equal(Financial.toString(result), "92831.82553415");
 		});
 		it("Should be '6' / '2' = '3'", function () {
 			const first = new Financial("6", 0);
@@ -718,6 +637,16 @@ describe("Financial funtion tests", function () {
 			const fin = new Financial(num.value, num.fraction);
 			const result = fin.toString();
 			assert.equal(result, "50");
+		});
+		it("Should be math functions work", function () {
+			const long = financial.parse("1323487763869.04896904726315");
+			const one = financial.parse("1");
+			const part = financial.parse("0.002");
+
+			const minus = financial.subtract(one, part);
+			const multiply = financial.multiply(long, minus);
+			assert.equal(multiply.value, "13208407883413108711091686237");
+			assert.equal(multiply.fraction, 16);
 		});
 	});
 
