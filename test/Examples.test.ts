@@ -219,17 +219,17 @@ describe("Financial funtion tests", function () {
 		});
 		it("Should avoid approximation as string (toInt)", function () {
 			const money = Financial.parse(settings, "600");
-			const numberMoney = Financial.toInt(money);
+			const numberMoney = Financial.toInt(settings, money);
 			assert.equal(numberMoney, 600);
 		});
 		it("Should avoid approximation as string 10", function () {
 			const money = Financial.parse(settings, "10");
-			const numberMoney = Financial.toInt(money);
+			const numberMoney = Financial.toInt(settings, money);
 			assert.equal(numberMoney, 10);
 		});
 		it("Should avoid approximation as number (toInt)", function () {
 			const money = Financial.fromFloat(600, 0);
-			const numberMoney = Financial.toInt(money);
+			const numberMoney = Financial.toInt(settings, money);
 			assert.equal(numberMoney, 600);
 		});
 		it("Should be equalsTo 1.90000000 and 1.9", function () {
@@ -291,14 +291,14 @@ describe("Financial funtion tests", function () {
 				fraction: 8
 			};
 			const newFinacial = Financial.wrap(financialLike);
-			const toInt = Financial.toInt(newFinacial);
+			const toInt = Financial.toInt(settings, newFinacial);
 			assert.equal(toInt, -10);
 		});
 		it("Should work Financial value: 0.00008328, fraction: 8", function () {
 			const right = new Financial("8328", 8); // setup number 0.00008328
 
 			assert.equal(Financial.toFloat(right), 0.00008328);
-			assert.equal(Financial.toInt(right), 0);
+			assert.equal(Financial.toInt(settings, right), 0);
 		});
 	});
 });

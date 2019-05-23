@@ -559,7 +559,7 @@ describe("Financial funtion tests", function () {
 			assert.equal(first.fraction, 0);
 			assert.equal(first.value, "1");
 			assert.equal(Financial.toString(settings, first), "1");
-			assert.equal(Financial.toInt(first), 1);
+			assert.equal(Financial.toInt(settings, first), 1);
 		});
 		it("Should be is not isFinancial", function () {
 			const result = financial.isFinancial([]);

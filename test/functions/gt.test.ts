@@ -20,6 +20,7 @@ const positiveTestCases: TestCases = {
 		[{ value: "6", fraction: 0 }, { value: "8", fraction: 0 }, false],
 		[{ value: "34857332423985479385470938547", fraction: 0 }, { value: "8", fraction: 0 }, true],
 		[{ value: "-3234248573985479385470938547", fraction: 0 }, { value: "8", fraction: 0 }, false],
+		[{ value: "3234248573985479385470938547", fraction: 3 }, { value: "385738547938547345345345", fraction: 12 }, true],
 		[{ value: "3234248573985479385470938547", fraction: 3 }, { value: "385738547938547345345345", fraction: 12 }, true]
 	]
 };

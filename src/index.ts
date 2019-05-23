@@ -3,6 +3,24 @@ import * as zxteam from "@zxteam/contract";
 import * as _ from "lodash";
 
 namespace heplers {
+	export function concatValue(wholePart: string, decimalPart: string): string {
+		if (wholePart === "0") {
+			return decimalPart;
+		}
+
+		if (wholePart === "-0") {
+			return `-${decimalPart}`;
+		}
+
+		return `${wholePart}${decimalPart}`;
+	}
+	export function isPositive(num: zxteam.Financial): boolean {
+		return num.value === "0" || !num.value.startsWith("-");
+	}
+	export function isNegative(num: zxteam.Financial): boolean {
+		return num.value === "0" || num.value.startsWith("-");
+	}
+
 	export function isFinancial(testValue: any): testValue is zxteam.Financial {
 		if (_.isObjectLike(testValue) && _.isString(testValue.value) && Fraction.isFraction(testValue.fraction)) {
 			if (valueRegExp.test(testValue.value)) {
@@ -10,6 +28,43 @@ namespace heplers {
 			}
 		}
 		return false;
+	}
+	export function splitParts(num: zxteam.Financial): { wholePart: string, decimalPart: string } {
+		const { value, fraction } = num;
+
+		if (value === "0" || fraction === 0) {
+			return { wholePart: value, decimalPart: "0" };
+		}
+
+		if (isPositive(num)) {
+			return splitPartsPositive(value, fraction);
+		} else {
+			return splitPartsNegative(value, fraction);
+		}
+	}
+	function splitPartsPositive(value: string, fraction: Fraction): { wholePart: string, decimalPart: string } {
+		if (value.length === fraction) {
+			return { wholePart: "0", decimalPart: value };
+		}
+
+		const diffLen = value.length - fraction;
+		if (diffLen > 0) {
+			return { wholePart: value.substr(0, diffLen), decimalPart: value.substr(diffLen) };
+		} else {
+			return { wholePart: "0", decimalPart: value.padStart(fraction, "0") };
+		}
+	}
+	function splitPartsNegative(value: string, fraction: Fraction): { wholePart: string, decimalPart: string } {
+		if (value.length === fraction + 1) {
+			return { wholePart: "-0", decimalPart: value.substr(1) };
+		}
+
+		const diffLen = value.length - (fraction + 1);
+		if (diffLen > 0) {
+			return { wholePart: "-" + value.substr(1, diffLen), decimalPart: value.substr(diffLen + 1) };
+		} else {
+			return { wholePart: "-0", decimalPart: value.substr(1).padStart(fraction, "0") };
+		}
 	}
 
 	export class UnreachableRoundMode extends Error {
@@ -20,6 +75,19 @@ namespace heplers {
 
 	export const valueRegExp = /^-?(0|[1-9][0-9]*)$/;
 }
+
+// export class Financial extends String {
+// 	public constructor(wrap: string) {
+// 		super(wrap);
+// 	}
+
+// 	public get value(): string {
+// 		return "1";
+// 	}
+// }
+
+// const a = new FinancialAddon("1.25");
+// console.log(a.value);
 
 export type Fraction = number;
 export namespace Fraction {
@@ -41,7 +109,8 @@ export namespace FinancialSettings {
 	export const enum ROUND_MODE {
 		CEIL = "CEIL",
 		FLOOR = "FLOOR",
-		ROUND = "ROUND"
+		ROUND = "ROUND",
+		TRUNC = "TRUNC"
 	}
 }
 export interface FinancialSettings {
@@ -358,7 +427,9 @@ export class Financial implements zxteam.Financial {
 	public static parse(settings: FinancialSettings, value: string): zxteam.Financial {
 		const separatorChar = settings.decimalSeparator;
 		const argsRegex = /^[+-]?\d+(\.\d+)?$/;
-		if (!argsRegex.test(value)) { throw new Error("Invalid financial value. Expected decimal string"); }
+		if (!argsRegex.test(value)) {
+			throw new Error("Invalid financial value. Expected decimal string");
+		}
 
 		let valueString;
 		let valueSplitToArray;
@@ -395,21 +466,92 @@ export class Financial implements zxteam.Financial {
 	 * An analog Math.round() for JS float
 	 */
 	public static round(num: zxteam.Financial, fraction: number): Financial {
-		if (!Fraction.isFraction(fraction)) {
-			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		Fraction.verifyFraction(fraction);
+
+		if (num.fraction <= fraction) { return { value: num.value, fraction: num.fraction }; }
+
+		const parts = heplers.splitParts(num);
+		const newDecimalPart = parts.decimalPart.substr(0, fraction);
+		const roundSymbol = Number.parseInt(parts.decimalPart.substr(fraction, 1));
+		if (fraction === 0) {
+			if (roundSymbol === 5) {
+				// We need one more symbol
+				if (heplers.isNegative(num)) {
+					if (parts.decimalPart.length === 1) {
+						return {
+							value: parts.wholePart,
+							fraction: 0
+						};
+					} else {
+						const ceilWholePart = BigInt(parts.wholePart) - 1n;
+						return {
+							value: ceilWholePart.toString(),
+							fraction
+						};
+					}
+				} else {
+					const ceilWholePart = BigInt(parts.wholePart) + 1n;
+					return {
+						value: ceilWholePart.toString(),
+						fraction
+					};
+				}
+			} else if (roundSymbol > 5) {
+				const ceilWholePart = BigInt(parts.wholePart) + 1n;
+				return {
+					value: ceilWholePart.toString(),
+					fraction
+				};
+			} else {
+				return {
+					value: parts.wholePart,
+					fraction: 0
+				};
+			}
+		} else {
+			if (roundSymbol === 5) {
+				// We need one more symbol
+				if (heplers.isNegative(num) && parts.decimalPart.length === fraction + 1) {
+					return {
+						value: heplers.concatValue(parts.wholePart, newDecimalPart.toString()),
+						fraction
+					};
+				} else {
+					const ceilDecimalPart = (BigInt(newDecimalPart) + 1n).toString();
+					if (ceilDecimalPart.length === newDecimalPart.length) {
+						return {
+							value: heplers.concatValue(parts.wholePart, ceilDecimalPart),
+							fraction
+						};
+					} else {
+						const ceilWholePart = (BigInt(parts.wholePart) + 1n).toString();
+						return {
+							value: heplers.concatValue(ceilWholePart, "0"),
+							fraction
+						};
+					}
+				}
+			} else if (roundSymbol > 5) {
+				const ceilDecimalPart = (BigInt(newDecimalPart) + 1n).toString();
+				if (ceilDecimalPart.length === newDecimalPart.length) {
+					return {
+						value: heplers.concatValue(parts.wholePart, ceilDecimalPart),
+						fraction
+					};
+				} else {
+					const ceilWholePart = (BigInt(parts.wholePart) + 1n).toString();
+					return {
+						value: heplers.concatValue(ceilWholePart, "0"),
+						fraction
+					};
+				}
+			} else {
+				return {
+					value: heplers.concatValue(parts.wholePart, newDecimalPart.toString()),
+					fraction
+				};
+			}
 		}
-
-		// if (num.value.length < 16) {
-		// 	const multiplier = Number("1".padEnd(fraction + 1, "0"));
-		// 	const roundNumber = Math.round(Financial.toFloat(num) * multiplier) / multiplier;
-		// 	return Financial.parse(roundNumber.toFixed(fraction));
-		// } else {
-		// 	// Сейчас делаю.
-		// 	const stringNum = Financial.toString(num);
-		// 	return {} as any;
-		// }
-
-		throw new Error("Not implemented yet");
 	}
 
 	public static subtract(left: zxteam.Financial, right: zxteam.Financial): Financial {
@@ -441,16 +583,29 @@ export class Financial implements zxteam.Financial {
 	}
 
 	public static toFloat(num: zxteam.Financial): number {
-		// const string = Financial.toString(num);
-		// return parseFloat(string);
+		const parts = heplers.splitParts(num);
 
-		throw new Error("Not implemented yet");
+		// const wholePart: number = Number.parseInt(parts.wholePart);
+		// const decimalPart: number = Number.parseInt(parts.decimalPart);
+
+		// if (Number.isSafeInteger(wholePart) && Number.isSafeInteger(decimalPart)) {
+		// 	const powDelimer = Math.pow(10, parts.decimalPart.length);
+		// 	const result = wholePart + decimalPart / powDelimer;
+		// }
+
+		return Number.parseFloat(`${parts.wholePart}.${parts.decimalPart}`);
 	}
 
-	public static toInt(num: zxteam.Financial): number {
-		//return Number.parseInt(Financial.toString(num));
+	public static toInt(settings: FinancialSettings, num: zxteam.Financial): number {
+		const intNum = Financial._rounding(settings, num, 0/*fraction*/);
 
-		throw new Error("Not implemented yet");
+		const wholePart: number = Number.parseInt(intNum.value);
+
+		if (!Number.isInteger(wholePart)) {
+			throw new Error("Overflow. The value cannot represent as Integer.");
+		}
+
+		return wholePart;
 	}
 
 	public static toString(settings: FinancialSettings, num: zxteam.Financial): string {
@@ -484,11 +639,32 @@ export class Financial implements zxteam.Financial {
 	public static floor(num: zxteam.Financial, fraction: Fraction): zxteam.Financial {
 		Fraction.verifyFraction(fraction);
 
-		// const multiplier = Number("1".padEnd(fraction + 1, "0"));
-		// const roundNumber = Math.floor(Financial.toFloat(num) * multiplier) / multiplier;
-		// return Financial.parse(roundNumber.toFixed(fraction));
+		if (num.fraction === fraction) { return { value: num.value, fraction }; }
 
-		throw new Error("Not implemented yet");
+		const parts = heplers.splitParts(num);
+
+		let newDecimalPart: string;
+		let roundSymbol: string;
+		if (num.fraction > fraction) {
+			newDecimalPart = parts.decimalPart.substr(0, fraction);
+			roundSymbol = parts.decimalPart.substr(fraction, 1);
+		} else {
+			newDecimalPart = parts.decimalPart.padEnd(fraction - num.fraction, "0");
+			roundSymbol = "0";
+		}
+
+		if (roundSymbol === "0") {
+			return {
+				value: `${parts.wholePart}${newDecimalPart}`,
+				fraction
+			};
+		} else {
+			const ceilWholePart = BigInt(parts.wholePart) - 1n;
+			return {
+				value: `${ceilWholePart}${newDecimalPart}`,
+				fraction
+			};
+		}
 	}
 
 	/**
@@ -497,21 +673,52 @@ export class Financial implements zxteam.Financial {
 	 * An analog Math.ceil() for JS float
 	 */
 	public static ceil(num: zxteam.Financial, fraction: Fraction): zxteam.Financial {
-		if (!Fraction.isFraction(fraction)) {
-			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		Fraction.verifyFraction(fraction);
+
+		if (num.fraction <= fraction) { return { value: num.value, fraction: num.fraction }; }
+
+		const parts = heplers.splitParts(num);
+
+		let newDecimalPart: string;
+		let roundSymbol: string;
+
+		newDecimalPart = parts.decimalPart.substr(0, fraction);
+		roundSymbol = parts.decimalPart.substr(fraction, 1);
+
+		if (roundSymbol === "0") {
+			return {
+				value: heplers.concatValue(parts.wholePart, newDecimalPart),
+				fraction
+			};
+		} else {
+			const ceilWholePart = BigInt(parts.wholePart) + 1n;
+			return {
+				value: `${ceilWholePart}${newDecimalPart}`,
+				fraction
+			};
 		}
-		const multiplier = Number("1".padEnd(fraction + 1, "0"));
-		const roundNumber = Math.ceil(Financial.toFloat(num) * multiplier) / multiplier;
-		return Financial.fromFloat(roundNumber, fraction);
 	}
 
 	public static trunc(num: zxteam.Financial, fraction: Fraction): zxteam.Financial {
-		if (!Fraction.isFraction(fraction)) {
-			throw new Error("Wrong argument fraction. Expected integer >= 0");
+		Fraction.verifyFraction(fraction);
+
+		if (num.fraction === fraction) { return { value: num.value, fraction }; }
+
+		const parts = heplers.splitParts(num);
+
+		if (num.fraction > fraction) {
+			const newDecimalPart = parts.decimalPart.substr(0, fraction);
+			return {
+				value: `${parts.wholePart}${newDecimalPart}`,
+				fraction
+			};
+		} else {
+			const newDecimalPart = parts.decimalPart.padEnd(fraction - num.fraction, "0");
+			return {
+				value: `${parts.wholePart}${newDecimalPart}`,
+				fraction
+			};
 		}
-		const multiplier = Number("1".padEnd(fraction + 1, "0"));
-		const roundNumber = Math.ceil(Financial.toFloat(num) * multiplier) / multiplier;
-		return Financial.fromFloat(roundNumber, fraction);
 	}
 
 	public static wrap(num: zxteam.Financial): zxteam.Financial {
@@ -536,6 +743,17 @@ export class Financial implements zxteam.Financial {
 		this.value = value;
 		this.fraction = fraction;
 	}
+
+	private static _rounding(settings: FinancialSettings, num: zxteam.Financial, fraction: Fraction): zxteam.Financial {
+		const { roundMode } = settings;
+		switch (roundMode) {
+			case FinancialSettings.ROUND_MODE.CEIL: return Financial.ceil(num, fraction);
+			case FinancialSettings.ROUND_MODE.FLOOR: return Financial.floor(num, fraction);
+			case FinancialSettings.ROUND_MODE.ROUND: return Financial.round(num, fraction);
+			case FinancialSettings.ROUND_MODE.TRUNC: return Financial.trunc(num, fraction);
+			default: throw new heplers.UnreachableRoundMode(roundMode);
+		}
+	}
 }
 
 export function setup(settings: FinancialSettings) {
@@ -554,7 +772,12 @@ export function setup(settings: FinancialSettings) {
 		},
 
 		ceil(num: any, fraction: Fraction): any {
-			throw new Error("Not implemented yet");
+			if (_.isString(num)) {
+				return Financial.toString(settings, Financial.ceil(Financial.parse(settings, num), fraction));
+			} else if (heplers.isFinancial(num)) {
+				return Financial.ceil(num, fraction);
+			}
+			throw new Error("Wrong arguments passed");
 		},
 
 		divide(left: any, right: any): any {
@@ -576,7 +799,12 @@ export function setup(settings: FinancialSettings) {
 		},
 
 		floor(num: any, fraction: Fraction): any {
-			throw new Error("Not implemented yet");
+			if (_.isString(num)) {
+				return Financial.toString(settings, Financial.floor(Financial.parse(settings, num), fraction));
+			} else if (heplers.isFinancial(num)) {
+				return Financial.floor(num, fraction);
+			}
+			throw new Error("Wrong arguments passed");
 		},
 
 		fromBigInt(value: BigInt): zxteam.Financial {
@@ -672,8 +900,6 @@ export function setup(settings: FinancialSettings) {
 		},
 
 		round(num: any, fraction: Fraction): any {
-			Fraction.verifyFraction(fraction);
-
 			if (_.isString(num) && _.isNumber(fraction)) {
 				return Financial.toString(settings, Financial.round(Financial.parse(settings, num), fraction));
 			} else if (heplers.isFinancial(num)) {
@@ -700,7 +926,7 @@ export function setup(settings: FinancialSettings) {
 
 		toInt(num: zxteam.Financial): number {
 			if (heplers.isFinancial(num)) {
-				return Financial.toInt(num);
+				return Financial.toInt(settings, num);
 			}
 			throw new Error("Wrong arguments passed");
 		},
@@ -713,7 +939,12 @@ export function setup(settings: FinancialSettings) {
 		},
 
 		trunc(num: any, fraction: Fraction): any {
-			throw new Error("Not implemented yet");
+			if (_.isString(num)) {
+				return Financial.toString(settings, Financial.trunc(Financial.parse(settings, num), fraction));
+			} else if (heplers.isFinancial(num)) {
+				return Financial.trunc(num, fraction);
+			}
+			throw new Error("Wrong arguments passed");
 		}
 	});
 	return instance;
@@ -725,3 +956,8 @@ export const DEFAULT_SETTINGS: FinancialSettings = Object.freeze({
 });
 export const financial: FinancialOperation = setup(DEFAULT_SETTINGS);
 export default financial;
+
+
+export const VISIBLE_FOR_TESTS = {
+	splitParts: heplers.splitParts
+};
