@@ -180,43 +180,6 @@ describe("Financial funtion tests", function () {
 	});
 
 	describe("Positive Test Cases", function () {
-
-		describe("multiply", function () {
-			positiveTestCases.multiply.forEach(multiplyCase => {
-				const [left, right, expectedResult] = multiplyCase;
-				const [expectedValue, expectedFraction] = expectedResult;
-				it(
-					// tslint:disable-next-line: max-line-length
-					`Should multiply values "${JSON.stringify(left)}" and "${JSON.stringify(right)}" to v:"${expectedValue}" and fraction:${expectedFraction}`,
-					function () {
-						const result = Financial.multiply(left, right);
-						assert.equal(result.value, expectedValue);
-						assert.equal(result.fraction, expectedFraction);
-					});
-			});
-		});
-		describe("parse", function () {
-			positiveTestCases.parse.forEach(parseCase => {
-				const [input, expectedResult] = parseCase;
-				const [expectedValue, expectedFraction] = expectedResult;
-				it(`Should parse string value "${input}" to v:"${expectedValue}" and fraction:${expectedFraction}`, function () {
-					const result = Financial.parse(input);
-					assert.equal(result.value, expectedValue);
-					assert.equal(result.fraction, expectedFraction);
-				});
-			});
-		});
-		describe("round", function () {
-			positiveTestCases.round.forEach(roundCase => {
-				const [input, newFraction, expectedResult] = roundCase;
-				it(`Should round financial "${JSON.stringify(input)}" for new fraction ${newFraction} to value:"${JSON.stringify(expectedResult)}"`,
-					function () {
-						const result = Financial.round(input, newFraction);
-						assert.equal(result.value, expectedResult.value);
-						assert.equal(result.fraction, expectedResult.fraction);
-					});
-			});
-		});
 		describe("truncDown", function () {
 			positiveTestCases.truncDown.forEach(truncDownCase => {
 				const [input, newFraction, expectedResult] = truncDownCase;
@@ -236,38 +199,6 @@ describe("Financial funtion tests", function () {
 						const result = Financial.truncUp(input, newFraction);
 						assert.equal(result.value, expectedResult.value);
 						assert.equal(result.fraction, expectedResult.fraction);
-					});
-			});
-		});
-
-		describe("lt", function () {
-			positiveTestCases.lt.forEach(ltCase => {
-				const [first, second, boolean] = ltCase;
-				it(`Should lt financial "${JSON.stringify(first)}" < fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
-					function () {
-						const result = Financial.lt(first, second);
-						assert.equal(result, boolean);
-					});
-			});
-		});
-		describe("lte", function () {
-			positiveTestCases.lte.forEach(lteCase => {
-				const [first, second, boolean] = lteCase;
-				it(`Should lte financial "${JSON.stringify(first)}" <= fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(boolean)}"`,
-					function () {
-						const result = Financial.lte(first, second);
-						assert.equal(result, boolean);
-					});
-			});
-		});
-		describe("mod", function () {
-			positiveTestCases.mod.forEach(modCase => {
-				const [first, second, result] = modCase;
-				it(`Should mod financial "${JSON.stringify(first)}" / fraction "${JSON.stringify(second)}" to value: "${JSON.stringify(result)}"`,
-					function () {
-						const modResult = Financial.mod(first, second);
-						assert.equal(modResult.fraction, result.fraction);
-						assert.equal(modResult.value, result.value);
 					});
 			});
 		});
@@ -637,16 +568,6 @@ describe("Financial funtion tests", function () {
 			const fin = new Financial(num.value, num.fraction);
 			const result = fin.toString();
 			assert.equal(result, "50");
-		});
-		it("Should be math functions work", function () {
-			const long = financial.parse("1323487763869.04896904726315");
-			const one = financial.parse("1");
-			const part = financial.parse("0.002");
-
-			const minus = financial.subtract(one, part);
-			const multiply = financial.multiply(long, minus);
-			assert.equal(multiply.value, "13208407883413108711091686237");
-			assert.equal(multiply.fraction, 16);
 		});
 	});
 

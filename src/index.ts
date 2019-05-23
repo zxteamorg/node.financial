@@ -179,8 +179,10 @@ export class Financial implements zxteam.Financial {
 			const lessRightFraction = (left.fraction > right.fraction) ? (left.fraction - right.fraction) : 0;
 			const lessleftFraction = (right.fraction > left.fraction) ? (right.fraction - left.fraction) : 0;
 
-			const leftFractionPlus = "1" + new Array(maxFraction + fraction + lessleftFraction).fill(0).join("");
-			const rightFractionPlus = "1" + new Array(maxFraction + lessRightFraction).fill(0).join("");
+			const leftFractionPlus = "1".padEnd(1 + maxFraction + fraction + lessleftFraction, "0");
+			const rightFractionPlus = "1".padEnd(1 + maxFraction + lessRightFraction, "0");
+			// const leftFractionPlus = "1" + new Array(maxFraction + fraction + lessleftFraction).fill(0).join("");
+			// const rightFractionPlus = "1" + new Array(maxFraction + lessRightFraction).fill(0).join("");
 
 			const friendlyLeftValue = bigLeftValue * BigInt(leftFractionPlus);
 			const friendlyRightValue = bigRightValue * BigInt(rightFractionPlus);
@@ -263,6 +265,10 @@ export class Financial implements zxteam.Financial {
 		// According to ECMA Section 8.5 - Numbers https://www.ecma-international.org/ecma-262/5.1/#sec-8.5
 		// IEEE-754 maximum integer value is +/- 9007199254740991
 
+		if (Financial.isZero(right) || Financial.isZero(left)) {
+			return Financial.ZERO;
+		}
+
 		const summaryLength = left.value.length + right.value.length;
 		if (summaryLength < 15) {
 			// 15 symbols total length is safe to multiply in IEEE-754 range
@@ -274,10 +280,12 @@ export class Financial implements zxteam.Financial {
 			// Use BigInt arithmetic instead
 			const friendlyLeftValue = BigInt(left.value);
 			const friendlyRightValue = BigInt(right.value);
-			const result = friendlyLeftValue * friendlyRightValue;
-			return new Financial(result.toString(), left.fraction + right.fraction);
-		}
 
+			const result = friendlyLeftValue * friendlyRightValue;
+			const value = result.toString();
+			const fraction = left.fraction + right.fraction;
+			return { value, fraction };
+		}
 	}
 
 	public static parse(value: string): zxteam.Financial {
@@ -323,9 +331,17 @@ export class Financial implements zxteam.Financial {
 		if (!heplers.verifyFraction(fraction)) {
 			throw new Error("Wrong argument fraction. Expected integer >= 0");
 		}
-		const multiplier = Number("1".padEnd(fraction + 1, "0"));
-		const roundNumber = Math.round(Financial.toFloat(num) * multiplier) / multiplier;
-		return Financial.parse(roundNumber.toFixed(fraction));
+
+		if (num.value.length < 16) {
+			const multiplier = Number("1".padEnd(fraction + 1, "0"));
+			const roundNumber = Math.round(Financial.toFloat(num) * multiplier) / multiplier;
+			return Financial.parse(roundNumber.toFixed(fraction));
+		} else {
+			// Сейчас делаю.
+			const stringNum = Financial.toString(num);
+			return {} as any;
+		}
+
 	}
 
 	public static subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial {
