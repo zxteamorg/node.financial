@@ -1,24 +1,26 @@
 import { assert } from "chai";
 
 import { Financial as FinancialLike } from "@zxteam/contract";
-import { Financial } from "../src/index";
+import { Financial, FinancialSettings, DEFAULT_SETTINGS } from "../src/index";
+
+const settings: FinancialSettings = DEFAULT_SETTINGS;
 
 describe("Financial examples funtion tests", function () {
 	it("Financial.add(left, right)", () => {
-		const left = Financial.parse("200.3");
-		const right = Financial.parse("600.5");
+		const left = Financial.parse(settings, "200.3");
+		const right = Financial.parse(settings, "600.5");
 		const result = Financial.add(left, right); // return Financial
 		// console.log(result.toString());            // "800.8"
 		// console.log(result.toFloat());             // 800.8
 
-		assert.equal(Financial.toString(result), "800.8");
+		assert.equal(Financial.toString(settings, result), "800.8");
 		assert.equal(Financial.toFloat(result), 800.8);
 		assert.equal(result.value, "8008");
 		assert.equal(result.fraction, 1);
 	});
 	it("Financial.equals(left, right)", () => {
-		const left = Financial.parse("200.3");
-		const right = Financial.parse("600.5");
+		const left = Financial.parse(settings, "200.3");
+		const right = Financial.parse(settings, "600.5");
 		const result = Financial.equals(left, right); // return boolean
 		// console.log(result);                        // false
 
@@ -33,7 +35,7 @@ describe("Financial examples funtion tests", function () {
 
 		assert.equal(simpleFinancial.value, "15055");
 		assert.equal(simpleFinancial.fraction, fraction);
-		assert.equal(Financial.toString(simpleFinancial), value.toString());
+		assert.equal(Financial.toString(settings, simpleFinancial), value.toString());
 		assert.equal(Financial.toFloat(simpleFinancial), value);
 	});
 	it("Financial.fromInt(value)", () => {
@@ -44,46 +46,35 @@ describe("Financial examples funtion tests", function () {
 
 		assert.equal(simpleFinancial.value, "42");
 		assert.equal(simpleFinancial.fraction, 0);
-		assert.equal(Financial.toString(simpleFinancial), value.toString());
+		assert.equal(Financial.toString(settings, simpleFinancial), value.toString());
 		assert.equal(Financial.toFloat(simpleFinancial), value);
 	});
 	it("Financial.fromString(value)", () => {
 		const value = "101.5";
-		const simpleFinancial = Financial.parse(value);
+		const simpleFinancial = Financial.parse(settings, value);
 		// console.log(simpleFinancial.toString());   // "101.5"
 		// console.log(simpleFinancial.toFloat());    // 101.5
 
 		assert.equal(simpleFinancial.value, "1015");
 		assert.equal(simpleFinancial.fraction, 1);
-		assert.equal(Financial.toString(simpleFinancial), value);
+		assert.equal(Financial.toString(settings, simpleFinancial), value);
 		assert.equal(Financial.toFloat(simpleFinancial), parseFloat(value));
 	});
 	it("Financial.gt(left, right)", () => {
-		const left = Financial.parse("200.3");
-		const right = Financial.parse("600.5");
+		const left = Financial.parse(settings, "200.3");
+		const right = Financial.parse(settings, "600.5");
 		const result = Financial.gt(left, right); // left > right = false
 		// console.log(result);                   // false
 
 		assert.equal(result, false);
 	});
 	it("Financial.gte(left, right)", () => {
-		const left = Financial.parse("200.3");
-		const right = Financial.parse("600.5");
+		const left = Financial.parse(settings, "200.3");
+		const right = Financial.parse(settings, "600.5");
 		const result = Financial.gte(left, right); // left >= right = false
 		// console.log(result);                    // false
 
 		assert.equal(result, false);
-	});
-	it("Financial.isFinancial(probablyFinancal)", () => {
-		const financialLike = { value: "5", fraction: 0 };
-		const financialFake = {};
-		const resultTrue = Financial.isFinancial(financialLike);
-		const resultFalse = Financial.isFinancial(financialFake);
-		// console.log(resultTrue);  // true
-		// console.log(resultFalse); // false
-
-		assert.equal(resultTrue, true);
-		assert.equal(resultFalse, false);
 	});
 	it("Financial.isZero(num)", () => {
 		const zero = { value: "0", fraction: 0 };
@@ -93,11 +84,11 @@ describe("Financial examples funtion tests", function () {
 		assert.equal(isZero, true);
 	});
 	it("Financial.mod(left, right)", () => {
-		const left = Financial.parse("200.3");
-		const right = Financial.parse("600.5");
+		const left = Financial.parse(settings, "200.3");
+		const right = Financial.parse(settings, "600.5");
 		const remainder = Financial.mod(left, right);
 		console.log(remainder); //
-		Financial.toString(remainder);
+		Financial.toString(settings, remainder);
 	});
 });
 
@@ -106,74 +97,74 @@ describe("Financial funtion tests", function () {
 		it("Should avoid approximation as number (multiply)", function () {
 			const totalMoney = Financial.fromFloat(600.90, 2);
 			const pricePerItem = Financial.fromFloat(200.30, 2);
-			const buyItems = Financial.parse("3");
+			const buyItems = Financial.parse(settings, "3");
 			const result = Financial.multiply(pricePerItem, buyItems);
 
 			assert.isTrue(Financial.equals(totalMoney, result));
-			assert.equal(Financial.toString(result), "600.9");
+			assert.equal(Financial.toString(settings, result), "600.9");
 		});
 		it("Should avoid approximation as string (multiply)", function () {
-			const totalMoney = Financial.parse("600.90");
-			const pricePerItem = Financial.parse("200.30");
-			const buyItems = Financial.parse("3");
+			const totalMoney = Financial.parse(settings, "600.90");
+			const pricePerItem = Financial.parse(settings, "200.30");
+			const buyItems = Financial.parse(settings, "3");
 			const result = Financial.multiply(pricePerItem, buyItems);
 
 			assert.isTrue(Financial.equals(totalMoney, result));
-			assert.equal(Financial.toString(result), "600.9");
+			assert.equal(Financial.toString(settings, result), "600.9");
 		});
 		it("Should work not equalsTo two financial", function () {
-			const first = Financial.parse("600.90");
-			const second = Financial.parse("200.30");
+			const first = Financial.parse(settings, "600.90");
+			const second = Financial.parse(settings, "200.30");
 			assert.isFalse(Financial.equals(first, second));
 		});
 		it("Should avoid approximation as number (divide)", function () {
 			const totalMoney = Financial.fromFloat(600.90, 2);
 			const pricePerItem = Financial.fromFloat(200.30, 2);
-			const buyItems = Financial.parse("3");
-			const result = Financial.divide(totalMoney, buyItems);
+			const buyItems = Financial.parse(settings, "3");
+			const result = Financial.divide(settings, totalMoney, buyItems);
 
 			assert.isTrue(Financial.equals(pricePerItem, result));
-			assert.equal(Financial.toString(result), "200.3");
+			assert.equal(Financial.toString(settings, result), "200.3");
 		});
 		it("Should avoid approximation as string (divide)", function () {
-			const totalMoney = Financial.parse("600.90");
-			const pricePerItem = Financial.parse("200.30");
-			const buyItems = Financial.parse("3");
-			const result = Financial.divide(totalMoney, buyItems);
+			const totalMoney = Financial.parse(settings, "600.90");
+			const pricePerItem = Financial.parse(settings, "200.30");
+			const buyItems = Financial.parse(settings, "3");
+			const result = Financial.divide(settings, totalMoney, buyItems);
 
 			assert.isTrue(Financial.equals(pricePerItem, result));
-			assert.equal(Financial.toString(result), "200.3");
+			assert.equal(Financial.toString(settings, result), "200.3");
 		});
 		it("Should avoid approximation as string (PLUS)", function () {
-			const totalMoney = Financial.parse("600.90");
-			const pricePerItem = Financial.parse("200.3005");
+			const totalMoney = Financial.parse(settings, "600.90");
+			const pricePerItem = Financial.parse(settings, "200.3005");
 
 			const result = Financial.add(totalMoney, pricePerItem);
 
-			assert.equal(Financial.toString(result), "801.2005");
+			assert.equal(Financial.toString(settings, result), "801.2005");
 		});
 		it("Should avoid digits limit (plus)", function () {
-			const first = Financial.parse("123456789012345678901234567890");
-			const second = Financial.parse("1");
+			const first = Financial.parse(settings, "123456789012345678901234567890");
+			const second = Financial.parse(settings, "1");
 			const result = Financial.add(first, second);
-			assert.equal(Financial.toString(result), "123456789012345678901234567891");
+			assert.equal(Financial.toString(settings, result), "123456789012345678901234567891");
 		});
 		it("Should avoid digits limit and fraction (plus)", function () {
-			const first = Financial.parse("123456789012345678901234567890.01");
-			const second = Financial.parse("1.002");
+			const first = Financial.parse(settings, "123456789012345678901234567890.01");
+			const second = Financial.parse(settings, "1.002");
 			const result = Financial.add(first, second);
 			assert.equal(result.value, "123456789012345678901234567891012");
 			assert.equal(result.fraction, 3);
 		});
 		it("Should avoid digits limit (minus)", function () {
-			const first = Financial.parse("123456789012345678901234567890");
-			const second = Financial.parse("1");
+			const first = Financial.parse(settings, "123456789012345678901234567890");
+			const second = Financial.parse(settings, "1");
 			const result = Financial.subtract(first, second);
-			assert.equal(Financial.toString(result), "123456789012345678901234567889");
+			assert.equal(Financial.toString(settings, result), "123456789012345678901234567889");
 		});
 		it("Should avoid digits limit and fraction (minus)", function () {
-			const first = Financial.parse("123456789012345678901234567890.01");
-			const second = Financial.parse("1.001");
+			const first = Financial.parse(settings, "123456789012345678901234567890.01");
+			const second = Financial.parse(settings, "1.001");
 			const result = Financial.subtract(first, second);
 			assert.equal(result.value, "123456789012345678901234567889009");
 			assert.equal(result.fraction, 3);
@@ -182,17 +173,17 @@ describe("Financial funtion tests", function () {
 	describe("Financial funtion converting tests", function () {
 		it("Should avoid approximation as number (toString)", function () {
 			const money = Financial.fromFloat(600.90, 2);
-			const toString = Financial.toString(money);
+			const toString = Financial.toString(settings, money);
 			assert.equal(toString, "600.9");
 		});
 		it("Should avoid approximation as number (toString)", function () {
 			const money = Financial.fromFloat(600, 0);
-			const toString = Financial.toString(money);
+			const toString = Financial.toString(settings, money);
 			assert.equal(toString, "600");
 		});
 		it("Should avoid approximation as string (toString)", function () {
-			const money = Financial.parse("600.90");
-			const toString = Financial.toString(money);
+			const money = Financial.parse(settings, "600.90");
+			const toString = Financial.toString(settings, money);
 			assert.equal(toString, "600.9");
 		});
 		it("Should avoid approximation as number (equalsTo)", function () {
@@ -202,13 +193,13 @@ describe("Financial funtion tests", function () {
 			assert.isTrue(Financial.equals(someMoney, money));
 		});
 		it("Should avoid approximation as string and number (equalsTo)", function () {
-			const money = Financial.parse("600.90");
+			const money = Financial.parse(settings, "600.90");
 			const someMoney = Financial.fromFloat(600.90, 2);
 			assert.isTrue(Financial.equals(money, someMoney));
 		});
 		it("Should avoid approximation as string (equalsTo)", function () {
-			const money = Financial.parse("600.90");
-			const someMoney = Financial.parse("600.90");
+			const money = Financial.parse(settings, "600.90");
+			const someMoney = Financial.parse(settings, "600.90");
 			assert.isTrue(Financial.equals(money, someMoney));
 		});
 		it("Should avoid approximation as number (equalsTo)", function () {
@@ -222,17 +213,17 @@ describe("Financial funtion tests", function () {
 			assert.equal(numberMoney, 600.90);
 		});
 		it("Should avoid approximation as string (toFloat)", function () {
-			const money = Financial.parse("600.90");
+			const money = Financial.parse(settings, "600.90");
 			const numberMoney = Financial.toFloat(money);
 			assert.equal(numberMoney, 600.90);
 		});
 		it("Should avoid approximation as string (toInt)", function () {
-			const money = Financial.parse("600");
+			const money = Financial.parse(settings, "600");
 			const numberMoney = Financial.toInt(money);
 			assert.equal(numberMoney, 600);
 		});
 		it("Should avoid approximation as string 10", function () {
-			const money = Financial.parse("10");
+			const money = Financial.parse(settings, "10");
 			const numberMoney = Financial.toInt(money);
 			assert.equal(numberMoney, 10);
 		});
@@ -242,38 +233,38 @@ describe("Financial funtion tests", function () {
 			assert.equal(numberMoney, 600);
 		});
 		it("Should be equalsTo 1.90000000 and 1.9", function () {
-			const a = Financial.parse("1.90000000");
-			const b = Financial.parse("1.9");
+			const a = Financial.parse(settings, "1.90000000");
+			const b = Financial.parse(settings, "1.9");
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be equalsTo 0.00000012 and 12", function () {
-			const a = Financial.parse("0.00000012");
+			const a = Financial.parse(settings, "0.00000012");
 			const b = Financial.fromFloat(0.00000012, 8);
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be equalsTo -0.00000012 and -12", function () {
-			const a = Financial.parse("-0.00000012");
+			const a = Financial.parse(settings, "-0.00000012");
 			const b = Financial.fromFloat(-0.00000012, 8);
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be equalsTo 0.00056000 as string and 0.00056000 as number", function () {
-			const a = Financial.parse("0.00056000");
+			const a = Financial.parse(settings, "0.00056000");
 			const b = Financial.fromFloat(0.00056000, 8);
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be equalsTo 0.000012 and 12", function () {
-			const a = Financial.parse("0.000012");
+			const a = Financial.parse(settings, "0.000012");
 			const b = Financial.fromFloat(0.000012, 6);
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be equalsTo -0.000012 and -12", function () {
-			const a = Financial.parse("-0.000012");
+			const a = Financial.parse(settings, "-0.000012");
 			const b = Financial.fromFloat(-0.000012, 6);
 			assert.isTrue(Financial.equals(a, b));
 		});
 		it("Should be skip two last char 89", function () {
 			const a = Financial.fromFloat(1.9123456789, 8);
-			assert.equal(Financial.toString(a), "1.91234568");
+			assert.equal(Financial.toString(settings, a), "1.91234568");
 			assert.equal(Financial.toFloat(a), 1.91234568);
 		});
 		it("Should work FinancialLike value: 1000001001, fraction: 8 toString()", function () {
@@ -282,7 +273,7 @@ describe("Financial funtion tests", function () {
 				fraction: 8
 			};
 			const newFinacial = Financial.wrap(financialLike);
-			const toString = Financial.toString(newFinacial);
+			const toString = Financial.toString(settings, newFinacial);
 			assert.equal(toString, "10.00001001");
 		});
 		it("Should work FinancialLike value: -1000001001, fraction: 8 toFloat()", function () {

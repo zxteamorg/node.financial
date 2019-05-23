@@ -39,7 +39,7 @@
 	"homepage": "https://github.com/zxteamorg/financial.js#readme",
 	"scripts": {
 		"build": "zxbuild clean dist",
-		"test": "nyc --exclude submodules --exclude test --reporter=lcov --extension=\".ts\" --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive",
+		"test": "nyc --exclude test --extension=\".ts\" --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive",
 		"test:only": "mocha --require source-map-support/register \"test/**/*.test.js\" --recursive",
 		"build-and-test": "npm run build && npm run test"
 	},

@@ -5,9 +5,7 @@ describe("Financial examples function add", function () {
 	it("financial.add(left: Financial, right: Financial): Financial", () => {
 		const left = financial.parse("200.3");
 		const right = financial.parse("600.5");
-		const result = financial.add(left, right); // return Financial
-		// console.log(result.toString());         // "800.8"
-		// console.log(result.toFloat());          // 800.8
+		const result = financial.add(left, right);
 
 		assert.equal(financial.toString(result), "800.8");
 		assert.equal(financial.toFloat(result), 800.8);
