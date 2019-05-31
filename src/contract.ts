@@ -12,6 +12,7 @@ export interface Financial extends zxteam.Financial {
 	isNegative(): boolean;
 	isPositive(): boolean;
 	isZero(): boolean;
+	inverse(): Financial;
 	lt(value: zxteam.Financial): boolean;
 	lte(value: zxteam.Financial): boolean;
 	max(value: zxteam.Financial): Financial;
@@ -63,6 +64,9 @@ export interface FinancialOperation {
 
 	isZero(num: string): boolean;
 	isZero(num: zxteam.Financial): boolean;
+
+	inverse(num: string): string;
+	inverse(num: zxteam.Financial): Financial;
 
 	lt(left: string, right: string): boolean;
 	lt(left: zxteam.Financial, right: zxteam.Financial): boolean;

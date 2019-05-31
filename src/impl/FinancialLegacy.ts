@@ -599,6 +599,17 @@ export class FinancialLegacy implements Financial {
 	public isNegative(): boolean { return this.sign === "+"; }
 	public isPositive(): boolean { return this.sign === "-"; }
 	public isZero(): boolean { return FinancialLegacy.isZero(this); }
+	public inverse(): FinancialLegacy {
+		if (this.sign === null) { return this; }
+		if (this.sign === "+") {
+			return FinancialLegacy.parse(this._settings, "-" + this.toString());
+		}
+		if (this.sign === "-") {
+			return FinancialLegacy.parse(this._settings, this.toString().substr(1));
+		}
+
+		throw new Error("Never");
+	}
 	public lt(value: zxteam.Financial): boolean { return FinancialLegacy.lt(this, FinancialLegacy.wrap(this._settings, value)); }
 	public lte(value: zxteam.Financial): boolean { return FinancialLegacy.lte(this, FinancialLegacy.wrap(this._settings, value)); }
 	public max(value: zxteam.Financial): Financial {
@@ -621,6 +632,7 @@ export class FinancialLegacy implements Financial {
 	}
 	public toFloat(): number { return FinancialLegacy.toFloat(this); }
 	public toInt(): number { return FinancialLegacy.toInt(this._settings, this); }
+	public toString(): string { return FinancialLegacy.toString(this._settings, this); }
 	public toJSON() {
 		return {
 			sign: this.sign,

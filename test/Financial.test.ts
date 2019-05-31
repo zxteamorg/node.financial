@@ -919,5 +919,19 @@ describe("Financial funtion tests", function () {
 			const s = JSON.stringify(v);
 			assert.equal(s, "{\"sign\":\"-\",\"whole\":\"123\",\"fractional\":\"456789\"}");
 		});
+		it("Should inverse()", function () {
+			const v = Financial.parse(settings, "-123.456789");
+			const s = v.inverse();
+			assert.equal(s.sign, "+");
+			assert.equal(s.whole, "123");
+			assert.equal(s.fractional, "456789");
+		});
+		it("Should inverse()", function () {
+			const v = Financial.parse(settings, "123.456789");
+			const s = v.inverse();
+			assert.equal(s.sign, "-");
+			assert.equal(s.whole, "123");
+			assert.equal(s.fractional, "456789");
+		});
 	});
 });

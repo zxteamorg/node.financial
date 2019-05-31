@@ -122,6 +122,17 @@ export function setup(settings: Settings): FinancialOperation {
 			throw new Error("Wrong arguments passed");
 		},
 
+		inverse(num: any): any {
+			if (
+				(_.isString(num)) ||
+				(FinancialBase.isFinancial(num))
+			) {
+				return wrap(num).inverse();
+			}
+
+			throw new Error("Wrong arguments passed");
+		},
+
 		lt(left: any, right: any): boolean {
 			if (
 				(_.isString(left) && _.isString(right)) ||
