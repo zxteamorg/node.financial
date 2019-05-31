@@ -1,6 +1,7 @@
 import { Financial } from "@zxteam/contract";
 import { assert } from "chai";
-import financial, { Fraction } from "../../src/index";
+import financial from "../../src/index";
+import { Fraction } from "../../src/Fraction";
 
 describe("Financial examples function ceil", function () {
 
