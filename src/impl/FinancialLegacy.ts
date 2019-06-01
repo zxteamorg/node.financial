@@ -555,8 +555,8 @@ export class FinancialLegacy implements Financial {
 			this.value = "0";
 			this.fraction = 0;
 			this.sign = null;
-			this.whole = "0",
-				this.fractional = "";
+			this.whole = "0";
+			this.fractional = "0";
 			return;
 		} else {
 			while (fraction > 0 && value.length > 1 && value.endsWith("0")) {
@@ -574,7 +574,9 @@ export class FinancialLegacy implements Financial {
 			}
 			this.sign = "-";
 			this.whole = value.substr(1, (value.length - 1) - fraction);
+			if (this.whole === "") { this.whole = "0"; }
 			this.fractional = value.substr((value.length - 1) - fraction + 1);
+			if (this.fractional === "") { this.fractional = "0"; }
 		} else {
 			if (value.length <= fraction) {
 				const pads = "".padEnd(fraction - value.length, "0");
@@ -582,7 +584,9 @@ export class FinancialLegacy implements Financial {
 			}
 			this.sign = "+";
 			this.whole = value.substr(0, value.length - fraction);
+			if (this.whole === "") { this.whole = "0"; }
 			this.fractional = value.substr(value.length - fraction);
+			if (this.fractional === "") { this.fractional = "0"; }
 		}
 	}
 

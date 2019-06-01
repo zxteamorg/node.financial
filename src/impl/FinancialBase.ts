@@ -5,14 +5,21 @@ import * as _ from "lodash";
 import { Settings } from "../contract";
 
 export abstract class FinancialBase implements zxteam.Financial {
-	public static readonly FinancialNumberRegExp = /^(-|\+?)(0|[1-9][0-9]*)(\\.[0-9]*[1-9])?$/;
+	public static readonly FinancialNumberRegExp = /^(-|\+?)(0|[1-9][0-9]*)(\.\d+)?$/;
 	public static readonly FinancialWholePartRegex = /^(0|[1-9][0-9]*)$/;
-	public static readonly FinancialFractionalPartRegex = /^([0-9]*[1-9])$/;
+	public static readonly FinancialFractionalPartRegex = /^(0|[0-9]*[1-9])$/;
 
 	public static parse(settings: Settings, num: string): zxteam.Financial {
-		const matches = FinancialBase.FinancialNumberRegExp.exec(num);
-		if (matches !== null && matches.length === 3) {
+		const matches = num.match(FinancialBase.FinancialNumberRegExp);
+		if (matches !== null && matches.length === 4) {
 			//
+			const sign = matches[1] === "-" ? "-" : "+";
+			const whole = matches[2];
+			const fractional = matches[3] !== undefined ? trimEndZeros(matches[3].substr(1)) : "0";
+
+			return {
+				sign, whole, fractional
+			};
 		}
 
 		throw new Error("Invalid financial value. Expected decimal string");
@@ -60,4 +67,12 @@ export abstract class FinancialBase implements zxteam.Financial {
 	public fractional: string;
 
 	public abstract round(fraction: number): FinancialBase;
+}
+
+
+function trimEndZeros(value: string): string {
+	while (value.length > 1 && value[value.length - 1] === "0") {
+		value = value.substr(0, value.length - 1);
+	}
+	return value;
 }
