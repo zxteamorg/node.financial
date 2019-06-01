@@ -933,5 +933,19 @@ describe("Financial funtion tests", function () {
 			assert.equal(s.whole, "123");
 			assert.equal(s.fractional, "456789");
 		});
+		it("Should round()", function () {
+			const v = Financial.parse(settings, "0.00000977422");
+			const s = v.round(8, zxteam.Financial.RoundMode.Round);
+			assert.equal(s.sign, "+");
+			assert.equal(s.whole, "0");
+			assert.equal(s.fractional, "00000977");
+		});
+		it("Should round(0.00001415903101129128)", function () {
+			const v = Financial.parse(settings, "0.00001415903101129128");
+			const s = v.round(8, zxteam.Financial.RoundMode.Round);
+			assert.equal(s.sign, "+");
+			assert.equal(s.whole, "0");
+			assert.equal(s.fractional, "00001416");
+		});
 	});
 });

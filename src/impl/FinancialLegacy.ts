@@ -282,7 +282,7 @@ export class FinancialLegacy implements Financial {
 							0
 						);
 					} else {
-						const ceilWholePart = BigInt(num.whole) - 1n;
+						const ceilWholePart = BigInt(num.whole) + 1n;
 						return new FinancialLegacy(
 							settings,
 							ceilWholePart.toString(),
@@ -339,7 +339,7 @@ export class FinancialLegacy implements Financial {
 				}
 			} else if (roundSymbol > 5) {
 				const ceilDecimalPart = (BigInt(newDecimalPart) + 1n).toString();
-				if (ceilDecimalPart.length === newDecimalPart.length) {
+				if (ceilDecimalPart.length <= newDecimalPart.length) {
 					return new FinancialLegacy(
 						settings,
 						heplers.concatValue(num.whole, ceilDecimalPart),
@@ -356,7 +356,7 @@ export class FinancialLegacy implements Financial {
 			} else {
 				return new FinancialLegacy(
 					settings,
-					heplers.concatValue(num.whole, newDecimalPart.toString()),
+					heplers.trimStartZeros(heplers.concatValue(num.whole, newDecimalPart.toString())),
 					fraction
 				);
 			}
@@ -568,8 +568,8 @@ export class FinancialLegacy implements Financial {
 		this.value = value;
 		this.fraction = fraction;
 		if (value.startsWith("-")) {
-			if (value.length <= fraction) {
-				const pads = "".padStart(fraction - value.length, "0");
+			if ((value.length - 1) <= fraction) {
+				const pads = "".padStart(fraction - (value.length - 1), "0");
 				value = "-" + pads + value.substr(1);
 			}
 			this.sign = "-";

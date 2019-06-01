@@ -3,6 +3,7 @@ import * as zxteam from "@zxteam/contract";
 import * as _ from "lodash";
 
 import { Settings } from "../contract";
+import * as heplers from "../heplers";
 
 export abstract class FinancialBase implements zxteam.Financial {
 	public static readonly FinancialNumberRegExp = /^(-|\+?)(0|[1-9][0-9]*)(\.\d+)?$/;
@@ -15,7 +16,7 @@ export abstract class FinancialBase implements zxteam.Financial {
 			//
 			const sign = matches[1] === "-" ? "-" : "+";
 			const whole = matches[2];
-			const fractional = matches[3] !== undefined ? trimEndZeros(matches[3].substr(1)) : "0";
+			const fractional = matches[3] !== undefined ? heplers.trimEndZeros(matches[3].substr(1)) : "0";
 
 			return {
 				sign, whole, fractional
@@ -70,9 +71,3 @@ export abstract class FinancialBase implements zxteam.Financial {
 }
 
 
-function trimEndZeros(value: string): string {
-	while (value.length > 1 && value[value.length - 1] === "0") {
-		value = value.substr(0, value.length - 1);
-	}
-	return value;
-}

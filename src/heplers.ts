@@ -4,6 +4,21 @@ import * as _ from "lodash";
 
 import { Fraction } from "./Fraction";
 
+export function trimStartZeros(value: string): string {
+	while (value.length > 1 && value[0] === "0") {
+		value = value.substr(1);
+	}
+	return value;
+}
+
+
+export function trimEndZeros(value: string): string {
+	while (value.length > 1 && value[value.length - 1] === "0") {
+		value = value.substr(0, value.length - 1);
+	}
+	return value;
+}
+
 
 export function concatValue(wholePart: string, decimalPart: string): string {
 	if (wholePart === "0") {
