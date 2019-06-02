@@ -1,5 +1,5 @@
 import { assert } from "chai";
-import { Financial } from "../../src/index";
+import { Financial } from "../src/index";
 import * as zxteam from "@zxteam/contract";
 
 interface TestCases {

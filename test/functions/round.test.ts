@@ -2,14 +2,25 @@
 import * as zxteam from "@zxteam/contract";
 
 import { assert } from "chai";
-import { financial } from "../../src/index";
+
+import { setup } from "../../src/index";
+
+const financial = setup({
+	backend: "string",
+	decimalSeparator: ".",
+	defaultRoundOpts: {
+		fractionalDigits: 10,
+		roundMode: zxteam.Financial.RoundMode.Round
+	}
+});
 
 interface TestCases {
-	positive: Array<[zxteam.Financial/*given*/, number/*round fractional*/, zxteam.Financial/*expected result*/]>;
+	roundMode: Array<[zxteam.Financial/*given*/, number/*round fractional*/, zxteam.Financial/*expected result*/]>;
+	truncMode: Array<[zxteam.Financial/*given*/, number/*round fractional*/, zxteam.Financial/*expected result*/]>;
 }
 
 const testCases: TestCases = {
-	positive: [
+	roundMode: [
 		[{ sign: "+", whole: "1", fractional: "551" }, 8, { sign: "+", whole: "1", fractional: "551" }],
 		[{ sign: "-", whole: "123", fractional: "951" }, 1, { sign: "-", whole: "124", fractional: "0" }],  // Float => Float, round-down, Math.round(-1239.51) => -1240
 		[{ sign: "+", whole: "123", fractional: "951" }, 1, { sign: "+", whole: "124", fractional: "0" }],  // Float => Float, round-up, Math.round(1239.51) => 1240
@@ -51,17 +62,33 @@ const testCases: TestCases = {
 		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "45345" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "5" }],
 		[{ sign: "+", whole: "0", fractional: "00001415903101129128" }, 8, { sign: "+", whole: "0", fractional: "00001416" }],
 		[{ sign: "+", whole: "0", fractional: "037060335" }, 8, { sign: "+", whole: "0", fractional: "03706034" }]
+	],
+	truncMode: [
+		[{ sign: "+", whole: "0", fractional: "018785799" }, 8, { sign: "+", whole: "0", fractional: "01878579" }],
+		[{ sign: "+", whole: "0", fractional: "0528" }, 8, { sign: "+", whole: "0", fractional: "0528" }]
 	]
 };
 
 describe("round", function () {
-	testCases.positive.forEach(roundCase => {
+	testCases.roundMode.forEach(roundCase => {
 		const [input, newFraction, expectedResult] = roundCase;
 		it(`Should round "${JSON.stringify(input)}" for new fractional ${newFraction} to whole:"${JSON.stringify(expectedResult)}"`,
 			function () {
 				const result = financial.round(input, newFraction, zxteam.Financial.RoundMode.Round);
 				assert.equal(result.whole, expectedResult.whole);
 				assert.equal(result.fractional, expectedResult.fractional);
-			});
+			}
+		);
+	});
+	testCases.truncMode.forEach(roundCase => {
+		const [input, newFraction, expectedResult] = roundCase;
+		it(`Should trunc "${JSON.stringify(input)}" for new fractional ${newFraction} to whole:"${JSON.stringify(expectedResult)}"`,
+			function () {
+				const result = financial.round(input, newFraction, zxteam.Financial.RoundMode.Trunc);
+				assert.equal(result.sign, expectedResult.sign);
+				assert.equal(result.whole, expectedResult.whole);
+				assert.equal(result.fractional, expectedResult.fractional);
+			}
+		);
 	});
 });

@@ -10,6 +10,8 @@ import { BigIntFinancial } from "./impl/BigIntFinancial";
 import { FinancialBase } from "./impl/FinancialBase";
 import { FinancialLegacy } from "./impl/FinancialLegacy";
 
+export * from "./contract";
+
 export function setup(settings: Settings): FinancialOperation {
 	const wrap: (num: any) => Financial = (function () {
 		switch (settings.backend) {
@@ -253,8 +255,10 @@ export function setup(settings: Settings): FinancialOperation {
 export const DEFAULT_SETTINGS: Settings = Object.freeze({
 	backend: "string",
 	decimalSeparator: ".",
-	arithmeticMaxFractionalDigits: 32,
-	arithmeticRoundMode: zxteam.Financial.RoundMode.Round
+	defaultRoundOpts: {
+		fractionalDigits: 32,
+		roundMode: zxteam.Financial.RoundMode.Round
+	}
 });
 export const financial: FinancialOperation = setup(DEFAULT_SETTINGS);
 export default financial;

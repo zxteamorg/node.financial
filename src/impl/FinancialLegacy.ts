@@ -85,7 +85,7 @@ export class FinancialLegacy implements Financial {
 		}
 
 		const maxFraction: number = Math.max(left.fraction, right.fraction);
-		const fraction: Fraction = Math.max(maxFraction, settings.arithmeticMaxFractionalDigits);
+		const fraction: Fraction = Math.max(maxFraction, settings.defaultRoundOpts.fractionalDigits);
 
 		const summaryLength = left.value.length + right.value.length;
 		if (summaryLength < 15) {
@@ -94,13 +94,13 @@ export class FinancialLegacy implements Financial {
 
 			const result: number = friendlyLeft / friendlyRight;
 
-			const stringResult = result.toFixed(settings.arithmeticMaxFractionalDigits + 1).toString();
+			const stringResult = result.toFixed(settings.defaultRoundOpts.fractionalDigits + 1).toString();
 			const separator = settings.decimalSeparator;
 			const splitResult = stringResult.split(separator);
-			const value = splitResult[0] + separator + splitResult[1].substr(0, settings.arithmeticMaxFractionalDigits);
-			// const value: string = result.toFixed(settings.arithmeticMaxFractionalDigits);
+			const value = splitResult[0] + separator + splitResult[1].substr(0, settings.defaultRoundOpts.fractionalDigits);
+			// const value: string = result.toFixed(settings.defaultRoundOpts.fractionalDigits);
 			return FinancialLegacy.round(settings,
-				FinancialLegacy.parse(settings, value), settings.arithmeticMaxFractionalDigits, settings.arithmeticRoundMode
+				FinancialLegacy.parse(settings, value), settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode
 			);
 		} else {
 			// Use BigInt arithmetic instead
@@ -258,13 +258,12 @@ export class FinancialLegacy implements Financial {
 	public static round(settings: Settings, num: FinancialLegacy, fraction: number, mode: zxteam.Financial.RoundMode): FinancialLegacy {
 		Fraction.verifyFraction(fraction);
 
-		const { arithmeticRoundMode } = settings;
-		switch (arithmeticRoundMode) {
+		switch (mode) {
 			case zxteam.Financial.RoundMode.Ceil: return FinancialLegacy.ceil(settings, num, fraction);
 			case zxteam.Financial.RoundMode.Floor: return FinancialLegacy.floor(settings, num, fraction);
 			case zxteam.Financial.RoundMode.Round: break;
 			case zxteam.Financial.RoundMode.Trunc: return FinancialLegacy.trunc(settings, num, fraction);
-			default: throw new heplers.UnreachableRoundMode(arithmeticRoundMode);
+			default: throw new heplers.UnreachableRoundMode(mode);
 		}
 
 		if (num.fraction <= fraction) { return new FinancialLegacy(settings, num.value, num.fraction); }
@@ -523,20 +522,20 @@ export class FinancialLegacy implements Financial {
 
 		if (num.fraction === fraction) { return num; }
 
-		//const parts = heplers.splitParts(num);
-
 		if (num.fraction > fraction) {
 			const newDecimalPart = num.fractional.substr(0, fraction);
+			const legacyNum = heplers.trimStartZeros(heplers.concatValue(num.whole, newDecimalPart));
 			return new FinancialLegacy(
 				settings,
-				`${num.sign}${num.whole}${newDecimalPart}`,
+				num.sign === "-" ? `-${legacyNum}` : legacyNum,
 				fraction
 			);
 		} else {
-			const newDecimalPart = num.fractional.padEnd(fraction - num.fraction, "0");
+			const newDecimalPart = num.fractional.padEnd(fraction, "0");
+			const legacyNum = heplers.trimStartZeros(heplers.concatValue(num.whole, newDecimalPart));
 			return new FinancialLegacy(
 				settings,
-				`${num.sign}${num.whole}${newDecimalPart}`,
+				num.sign === "-" ? `-${legacyNum}` : legacyNum,
 				fraction
 			);
 		}

@@ -8,8 +8,10 @@ import { FinancialLegacy as Financial } from "../src/impl/FinancialLegacy";
 const settings: Settings = {
 	backend: "string",
 	decimalSeparator: ".",
-	arithmeticMaxFractionalDigits: 8,
-	arithmeticRoundMode: zxteam.Financial.RoundMode.Round
+	defaultRoundOpts: {
+		fractionalDigits: 8,
+		roundMode: zxteam.Financial.RoundMode.Round
+	}
 };
 
 interface TestCases {

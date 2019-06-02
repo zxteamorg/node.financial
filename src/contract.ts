@@ -118,9 +118,13 @@ export interface FinancialOperation {
 	wrap(num: zxteam.Financial): Financial;
 }
 
+export interface RoundOpts {
+	readonly fractionalDigits: number;
+	readonly roundMode: zxteam.Financial.RoundMode;
+}
+
 export interface Settings {
 	readonly backend: "string" | "bigint";
 	readonly decimalSeparator: string;
-	readonly arithmeticMaxFractionalDigits: number;
-	readonly arithmeticRoundMode: zxteam.Financial.RoundMode;
+	readonly defaultRoundOpts: RoundOpts;
 }
