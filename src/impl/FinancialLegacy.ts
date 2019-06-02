@@ -322,7 +322,13 @@ export class FinancialLegacy implements Financial {
 					);
 				} else {
 					const ceilDecimalPart = (BigInt(newDecimalPart) + 1n).toString();
-					if (ceilDecimalPart.length === newDecimalPart.length) {
+					if (ceilDecimalPart.length < newDecimalPart.length) {
+						return new FinancialLegacy(
+							settings,
+							heplers.concatValue(num.whole, heplers.trimStartZeros(ceilDecimalPart)),
+							fraction
+						);
+					} else if (ceilDecimalPart.length === newDecimalPart.length) {
 						return new FinancialLegacy(
 							settings,
 							heplers.concatValue(num.whole, ceilDecimalPart),

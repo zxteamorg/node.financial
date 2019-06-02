@@ -49,7 +49,8 @@ const testCases: TestCases = {
 		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "44345" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "4" }],
 		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "45" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "4" }],
 		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "45345" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "5" }],
-		[{ sign: "+", whole: "0", fractional: "00001415903101129128" }, 8, { sign: "+", whole: "0", fractional: "00001416" }]
+		[{ sign: "+", whole: "0", fractional: "00001415903101129128" }, 8, { sign: "+", whole: "0", fractional: "00001416" }],
+		[{ sign: "+", whole: "0", fractional: "037060335" }, 8, { sign: "+", whole: "0", fractional: "03706034" }]
 	]
 };
 
