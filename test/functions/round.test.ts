@@ -65,7 +65,8 @@ const testCases: TestCases = {
 	],
 	truncMode: [
 		[{ sign: "+", whole: "0", fractional: "018785799" }, 8, { sign: "+", whole: "0", fractional: "01878579" }],
-		[{ sign: "+", whole: "0", fractional: "0528" }, 8, { sign: "+", whole: "0", fractional: "0528" }]
+		[{ sign: "+", whole: "0", fractional: "0528" }, 8, { sign: "+", whole: "0", fractional: "0528" }],
+		[{ sign: "+", whole: "0", fractional: "000001005728" }, 9, { sign: "+", whole: "0", fractional: "000001005" }]
 	]
 };
 
