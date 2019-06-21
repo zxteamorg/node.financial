@@ -242,9 +242,16 @@ export class FinancialLegacy implements Financial {
 		let friendlyValue = valueStringClear;
 
 		// Remove zero
-		if ((valueStringClear.startsWith("0") && valueStringClear.length > 1) ||
-			valueStringClear.startsWith("-0") && valueStringClear.length > 2) {
-			friendlyValue = parseInt(friendlyValue).toString();
+		if (friendlyValue.startsWith("-0")) {
+			friendlyValue = friendlyValue.substr(1); // remove "-"
+			while (friendlyValue.length > 1 && friendlyValue[0] === "0") {
+				friendlyValue = friendlyValue.substr(1);
+			}
+			friendlyValue = `-${friendlyValue}`; // add "-"
+		} else {
+			while (friendlyValue.length > 1 && friendlyValue[0] === "0") {
+				friendlyValue = friendlyValue.substr(1);
+			}
 		}
 
 		return new FinancialLegacy(settings, friendlyValue, friendlyFraction);

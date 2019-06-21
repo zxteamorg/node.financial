@@ -22,7 +22,7 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^5.0.0",
+		"@zxteam/contract": "^5.0.1",
 		"lodash": "^4.17.11"
 	},
 	"devDependencies": {
