@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial.js",
-	"version": "5.0.6",
+	"version": "6.0.1",
 	"description": "Financial data type for Java Script",
 	"main": "./src/index.js",
 	"types": "./src/index.d.ts",
@@ -22,17 +22,17 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^5.0.1",
-		"lodash": "^4.17.11"
+		"@zxteam/contract": "^6.0.1",
+		"lodash": "^4.17.14"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.133",
-		"@types/mathjs": "^5.0.1",
-		"@types/node": "^11.13.13",
+		"@types/lodash": "^4.14.136",
+		"@types/mathjs": "^6.0.0",
+		"@types/node": "^11.13.17",
 		"@zxnode/build": "^0.0.34",
 		"bignumber.js": "^9.0.0",
 		"decimal.js": "^10.2.0",
-		"mathjs": "^5.10.3"
+		"mathjs": "^6.0.3"
 	},
 	"engines": {
 		"node": ">=11"
