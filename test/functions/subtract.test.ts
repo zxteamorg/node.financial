@@ -10,13 +10,14 @@ const fractionalDigits = 10;
 const roundMode = zxteam.Financial.RoundMode.Round;
 
 const testCases: TestCases = [
-	["5", "5", "10", [Settings.Backend.bignumberjs]],
-	["-5", "5", "0", [Settings.Backend.bignumberjs]],
-	["0.1", "0.2", "0.3", [Settings.Backend.bignumberjs]],
+	["10", "5", "5", [Settings.Backend.bignumberjs]],
+	["0", "-5", "5", [Settings.Backend.bignumberjs]],
+	["0.3", "0.1", "0.2", [Settings.Backend.bignumberjs]],
+	["0.00000000002", "0.00000000001", "0", [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
 	["0.00000000001", "0.00000000002", "0", [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
-	["0", "0.2", "0.2", [Settings.Backend.bignumberjs]],
-	["354793854793875498379548374958", "3485739854", "354793854793875498383034114812", [Settings.Backend.bignumberjs]],
-	["35479385479387549837954837.495835", "13.485739", "35479385479387549837954850.981574", [Settings.Backend.bignumberjs]]
+	["0", "0.2", "-0.2", [Settings.Backend.bignumberjs]],
+	["354793854793875498383034114812", "354793854793875498379548374958", "3485739854", [Settings.Backend.bignumberjs]],
+	["35479385479387549837954850.981574", "35479385479387549837954837.495835", "13.485739", [Settings.Backend.bignumberjs]]
 ];
 
 testCases.forEach(function (testCase) {
@@ -29,25 +30,25 @@ testCases.forEach(function (testCase) {
 			backend, { decimalSeparator: ".", defaultRoundOpts: { fractionalDigits, roundMode } }
 		);
 
-		describe(`add should be ${left} + ${right} = ${expectedResult}`, function () {
+		describe(`subtract should be ${left} - ${right} = ${expectedResult}`, function () {
 
-			it("financial.add(left: string, right: string): string", function () {
-				const result: string = financial.add(left, right);
+			it("financial.subtract(left: string, right: string): string", function () {
+				const result: string = financial.subtract(left, right);
 				assert.isString(result);
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.add(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
+			it("financial.subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
 				const friendlyLeft: zxteam.Financial = financial.parse(left);
 				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = financial.add(friendlyLeft, friendlyRight);
+				const result: zxteam.Financial = financial.subtract(friendlyLeft, friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 
-			it("value.add(right: zxteam.Financial): zxteam.Financial", function () {
+			it("value.subtract(right: zxteam.Financial): zxteam.Financial", function () {
 				const friendlyLeft: zxteam.Financial = financial.parse(left);
 				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = friendlyLeft.add(friendlyRight);
+				const result: zxteam.Financial = friendlyLeft.subtract(friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

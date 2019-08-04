@@ -1,19 +1,17 @@
 {
-	"name": "@zxteam/financial.js",
-	"version": "6.0.1",
+	"name": "@zxteam/financial",
+	"version": "6.0.16",
 	"description": "Financial data type for Java Script",
-	"main": "./src/index.js",
-	"types": "./src/index.d.ts",
 	"author": {
 		"name": "ZXTeam",
-		"email": "pub@project.zxteam.org",
-		"url": "http://www.zxteam.org"
+		"email": "pub@zxteam.org",
+		"url": "https://www.zxteam.org"
 	},
 	"contributors": [
 		{
 			"name": "Maxim Anurin",
 			"email": "maxim.anurin@zxteam.org",
-			"url": "http://www.anurin.name"
+			"url": "https://www.anurin.name"
 		},
 		{
 			"name": "Serhii Zghama",
@@ -22,17 +20,18 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^6.0.1",
+		"@zxteam/contract": "^6.0.16",
+		"@zxteam/errors": "^6.0.8",
 		"lodash": "^4.17.14"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.136",
-		"@types/mathjs": "^6.0.0",
 		"@types/node": "^11.13.17",
-		"@zxnode/build": "^0.0.34",
+		"@zxnode/build": "^0.0.34"
+	},
+	"optionalDependencies": {
 		"bignumber.js": "^9.0.0",
-		"decimal.js": "^10.2.0",
-		"mathjs": "^6.0.3"
+		"decimal.js": "^10.2.0"
 	},
 	"engines": {
 		"node": ">=11"
@@ -40,17 +39,18 @@
 	"keywords": [],
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/zxteamorg/financial.js.git"
+		"url": "https://github.com/zxteamorg/node.financial.git"
 	},
 	"bugs": {
-		"url": "https://github.com/zxteamorg/financial.js/issues"
+		"url": "https://github.com/zxteamorg/node.financial/issues"
 	},
-	"homepage": "https://github.com/zxteamorg/financial.js#readme",
+	"homepage": "https://github.com/zxteamorg/node.financial",
 	"scripts": {
 		"build": "zxbuild clean dist",
 		"test": "nyc --exclude test --extension=\".ts\" --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive",
-		"test:only": "mocha --require source-map-support/register \"test/**/*.test.js\" --recursive",
-		"build-and-test": "npm run build && npm run test"
+		"test:only": "mocha --require source-map-support/register \"test/**/*.test.js\" --recursive"
 	},
+	"main": "./src/index.js",
+	"types": "./src/index.d.ts",
 	"private": true
 }

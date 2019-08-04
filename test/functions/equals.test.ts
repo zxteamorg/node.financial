@@ -2,43 +2,57 @@ import * as zxteam from "@zxteam/contract";
 
 import { assert } from "chai";
 
-import { setup } from "../../src/index";
+import { setup, FinancialOperation, Settings } from "../../src/index";
 
-const financial = setup({
-	backend: "string",
-	decimalSeparator: ".",
-	defaultRoundOpts: {
-		fractionalDigits: 10,
-		roundMode: zxteam.Financial.RoundMode.Round
-	}
-});
+type TestCases = Array<[/*left: */string, /*right: */string, /*expectedResult: */boolean, /*backends: */Array<Settings.Backend>]>;
 
-type TestCases = Array<[zxteam.Financial, zxteam.Financial, boolean]>;
+const fractionalDigits = 10;
+const roundMode = zxteam.Financial.RoundMode.Round;
 
 const testCases: TestCases = [
-	[{ sign: "+", whole: "5", fractional: "0" }, { sign: "+", whole: "5", fractional: "0" }, true],
-	[{ sign: "-", whole: "5", fractional: "0" }, { sign: "+", whole: "5", fractional: "0" }, false]
-	// [{ value: "1", fraction: 1 }, { value: "2", fraction: 1 }, false],
-	// [{ value: "0", fraction: 0 }, { value: "2", fraction: 1 }, false],
-	// [{ value: "12354627856", fraction: 8 }, { value: "212648543", fraction: 8 }, false],
-	// [{ value: "354793854793875498379548374958", fraction: 0 }, { value: "3485739854", fraction: 0 }, false],
-	// // tslint:disable-next-line:max-line-length
-	// [{ value: "35479385479387549837954837495835", fraction: 6 }, { value: "35479385479387549837954837495835", fraction: 6 }, true],
-	// [{ value: "-35479385479387549837954837495835", fraction: 8 }, { value: "-35479385479387549837954837495835", fraction: 8 }, true],
-	// [{ value: "-35479385479387549837954837495835", fraction: 8 }, { value: "-35479385479387549837954837495835", fraction: 10 }, false],
-	// [{ value: "35479385479387549837954837495835", fraction: 8 }, { value: "35479385479387549837954837495835", fraction: 15 }, false],
-	// [{ value: "35479385479387549837954837495835", fraction: 10 }, { value: "-35479385479387549837954837495835", fraction: 10 }, false]
+	["5", "5", true, [Settings.Backend.bignumberjs]],
+	["-5", "5", false, [Settings.Backend.bignumberjs]],
+	["0.1", "0.1", true, [Settings.Backend.bignumberjs]],
+	["-0.1", "0.1", false, [Settings.Backend.bignumberjs]],
+	["0.00000000001", "0", true, [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
+	["-0.00000000001", "0", true, [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
+	["354793854793875498379548374958", "354793854793875498379548374958", true, [Settings.Backend.bignumberjs]],
+	["-354793854793875498379548374958", "354793854793875498379548374958", false, [Settings.Backend.bignumberjs]],
+	["35479385479387549837954837.495835", "35479385479387549837954837.495835", true, [Settings.Backend.bignumberjs]],
+	["-35479385479387549837954837.495835", "35479385479387549837954837.495835", false, [Settings.Backend.bignumberjs]]
 ];
 
-describe("Financial funtion equals", function () {
-	testCases.forEach(testCase => {
-		const [left, right, expectedBoolean] = testCase;
-		it(
-			// tslint:disable-next-line: max-line-length
-			`Should be ${JSON.stringify(left)} === ${JSON.stringify(right)} = is ${expectedBoolean}`,
-			function () {
-				const result = financial.equals(left, right);
-				assert.equal(result, expectedBoolean);
+testCases.forEach(function (testCase) {
+	// Unwrap test case data
+	const [left, right, expectedResult, backends] = testCase;
+
+	backends.forEach(function (backend: Settings.Backend) {
+		// Configure financial operations
+		const financial: FinancialOperation = setup(
+			backend, { decimalSeparator: ".", defaultRoundOpts: { fractionalDigits, roundMode } }
+		);
+
+		const msg = expectedResult === true ? "===" : "!==";
+		describe(`equals should be ${left} ${msg} ${right}`, function () {
+
+			it("financial.equals(left: string, right: string): string", function () {
+				const result: boolean = financial.equals(left, right);
+				assert.strictEqual(result, expectedResult);
 			});
+
+			it("financial.equals(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
+				const friendlyLeft: zxteam.Financial = financial.parse(left);
+				const friendlyRight: zxteam.Financial = financial.parse(right);
+				const result: boolean = financial.equals(friendlyLeft, friendlyRight);
+				assert.strictEqual(result, expectedResult);
+			});
+
+			it("value.equals(right: zxteam.Financial): zxteam.Financial", function () {
+				const friendlyLeft: zxteam.Financial = financial.parse(left);
+				const friendlyRight: zxteam.Financial = financial.parse(right);
+				const result: boolean = friendlyLeft.equals(friendlyRight);
+				assert.strictEqual(result, expectedResult);
+			});
+		});
 	});
 });

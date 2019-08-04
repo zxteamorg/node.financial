@@ -1,95 +1,114 @@
-// tslint:disable: max-line-length
 import * as zxteam from "@zxteam/contract";
 
 import { assert } from "chai";
 
-import { setup } from "../../src/index";
+import { setup, FinancialOperation, Settings } from "../../src/index";
 
-const financial = setup({
-	backend: "string",
-	decimalSeparator: ".",
-	defaultRoundOpts: {
-		fractionalDigits: 10,
-		roundMode: zxteam.Financial.RoundMode.Round
-	}
-});
+type TestCases = Array<[
+	/*value: */string,
+	/*expectedResult: */string,
+	/*fractionalDigits: */number,
+	/*roundMode: */zxteam.Financial.RoundMode,
+	/*backends: */Array<Settings.Backend>
+]>;
 
-interface TestCases {
-	roundMode: Array<[zxteam.Financial/*given*/, number/*round fractional*/, zxteam.Financial/*expected result*/]>;
-	truncMode: Array<[zxteam.Financial/*given*/, number/*round fractional*/, zxteam.Financial/*expected result*/]>;
-}
+const testCases: TestCases = [
+	// Math.round(55.5) => 56
+	["0.555", "0.56", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
 
-const testCases: TestCases = {
-	roundMode: [
-		[{ sign: "+", whole: "1", fractional: "551" }, 8, { sign: "+", whole: "1", fractional: "551" }],
-		[{ sign: "-", whole: "123", fractional: "951" }, 1, { sign: "-", whole: "124", fractional: "0" }],  // Float => Float, round-down, Math.round(-1239.51) => -1240
-		[{ sign: "+", whole: "123", fractional: "951" }, 1, { sign: "+", whole: "124", fractional: "0" }],  // Float => Float, round-up, Math.round(1239.51) => 1240
-		[{ sign: "-", whole: "123", fractional: "94" }, 1, { sign: "-", whole: "123", fractional: "9" }],  // Float => Float, round-down, Math.round(-1239.9) => -1240
-		[{ sign: "+", whole: "123", fractional: "94" }, 1, { sign: "+", whole: "123", fractional: "9" }],  // Float => Float, round-up, Math.round(1239.9) => 1240
-		[{ sign: "-", whole: "123", fractional: "95" }, 1, { sign: "-", whole: "123", fractional: "9" }], // Float => Float, round-up, Math.round(-1239.5) => -1239
-		[{ sign: "+", whole: "123", fractional: "95" }, 1, { sign: "+", whole: "124", fractional: "0" }],  // Float => Float, round-up, Math.round(1239.5) => 1240
-		[{ sign: "+", whole: "123", fractional: "59" }, 1, { sign: "+", whole: "123", fractional: "6" }],
-		[{ sign: "+", whole: "123", fractional: "99" }, 1, { sign: "+", whole: "124", fractional: "0" }],
-		[{ sign: "+", whole: "123", fractional: "99" }, 0, { sign: "+", whole: "124", fractional: "0" }],
-		[{ sign: "-", whole: "15", fractional: "551" }, 1, { sign: "-", whole: "15", fractional: "6" }], // Math.round(-155.51) => -156
-		[{ sign: "+", whole: "155", fractional: "5" }, 0, { sign: "+", whole: "156", fractional: "0" }], // Math.round(155.50) => 156
-		[{ sign: "-", whole: "155", fractional: "5" }, 0, { sign: "-", whole: "155", fractional: "0" }], // Math.round(-155.50) => -155
-		[{ sign: "+", whole: "15", fractional: "55" }, 1, { sign: "+", whole: "15", fractional: "6" }], // Math.round(155.50) => 156
-		[{ sign: "-", whole: "15", fractional: "55" }, 1, { sign: "-", whole: "15", fractional: "5" }], // Math.round(-155.50) => -155
-		[{ sign: "+", whole: "155", fractional: "51" }, 0, { sign: "+", whole: "156", fractional: "0" }], // Math.round(155.51) => 156
-		[{ sign: "-", whole: "155", fractional: "51" }, 0, { sign: "-", whole: "156", fractional: "0" }], // Math.round(-155.51) => -156
-		[{ sign: "+", whole: "1", fractional: "559" }, 2, { sign: "+", whole: "1", fractional: "56" }],
-		[{ sign: "+", whole: "1", fractional: "555" }, 2, { sign: "+", whole: "1", fractional: "56" }],
-		[{ sign: "+", whole: "1", fractional: "554" }, 2, { sign: "+", whole: "1", fractional: "55" }],
-		[{ sign: "-", whole: "1", fractional: "554" }, 2, { sign: "-", whole: "1", fractional: "55" }],
-		[{ sign: "+", whole: "1", fractional: "551" }, 2, { sign: "+", whole: "1", fractional: "55" }],
-		[{ sign: "+", whole: "0", fractional: "3" }, 1, { sign: "+", whole: "0", fractional: "3" }],
-		[{ sign: "-", whole: "0", fractional: "3" }, 3, { sign: "-", whole: "0", fractional: "3" }],
-		[{ sign: "-", whole: "0", fractional: "83475643" }, 5, { sign: "-", whole: "0", fractional: "83476" }],
-		[{ sign: "+", whole: "1", fractional: "759" }, 0, { sign: "+", whole: "2", fractional: "0" }],
-		[{ sign: "+", whole: "1", fractional: "759" }, 8, { sign: "+", whole: "1", fractional: "759" }],
-		[{ sign: "+", whole: "150", fractional: "12341" }, 4, { sign: "+", whole: "150", fractional: "1234" }],
-		[{ sign: "+", whole: "142731873", fractional: "13235" }, 5, { sign: "+", whole: "142731873", fractional: "13235" }],
-		[{ sign: "+", whole: "123", fractional: "99" }, 1, { sign: "+", whole: "124", fractional: "0" }],
-		[{ sign: "+", whole: "142731873", fractional: "1323529482" }, 10, { sign: "+", whole: "142731873", fractional: "1323529482" }],
-		[{ sign: "+", whole: "142731873", fractional: "1323529482" }, 1, { sign: "+", whole: "142731873", fractional: "1" }],
-		[{ sign: "+", whole: "238479237492834289347923743453", fractional: "45345" }, 0, { sign: "+", whole: "238479237492834289347923743453", fractional: "0" }],
-		[{ sign: "+", whole: "238479237492834289347923743453", fractional: "44345" }, 1, { sign: "+", whole: "238479237492834289347923743453", fractional: "4" }],
-		[{ sign: "+", whole: "238479237492834289347923743453", fractional: "45" }, 1, { sign: "+", whole: "238479237492834289347923743453", fractional: "5" }],
-		[{ sign: "+", whole: "238479237492834289347923743453", fractional: "45345" }, 1, { sign: "+", whole: "238479237492834289347923743453", fractional: "5" }],
-		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "44345" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "4" }],
-		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "45" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "4" }],
-		[{ sign: "-", whole: "238479237492834289347923743453", fractional: "45345" }, 1, { sign: "-", whole: "238479237492834289347923743453", fractional: "5" }],
-		[{ sign: "+", whole: "0", fractional: "00001415903101129128" }, 8, { sign: "+", whole: "0", fractional: "00001416" }],
-		[{ sign: "+", whole: "0", fractional: "037060335" }, 8, { sign: "+", whole: "0", fractional: "03706034" }]
-	],
-	truncMode: [
-		[{ sign: "+", whole: "0", fractional: "018785799" }, 8, { sign: "+", whole: "0", fractional: "01878579" }],
-		[{ sign: "+", whole: "0", fractional: "0528" }, 8, { sign: "+", whole: "0", fractional: "0528" }],
-		[{ sign: "+", whole: "0", fractional: "000001005728" }, 9, { sign: "+", whole: "0", fractional: "000001005" }]
-	]
-};
+	// Math.round(-55.5) => -55
+	["-0.555", "-0.55", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
 
-describe("round", function () {
-	testCases.roundMode.forEach(roundCase => {
-		const [input, newFraction, expectedResult] = roundCase;
-		it(`Should round "${JSON.stringify(input)}" for new fractional ${newFraction} to whole:"${JSON.stringify(expectedResult)}"`,
-			function () {
-				const result = financial.round(input, newFraction, zxteam.Financial.RoundMode.Round);
-				assert.equal(result.whole, expectedResult.whole);
-				assert.equal(result.fractional, expectedResult.fractional);
-			}
+	// Math.ceil(55.5) => 56
+	["0.555", "0.56", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	//Math.ceil(-55.5) => -55
+	["-0.555", "-0.55", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(55.5) => 55
+	["0.555", "0.55", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(-55.5) => -56
+	["-0.555", "-0.56", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	["0.555", "0.55", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.555", "-0.55", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+
+
+	// Math.round(0.99) => 1
+	["0.099", "0.1", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
+
+	// Math.round(-0.99) => -1
+	["-0.099", "-0.1", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
+
+	// Math.ceil(0.99) => 1
+	["0.099", "0.1", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	//Math.ceil(-0.99) => 0
+	["-0.099", "-0.09", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(0.99) => 0
+	["0.099", "0.09", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(-0.99) => -1
+	["-0.099", "-0.1", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	["0.099", "0.09", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.099", "-0.09", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+
+
+	// Math.round(0.11) => 0
+	["0.011", "0.01", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
+
+	// Math.round(-0.11) => -0
+	["-0.011", "-0.01", 2, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
+
+	// Math.ceil(0.11) => 1
+	["0.011", "0.02", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	// Math.ceil(-0.11) => -0
+	["-0.011", "-0.01", 2, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(0.11) => 0
+	["0.011", "0.01", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	// Math.floor(-0.11) => -1
+	["-0.011", "-0.02", 2, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+
+	["0.011", "0.01", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.011", "-0.01", 2, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]]
+];
+
+testCases.forEach(function (testCase) {
+	// Unwrap test case data
+	const [value, expectedResult, fractionalDigits, roundMode, backends] = testCase;
+
+	backends.forEach(function (backend: Settings.Backend) {
+		// Configure financial operations
+		const financial: FinancialOperation = setup(
+			backend, { decimalSeparator: ".", defaultRoundOpts: { fractionalDigits: 10, roundMode } }
 		);
-	});
-	testCases.truncMode.forEach(roundCase => {
-		const [input, newFraction, expectedResult] = roundCase;
-		it(`Should trunc "${JSON.stringify(input)}" for new fractional ${newFraction} to whole:"${JSON.stringify(expectedResult)}"`,
-			function () {
-				const result = financial.round(input, newFraction, zxteam.Financial.RoundMode.Trunc);
-				assert.equal(result.sign, expectedResult.sign);
-				assert.equal(result.whole, expectedResult.whole);
-				assert.equal(result.fractional, expectedResult.fractional);
-			}
-		);
+
+		// tslint:disable-next-line: max-line-length
+		describe(`round with roundMode: ${roundMode}, fractionalDigits: ${fractionalDigits} should be ${value} => ${expectedResult}`, function () {
+
+			it("financial.round(value: string, fractionDigits: zxteam.Financial.FractionDigits): string", function () {
+				const result: string = financial.round(value, fractionalDigits);
+				assert.isString(result);
+				assert.equal(result, expectedResult);
+			});
+
+			it("financial.round(value: zxteam.Financial, fractionDigits: zxteam.Financial.FractionDigits): zxteam.Financial", function () {
+				const friendlyValue: zxteam.Financial = financial.parse(value);
+				const result: zxteam.Financial = financial.round(friendlyValue, fractionalDigits);
+				assert.equal(result.toString(), expectedResult);
+			});
+
+			it("value.round(fractionalDigits: Financial.FractionDigits): zxteam.Financial", function () {
+				const friendlyValue: zxteam.Financial = financial.parse(value);
+				const result: zxteam.Financial = friendlyValue.round(fractionalDigits);
+				assert.equal(result.toString(), expectedResult);
+			});
+		});
 	});
 });

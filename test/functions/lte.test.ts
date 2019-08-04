@@ -10,15 +10,15 @@ const fractionalDigits = 10;
 const roundMode = zxteam.Financial.RoundMode.Round;
 
 const testCases: TestCases = [
-	["6", "5", true, [Settings.Backend.bignumberjs]],
+	["6", "5", false, [Settings.Backend.bignumberjs]],
 	["5", "5", true, [Settings.Backend.bignumberjs]],
-	["-5", "5", false, [Settings.Backend.bignumberjs]],
-	["0.1", "0.2", false, [Settings.Backend.bignumberjs]],
+	["-5", "5", true, [Settings.Backend.bignumberjs]],
+	["0.1", "0.2", true, [Settings.Backend.bignumberjs]],
 	["0.00000000002", "0.00000000001", true, [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
 	["0.00000000001", "0.00000000002", true, [Settings.Backend.bignumberjs]], // should be round to zero according fractionalDigits === 10
-	["0", "0.2", false, [Settings.Backend.bignumberjs]],
-	["354793854793875498379548374958", "3485739854", true, [Settings.Backend.bignumberjs]],
-	["35479385479387549837954837.495835", "13.485739", true, [Settings.Backend.bignumberjs]]
+	["0", "0.2", true, [Settings.Backend.bignumberjs]],
+	["354793854793875498379548374958", "3485739854", false, [Settings.Backend.bignumberjs]],
+	["35479385479387549837954837.495835", "13.485739", false, [Settings.Backend.bignumberjs]]
 ];
 
 testCases.forEach(function (testCase) {
@@ -31,24 +31,24 @@ testCases.forEach(function (testCase) {
 			backend, { decimalSeparator: ".", defaultRoundOpts: { fractionalDigits, roundMode } }
 		);
 
-		describe(`gte should be ${left} >= ${right} = ${expectedResult}`, function () {
+		describe(`lte should be ${left} <= ${right} = ${expectedResult}`, function () {
 
-			it("financial.gte(left: string, right: string): boolean", function () {
-				const result: boolean = financial.gte(left, right);
+			it("financial.lte(left: string, right: string): boolean", function () {
+				const result: boolean = financial.lte(left, right);
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.gte(left: zxteam.Financial, right: zxteam.Financial): boolean", function () {
+			it("financial.lte(left: zxteam.Financial, right: zxteam.Financial): boolean", function () {
 				const friendlyLeft: zxteam.Financial = financial.parse(left);
 				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: boolean = financial.gte(friendlyLeft, friendlyRight);
+				const result: boolean = financial.lte(friendlyLeft, friendlyRight);
 				assert.equal(result, expectedResult);
 			});
 
-			it("value.gte(right: zxteam.Financial): boolean", function () {
+			it("value.lte(right: zxteam.Financial): boolean", function () {
 				const friendlyLeft: zxteam.Financial = financial.parse(left);
 				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: boolean = friendlyLeft.gte(friendlyRight);
+				const result: boolean = friendlyLeft.lte(friendlyRight);
 				assert.equal(result, expectedResult);
 			});
 		});
