@@ -1,4 +1,4 @@
-# Function reference
+# (DEPRECATED) Function reference
 
 ## Functions
 
