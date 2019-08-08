@@ -44,7 +44,16 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		AbstractFinancial.verify(value); // raise error if wrong value
 		const raw = new BigNumber(value);
 		let rawStr = raw.toString(10);
-		if (rawStr.length < value.length && raw.decimalPlaces() > 0) { rawStr = rawStr.padEnd(value.length, "0"); }
+		if (rawStr.length < value.length) {
+			if (raw.decimalPlaces() > 0) {
+				// Workaround for X.XXX00000
+				rawStr = rawStr.padEnd(value.length, "0");
+			} else if (raw.decimalPlaces() === 0 && (rawStr.length + 1) < value.length) {
+				// Workaround for X.00000
+				rawStr += ".";
+				rawStr = rawStr.padEnd(value.length, "0");
+			}
+		}
 		if (rawStr !== value) {
 			throw new ArgumentError(`The value ${value} cannot be represented in backend: 'bignumber'`);
 		}
@@ -197,7 +206,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return this.toString();
 	}
 
-	protected get data(): string {
+	protected get raw(): string {
 		return this._raw.toString(10);
 	}
 

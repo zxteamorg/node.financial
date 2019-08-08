@@ -39,9 +39,9 @@ export abstract class AbstractFinancial implements zxteam.Financial {
 	public abstract subtract(value: zxteam.Financial): zxteam.Financial;
 	public abstract toFloat(): number;
 	public abstract toInt(): number;
-	public toString(): string { return this.data; }
+	public toString(): string { return this.raw; }
 
-	protected abstract get data(): string;
+	protected abstract get raw(): string;
 }
 
 

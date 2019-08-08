@@ -4,6 +4,7 @@ import * as _ from "lodash";
 
 import { Settings } from "./Settings";
 import { FinancialOperation } from "./FinancialOperation";
+import { AbstractFinancial } from "./impl/AbstractFinancial";
 
 export * from "./FinancialOperation";
 export * from "./Settings";
@@ -104,6 +105,10 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 				return friendlyLeft.gte(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
+		},
+
+		isFinancial(test: any): test is zxteam.Financial {
+			return test instanceof AbstractFinancial;
 		},
 
 		isNegative(test: any) {

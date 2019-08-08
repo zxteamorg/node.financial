@@ -37,6 +37,8 @@ export interface FinancialOperation {
 	inverse(value: string): string;
 	inverse(value: zxteam.Financial): zxteam.Financial;
 
+	isFinancial(test: any): test is zxteam.Financial;
+
 	isNegative(test: string): boolean;
 	isNegative(test: zxteam.Financial): boolean;
 

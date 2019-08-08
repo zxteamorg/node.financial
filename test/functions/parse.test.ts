@@ -14,7 +14,10 @@ const testCases: TestCases = [
 	["10.95802660", "10.9580266", [Settings.Backend.bignumberjs]],
 	["10.958026600", "10.9580266", [Settings.Backend.bignumberjs]],
 	["10.9580266000", "10.9580266", [Settings.Backend.bignumberjs]],
-	["10.95802660000", "10.9580266", [Settings.Backend.bignumberjs]]
+	["10.95802660000", "10.9580266", [Settings.Backend.bignumberjs]],
+	["0.0", "0", [Settings.Backend.bignumberjs]],
+	["0.00000000", "0", [Settings.Backend.bignumberjs]],
+	["88.00000000", "88", [Settings.Backend.bignumberjs]]
 ];
 
 testCases.forEach(function (testCase) {
