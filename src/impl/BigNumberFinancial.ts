@@ -43,7 +43,8 @@ export default class BigNumberFinancial extends AbstractFinancial {
 	public static parse(value: string, settings: Settings): BigNumberFinancial {
 		AbstractFinancial.verify(value); // raise error if wrong value
 		const raw = new BigNumber(value);
-		const rawStr = raw.toString(10);
+		let rawStr = raw.toString(10);
+		if (rawStr.length < value.length && raw.decimalPlaces() > 0) { rawStr = rawStr.padEnd(value.length, "0"); }
 		if (rawStr !== value) {
 			throw new ArgumentError(`The value ${value} cannot be represented in backend: 'bignumber'`);
 		}

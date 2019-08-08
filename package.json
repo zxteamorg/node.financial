@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial",
-	"version": "6.0.18",
+	"version": "6.0.19",
 	"description": "Financial data type for Java Script",
 	"author": {
 		"name": "ZXTeam",
@@ -46,7 +46,7 @@
 	},
 	"homepage": "https://github.com/zxteamorg/node.financial",
 	"scripts": {
-		"build": "zxbuild clean dist",
+		"build": "zxbuild clean dist && cp README.md .dist/",
 		"test": "nyc --exclude test --extension=\".ts\" --reporter=lcov --reporter=text --reporter=text-summary mocha \"test/**/*.test.js\" --recursive",
 		"test:only": "mocha --require source-map-support/register \"test/**/*.test.js\" --recursive"
 	},
