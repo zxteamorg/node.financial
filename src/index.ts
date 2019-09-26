@@ -26,6 +26,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 	})();
 
 	const instance: FinancialOperation = {
+		get settings(): Settings { return settings; },
+
 		abs(value: any): any {
 			if (value instanceof backendClass) {
 				return value.abs();

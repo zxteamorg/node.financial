@@ -1,6 +1,9 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial } from "@zxteam/contract";
+import { Settings } from "./Settings";
 
 export interface FinancialOperation {
+	readonly settings: Settings;
+
 	/**
 	 * Analog of Math​.abs()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs
@@ -10,49 +13,49 @@ export interface FinancialOperation {
 	 * Analog of Math​.abs()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs
 	 */
-	abs(value: zxteam.Financial): zxteam.Financial;
+	abs(value: Financial): Financial;
 
 	add(left: string, right: string): string;
-	add(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	add(left: Financial, right: Financial): Financial;
 
-	divide(left: string, right: string, roundMode?: zxteam.Financial.RoundMode): string;
-	divide(left: zxteam.Financial, right: zxteam.Financial, roundMode?: zxteam.Financial.RoundMode): zxteam.Financial;
+	divide(left: string, right: string, roundMode?: Financial.RoundMode): string;
+	divide(left: Financial, right: Financial, roundMode?: Financial.RoundMode): Financial;
 
 	equals(left: string, right: string): boolean;
-	equals(left: zxteam.Financial, right: zxteam.Financial): boolean;
+	equals(left: Financial, right: Financial): boolean;
 
-	ensure(value: zxteam.Financial, errorMessage?: string): zxteam.Financial;
-	ensureNullable(value: zxteam.Financial | null, errorMessage?: string): zxteam.Financial | null;
+	ensure(value: Financial, errorMessage?: string): Financial;
+	ensureNullable(value: Financial | null, errorMessage?: string): Financial | null;
 
-	fromFloat(value: number): zxteam.Financial;
+	fromFloat(value: number): Financial;
 
-	fromInt(value: number): zxteam.Financial;
+	fromInt(value: number): Financial;
 
 	gt(left: string, right: string): boolean;
-	gt(left: zxteam.Financial, right: zxteam.Financial): boolean;
+	gt(left: Financial, right: Financial): boolean;
 
 	gte(left: string, right: string): boolean;
-	gte(left: zxteam.Financial, right: zxteam.Financial): boolean;
+	gte(left: Financial, right: Financial): boolean;
 
 	inverse(value: string): string;
-	inverse(value: zxteam.Financial): zxteam.Financial;
+	inverse(value: Financial): Financial;
 
-	isFinancial(test: any): test is zxteam.Financial;
+	isFinancial(test: any): test is Financial;
 
 	isNegative(test: string): boolean;
-	isNegative(test: zxteam.Financial): boolean;
+	isNegative(test: Financial): boolean;
 
 	isPositive(test: string): boolean;
-	isPositive(test: zxteam.Financial): boolean;
+	isPositive(test: Financial): boolean;
 
 	isZero(test: string): boolean;
-	isZero(test: zxteam.Financial): boolean;
+	isZero(test: Financial): boolean;
 
 	lt(left: string, right: string): boolean;
-	lt(left: zxteam.Financial, right: zxteam.Financial): boolean;
+	lt(left: Financial, right: Financial): boolean;
 
 	lte(left: string, right: string): boolean;
-	lte(left: zxteam.Financial, right: zxteam.Financial): boolean;
+	lte(left: Financial, right: Financial): boolean;
 
 	/**
 	 * Analog of Math.max()
@@ -63,7 +66,7 @@ export interface FinancialOperation {
 	 * Analog of Math.max()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max
 	 */
-	max(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	max(left: Financial, right: Financial): Financial;
 
 	/**
 	 * Analog of Math.min()
@@ -74,25 +77,22 @@ export interface FinancialOperation {
 	 * Analog of Math.min()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min
 	 */
-	min(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	min(left: Financial, right: Financial): Financial;
 
 	mod(left: string, right: string): string;
-	mod(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	mod(left: Financial, right: Financial): Financial;
 
-	multiply(left: string, right: string, roundMode?: zxteam.Financial.RoundMode): string;
-	multiply(left: zxteam.Financial, right: zxteam.Financial, roundMode?: zxteam.Financial.RoundMode): zxteam.Financial;
+	multiply(left: string, right: string, roundMode?: Financial.RoundMode): string;
+	multiply(left: Financial, right: Financial, roundMode?: Financial.RoundMode): Financial;
 
-	parse(value: string): zxteam.Financial;
+	parse(value: string): Financial;
 
-	round(value: string, fractionDigits: zxteam.Financial.FractionDigits, roundMode?: zxteam.Financial.RoundMode): string;
-	round(value: zxteam.Financial, fractionDigits: zxteam.Financial.FractionDigits, roundMode?: zxteam.Financial.RoundMode): zxteam.Financial;
+	round(value: string, fractionDigits: Financial.FractionDigits, roundMode?: Financial.RoundMode): string;
+	round(value: Financial, fractionDigits: Financial.FractionDigits, roundMode?: Financial.RoundMode): Financial;
 
 	subtract(left: string, right: string): string;
-	subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial;
+	subtract(left: Financial, right: Financial): Financial;
 
-	toFloat(value: zxteam.Financial): number;
-	toInt(value: zxteam.Financial): number;
+	toFloat(value: Financial): number;
+	toInt(value: Financial): number;
 }
-
-
-

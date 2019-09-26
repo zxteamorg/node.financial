@@ -1,6 +1,6 @@
 {
 	"name": "@zxteam/financial",
-	"version": "6.0.20",
+	"version": "6.0.21",
 	"description": "Financial data type for Java Script",
 	"author": {
 		"name": "ZXTeam",
@@ -20,12 +20,12 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"@zxteam/contract": "^6.0.18",
-		"@zxteam/errors": "^6.0.8",
-		"lodash": "^4.17.14"
+		"@zxteam/contract": "^6.0.21",
+		"@zxteam/errors": "^6.0.18",
+		"lodash": "^4.17.15"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.136",
+		"@types/lodash": "^4.14.139",
 		"@types/node": "^11.13.17",
 		"@zxnode/build": "^0.0.34"
 	},
@@ -39,7 +39,7 @@
 	"keywords": [],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/zxteamorg/node.financial.git"
+		"url": "ssh://git@code.zxteam.net:22282/pub/node/financial.git"
 	},
 	"bugs": {
 		"url": "https://github.com/zxteamorg/node.financial/issues"
