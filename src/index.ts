@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial } from "@zxteam/contract";
 
 import * as _ from "lodash";
 
@@ -49,7 +49,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		divide(left: any, right: any, roundMode?: zxteam.Financial.RoundMode): any {
+		divide(left: any, right: any, roundMode?: Financial.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.divide(right, roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
@@ -71,19 +71,19 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		ensure(value: zxteam.Financial, errorMessage?: string): zxteam.Financial {
+		ensure(value: Financial, errorMessage?: string): Financial {
 			return backendClass.ensure(value, errorMessage);
 		},
 
-		ensureNullable(value: zxteam.Financial | null, errorMessage?: string): zxteam.Financial | null {
+		ensureNullable(value: Financial | null, errorMessage?: string): Financial | null {
 			return backendClass.ensureNullable(value, errorMessage);
 		},
 
-		fromFloat(value: number): zxteam.Financial {
+		fromFloat(value: number): Financial {
 			return backendClass.fromFloat(value, settings);
 		},
 
-		fromInt(value: number): zxteam.Financial {
+		fromInt(value: number): Financial {
 			return backendClass.fromInt(value, settings);
 		},
 
@@ -109,7 +109,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		isFinancial(test: any): test is zxteam.Financial {
+		isFinancial(test: any): test is Financial {
 			return test instanceof AbstractFinancial;
 		},
 
@@ -197,7 +197,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		mod(left: any, right: any, roundMode?: zxteam.Financial.RoundMode): any {
+		mod(left: any, right: any, roundMode?: Financial.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.mod(right, roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
@@ -208,7 +208,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		multiply(left: any, right: any, roundMode?: zxteam.Financial.RoundMode): any {
+		multiply(left: any, right: any, roundMode?: Financial.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.multiply(right, roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
@@ -219,14 +219,14 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		parse(value: string): zxteam.Financial {
+		parse(value: string): Financial {
 			if (_.isString(value)) {
 				return backendClass.parse(value, settings);
 			}
 			throw new Error("Wrong arguments passed");
 		},
 
-		round(value: any, fractionDigits: zxteam.Financial.FractionDigits, roundMode?: zxteam.Financial.RoundMode): any {
+		round(value: any, fractionDigits: Financial.FractionDigits, roundMode?: Financial.RoundMode): any {
 			if (value instanceof backendClass) {
 				return value.round(fractionDigits, roundMode);
 			} else if (_.isString(value)) {
@@ -247,7 +247,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		toFloat(value: zxteam.Financial): number {
+		toFloat(value: Financial): number {
 			if (value instanceof backendClass) {
 				return value.toFloat();
 			} else if (_.isString(value)) {
@@ -257,7 +257,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			throw new Error("Wrong arguments passed");
 		},
 
-		toInt(value: zxteam.Financial): number {
+		toInt(value: Financial): number {
 			if (value instanceof backendClass) {
 				return value.toInt();
 			} else if (_.isString(value)) {
@@ -275,7 +275,7 @@ export const DEFAULT_SETTINGS: Settings = Object.freeze({
 	decimalSeparator: ".",
 	defaultRoundOpts: {
 		fractionalDigits: 32,
-		roundMode: zxteam.Financial.RoundMode.Round
+		roundMode: Financial.RoundMode.Round
 	}
 });
 

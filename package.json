@@ -21,12 +21,12 @@
 	"license": "MIT",
 	"dependencies": {
 		"@zxteam/contract": "^6.0.21",
-		"@zxteam/errors": "^6.0.18",
+		"@zxteam/errors": "^6.0.21",
 		"lodash": "^4.17.15"
 	},
 	"devDependencies": {
-		"@types/lodash": "^4.14.139",
-		"@types/node": "^11.13.17",
+		"@types/lodash": "^4.14.141",
+		"@types/node": "^11.13.21",
 		"@zxnode/build": "^0.0.34"
 	},
 	"optionalDependencies": {
