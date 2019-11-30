@@ -1,6 +1,6 @@
 // This module provide a wrapper over https://www.npmjs.com/package/bignumber.js
 
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 import { ArgumentError, InvalidOperationError } from "@zxteam/errors";
 
 import { BigNumber } from "bignumber.js";
@@ -27,7 +27,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return new BigNumberFinancial(raw, settings);
 	}
 
-	public static ensure(data: zxteam.Financial, errorMessage?: string): BigNumberFinancial {
+	public static ensure(data: FinancialLike, errorMessage?: string): BigNumberFinancial {
 		if (data instanceof BigNumberFinancial) { return data; }
 		if (errorMessage === undefined) {
 			errorMessage = "Wrong Financial object";
@@ -35,7 +35,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		throw new ArgumentError(errorMessage);
 	}
 
-	public static ensureNullable(data: zxteam.Financial | null, errorMessage?: string): BigNumberFinancial | null {
+	public static ensureNullable(data: FinancialLike | null, errorMessage?: string): BigNumberFinancial | null {
 		if (data === null) { return null; }
 		return BigNumberFinancial.ensure(data, errorMessage);
 	}
@@ -70,13 +70,13 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public add(value: zxteam.Financial): BigNumberFinancial {
+	public add(value: FinancialLike): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.plus(friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public divide(value: zxteam.Financial, roundMode?: zxteam.Financial.RoundMode): BigNumberFinancial {
+	public divide(value: FinancialLike, roundMode?: FinancialLike.RoundMode): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.div(friendlyValue._raw);
 
@@ -94,17 +94,17 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		}
 	}
 
-	public equals(value: zxteam.Financial): boolean {
+	public equals(value: FinancialLike): boolean {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		return this._raw.isEqualTo(friendlyValue._raw);
 	}
 
-	public gt(value: zxteam.Financial): boolean {
+	public gt(value: FinancialLike): boolean {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		return this._raw.gt(friendlyValue._raw);
 	}
 
-	public gte(value: zxteam.Financial): boolean {
+	public gte(value: FinancialLike): boolean {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		return this._raw.gte(friendlyValue._raw);
 	}
@@ -126,35 +126,35 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public lt(value: zxteam.Financial): boolean {
+	public lt(value: FinancialLike): boolean {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		return this._raw.lt(friendlyValue._raw);
 	}
 
-	public lte(value: zxteam.Financial): boolean {
+	public lte(value: FinancialLike): boolean {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		return this._raw.lte(friendlyValue._raw);
 	}
 
-	public max(value: zxteam.Financial): BigNumberFinancial {
+	public max(value: FinancialLike): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = BigNumber.max(this._raw, friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public min(value: zxteam.Financial): BigNumberFinancial {
+	public min(value: FinancialLike): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = BigNumber.min(this._raw, friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public mod(value: zxteam.Financial): BigNumberFinancial {
+	public mod(value: FinancialLike): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.mod(friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public multiply(value: zxteam.Financial, roundMode?: zxteam.Financial.RoundMode): BigNumberFinancial {
+	public multiply(value: FinancialLike, roundMode?: FinancialLike.RoundMode): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.multipliedBy(friendlyValue._raw);
 
@@ -172,7 +172,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		}
 	}
 
-	public round(fractionalDigits: zxteam.Financial.FractionDigits, roundMode?: zxteam.Financial.RoundMode): zxteam.Financial {
+	public round(fractionalDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): FinancialLike {
 		FractionDigitsGuard.verifyFraction(fractionalDigits);
 
 		if (fractionalDigits < this._raw.decimalPlaces()) {
@@ -187,7 +187,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		}
 	}
 
-	public subtract(value: zxteam.Financial): BigNumberFinancial {
+	public subtract(value: FinancialLike): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.minus(friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
@@ -219,7 +219,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		this._raw = value;
 	}
 
-	private wrap(value: zxteam.Financial): BigNumberFinancial {
+	private wrap(value: FinancialLike): BigNumberFinancial {
 		if (value instanceof BigNumberFinancial) {
 			return value;
 		}
@@ -227,12 +227,12 @@ export default class BigNumberFinancial extends AbstractFinancial {
 	}
 }
 
-function convertRoundMode(roundMode: zxteam.Financial.RoundMode, isPositive: boolean): BigNumber.RoundingMode {
+function convertRoundMode(roundMode: FinancialLike.RoundMode, isPositive: boolean): BigNumber.RoundingMode {
 	switch (roundMode) {
-		case zxteam.Financial.RoundMode.Ceil: return isPositive === true ? BigNumber.ROUND_UP : BigNumber.ROUND_DOWN;
-		case zxteam.Financial.RoundMode.Floor: return isPositive === true ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP;
-		case zxteam.Financial.RoundMode.Round: return isPositive === true ? BigNumber.ROUND_HALF_UP : BigNumber.ROUND_HALF_DOWN;
-		case zxteam.Financial.RoundMode.Trunc: return BigNumber.ROUND_DOWN;
+		case FinancialLike.RoundMode.Ceil: return isPositive === true ? BigNumber.ROUND_UP : BigNumber.ROUND_DOWN;
+		case FinancialLike.RoundMode.Floor: return isPositive === true ? BigNumber.ROUND_DOWN : BigNumber.ROUND_UP;
+		case FinancialLike.RoundMode.Round: return isPositive === true ? BigNumber.ROUND_HALF_UP : BigNumber.ROUND_HALF_DOWN;
+		case FinancialLike.RoundMode.Trunc: return BigNumber.ROUND_DOWN;
 		default:
 			throw new UnreachableRoundMode(roundMode);
 	}

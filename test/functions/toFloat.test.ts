@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*value: */string, /*expectedResult: */number, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["5", 5, [Settings.Backend.bignumberjs]],
@@ -30,14 +30,14 @@ testCases.forEach(function (testCase) {
 
 		describe(`toFloat should be ${test} => ${expectedResult}`, function () {
 
-			it("financial.toFloat(value: zxteam.Financial): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+			it("financial.toFloat(value: FinancialLike): number", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: number = financial.toFloat(friendlyTest);
 				assert.equal(result, expectedResult);
 			});
 
 			it("value.toFloat(): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: number = friendlyTest.toFloat();
 				assert.equal(result, expectedResult);
 			});

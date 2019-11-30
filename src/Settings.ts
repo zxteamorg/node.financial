@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 
 export interface Settings {
@@ -33,6 +33,6 @@ export namespace Settings {
 
 	export interface RoundOptions {
 		readonly fractionalDigits: number;
-		readonly roundMode: zxteam.Financial.RoundMode;
+		readonly roundMode: FinancialLike.RoundMode;
 	}
 }

@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*left: */string, /*right: */string, /*expectedResult: */string, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["10", "5", "5", [Settings.Backend.bignumberjs]],
@@ -38,17 +38,17 @@ testCases.forEach(function (testCase) {
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.subtract(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = financial.subtract(friendlyLeft, friendlyRight);
+			it("financial.subtract(left: FinancialLike, right: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = financial.subtract(friendlyLeft, friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 
-			it("value.subtract(right: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = friendlyLeft.subtract(friendlyRight);
+			it("value.subtract(right: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = friendlyLeft.subtract(friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

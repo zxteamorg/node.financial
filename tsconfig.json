@@ -4,6 +4,7 @@
 		"alwaysStrict": true,
 		"declaration": true,
 		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
 		"module": "commonjs",
 		"moduleResolution": "node",
 		"noImplicitAny": true,

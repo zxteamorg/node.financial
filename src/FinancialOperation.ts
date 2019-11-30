@@ -1,4 +1,4 @@
-import { Financial } from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 import { Settings } from "./Settings";
 
 export interface FinancialOperation {
@@ -13,49 +13,49 @@ export interface FinancialOperation {
 	 * Analog of Math​.abs()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/abs
 	 */
-	abs(value: Financial): Financial;
+	abs(value: FinancialLike): FinancialLike;
 
 	add(left: string, right: string): string;
-	add(left: Financial, right: Financial): Financial;
+	add(left: FinancialLike, right: FinancialLike): FinancialLike;
 
-	divide(left: string, right: string, roundMode?: Financial.RoundMode): string;
-	divide(left: Financial, right: Financial, roundMode?: Financial.RoundMode): Financial;
+	divide(left: string, right: string, roundMode?: FinancialLike.RoundMode): string;
+	divide(left: FinancialLike, right: FinancialLike, roundMode?: FinancialLike.RoundMode): FinancialLike;
 
 	equals(left: string, right: string): boolean;
-	equals(left: Financial, right: Financial): boolean;
+	equals(left: FinancialLike, right: FinancialLike): boolean;
 
-	ensure(value: Financial, errorMessage?: string): Financial;
-	ensureNullable(value: Financial | null, errorMessage?: string): Financial | null;
+	ensure(value: FinancialLike, errorMessage?: string): FinancialLike;
+	ensureNullable(value: FinancialLike | null, errorMessage?: string): FinancialLike | null;
 
-	fromFloat(value: number): Financial;
+	fromFloat(value: number): FinancialLike;
 
-	fromInt(value: number): Financial;
+	fromInt(value: number): FinancialLike;
 
 	gt(left: string, right: string): boolean;
-	gt(left: Financial, right: Financial): boolean;
+	gt(left: FinancialLike, right: FinancialLike): boolean;
 
 	gte(left: string, right: string): boolean;
-	gte(left: Financial, right: Financial): boolean;
+	gte(left: FinancialLike, right: FinancialLike): boolean;
 
 	inverse(value: string): string;
-	inverse(value: Financial): Financial;
+	inverse(value: FinancialLike): FinancialLike;
 
-	isFinancial(test: any): test is Financial;
+	isFinancial(test: any): test is FinancialLike;
 
 	isNegative(test: string): boolean;
-	isNegative(test: Financial): boolean;
+	isNegative(test: FinancialLike): boolean;
 
 	isPositive(test: string): boolean;
-	isPositive(test: Financial): boolean;
+	isPositive(test: FinancialLike): boolean;
 
 	isZero(test: string): boolean;
-	isZero(test: Financial): boolean;
+	isZero(test: FinancialLike): boolean;
 
 	lt(left: string, right: string): boolean;
-	lt(left: Financial, right: Financial): boolean;
+	lt(left: FinancialLike, right: FinancialLike): boolean;
 
 	lte(left: string, right: string): boolean;
-	lte(left: Financial, right: Financial): boolean;
+	lte(left: FinancialLike, right: FinancialLike): boolean;
 
 	/**
 	 * Analog of Math.max()
@@ -66,7 +66,7 @@ export interface FinancialOperation {
 	 * Analog of Math.max()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/max
 	 */
-	max(left: Financial, right: Financial): Financial;
+	max(left: FinancialLike, right: FinancialLike): FinancialLike;
 
 	/**
 	 * Analog of Math.min()
@@ -77,22 +77,22 @@ export interface FinancialOperation {
 	 * Analog of Math.min()
 	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min
 	 */
-	min(left: Financial, right: Financial): Financial;
+	min(left: FinancialLike, right: FinancialLike): FinancialLike;
 
 	mod(left: string, right: string): string;
-	mod(left: Financial, right: Financial): Financial;
+	mod(left: FinancialLike, right: FinancialLike): FinancialLike;
 
-	multiply(left: string, right: string, roundMode?: Financial.RoundMode): string;
-	multiply(left: Financial, right: Financial, roundMode?: Financial.RoundMode): Financial;
+	multiply(left: string, right: string, roundMode?: FinancialLike.RoundMode): string;
+	multiply(left: FinancialLike, right: FinancialLike, roundMode?: FinancialLike.RoundMode): FinancialLike;
 
-	parse(value: string): Financial;
+	parse(value: string): FinancialLike;
 
-	round(value: string, fractionDigits: Financial.FractionDigits, roundMode?: Financial.RoundMode): string;
-	round(value: Financial, fractionDigits: Financial.FractionDigits, roundMode?: Financial.RoundMode): Financial;
+	round(value: string, fractionDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): string;
+	round(value: FinancialLike, fractionDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): FinancialLike;
 
 	subtract(left: string, right: string): string;
-	subtract(left: Financial, right: Financial): Financial;
+	subtract(left: FinancialLike, right: FinancialLike): FinancialLike;
 
-	toFloat(value: Financial): number;
-	toInt(value: Financial): number;
+	toFloat(value: FinancialLike): number;
+	toInt(value: FinancialLike): number;
 }

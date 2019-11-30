@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*left: */string, /*right: */string, /*expectedResult: */boolean, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["6", "5", false, [Settings.Backend.bignumberjs]],
@@ -38,16 +38,16 @@ testCases.forEach(function (testCase) {
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.lte(left: zxteam.Financial, right: zxteam.Financial): boolean", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
+			it("financial.lte(left: FinancialLike, right: FinancialLike): boolean", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
 				const result: boolean = financial.lte(friendlyLeft, friendlyRight);
 				assert.equal(result, expectedResult);
 			});
 
-			it("value.lte(right: zxteam.Financial): boolean", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
+			it("value.lte(right: FinancialLike): boolean", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
 				const result: boolean = friendlyLeft.lte(friendlyRight);
 				assert.equal(result, expectedResult);
 			});

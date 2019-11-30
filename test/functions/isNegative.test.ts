@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*left: */string, /*expectedResult: */boolean, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["5", false, [Settings.Backend.bignumberjs]],
@@ -36,19 +36,19 @@ testCases.forEach(function (testCase) {
 		const msg = expectedResult === true ? "negative" : "not negative";
 		describe(`isNegative should be ${test} is ${msg}`, function () {
 
-			it("financial.isNegative(test: zxteam.Financial): boolean", function () {
+			it("financial.isNegative(test: FinancialLike): boolean", function () {
 				const result: boolean = financial.isNegative(test);
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.isNegative(test: zxteam.Financial): boolean", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+			it("financial.isNegative(test: FinancialLike): boolean", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: boolean = financial.isNegative(friendlyTest);
 				assert.equal(result, expectedResult);
 			});
 
 			it("value.isNegative(): boolean", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: boolean = friendlyTest.isNegative();
 				assert.equal(result, expectedResult);
 			});

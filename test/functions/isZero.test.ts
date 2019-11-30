@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*left: */string, /*expectedResult: */boolean, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["6", false, [Settings.Backend.bignumberjs]],
@@ -34,19 +34,19 @@ testCases.forEach(function (testCase) {
 		const msg = expectedResult === true ? "zero" : "not zero";
 		describe(`isZero should be ${test} is ${msg}`, function () {
 
-			it("financial.isZero(test: zxteam.Financial): boolean", function () {
+			it("financial.isZero(test: FinancialLike): boolean", function () {
 				const result: boolean = financial.isZero(test);
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.isZero(test: zxteam.Financial): boolean", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+			it("financial.isZero(test: FinancialLike): boolean", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: boolean = financial.isZero(friendlyTest);
 				assert.equal(result, expectedResult);
 			});
 
 			it("value.isZero(): boolean", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: boolean = friendlyTest.isZero();
 				assert.equal(result, expectedResult);
 			});

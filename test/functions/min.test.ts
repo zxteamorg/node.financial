@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*left: */string, /*right: */string, /*expectedResult: */string, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["5", "10", "5", [Settings.Backend.bignumberjs]],
@@ -38,17 +38,17 @@ testCases.forEach(function (testCase) {
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.min(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = financial.min(friendlyLeft, friendlyRight);
+			it("financial.min(left: FinancialLike, right: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = financial.min(friendlyLeft, friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 
-			it("value.add(right: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = friendlyLeft.min(friendlyRight);
+			it("value.add(right: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = friendlyLeft.min(friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -7,7 +7,7 @@ import { setup, FinancialOperation, Settings } from "../../src/index";
 type TestCases = Array<[/*value: */string, /*expectedResult: */string, /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const testCases: TestCases = [
 	["5", "-5", [Settings.Backend.bignumberjs]],
@@ -40,15 +40,15 @@ testCases.forEach(function (testCase) {
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.inverse(value: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
-				const result: zxteam.Financial = financial.inverse(friendlyTest);
+			it("financial.inverse(value: FinancialLike): FinancialLike", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
+				const result: FinancialLike = financial.inverse(friendlyTest);
 				assert.equal(result.toString(), expectedResult);
 			});
 
-			it("value.inverse(): zxteam.Financial", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
-				const result: zxteam.Financial = friendlyTest.inverse();
+			it("value.inverse(): FinancialLike", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
+				const result: FinancialLike = friendlyTest.inverse();
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

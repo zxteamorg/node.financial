@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -8,7 +8,7 @@ type PositiveTestCases = Array<[/*value: */string, /*expectedResult: */number, /
 type ErrorsTestCases = Array<[/*value: */string,  /*backends: */Array<Settings.Backend>]>;
 
 const fractionalDigits = 10;
-const roundMode = zxteam.Financial.RoundMode.Round;
+const roundMode = FinancialLike.RoundMode.Round;
 
 const positiveTestCases: PositiveTestCases = [
 	["5", 5, [Settings.Backend.bignumberjs]],
@@ -34,14 +34,14 @@ positiveTestCases.forEach(function (testCase) {
 
 		describe(`toInt should be ${test} => ${expectedResult}`, function () {
 
-			it("financial.toInt(value: zxteam.Financial): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+			it("financial.toInt(value: FinancialLike): number", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: number = financial.toInt(friendlyTest);
 				assert.equal(result, expectedResult);
 			});
 
 			it("value.toInt(): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+				const friendlyTest: FinancialLike = financial.parse(test);
 				const result: number = friendlyTest.toInt();
 				assert.equal(result, expectedResult);
 			});
@@ -61,8 +61,8 @@ errorsTestCases.forEach(function (testCase) {
 
 		describe(`toInt should raise error on value ${test}`, function () {
 
-			it("financial.toInt(value: zxteam.Financial): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+			it("financial.toInt(value: FinancialLike): number", function () {
+				const friendlyTest: FinancialLike = financial.parse(test);
 				let err;
 				try {
 					financial.toInt(friendlyTest);
@@ -73,7 +73,7 @@ errorsTestCases.forEach(function (testCase) {
 			});
 
 			it("value.toInt(): number", function () {
-				const friendlyTest: zxteam.Financial = financial.parse(test);
+				const friendlyTest: FinancialLike = financial.parse(test);
 				let err;
 				try {
 					friendlyTest.toInt();
@@ -94,7 +94,7 @@ describe(`round + toInt should works`, function () {
 	);
 
 	it("value.round(0).toInt(): number", function () {
-		const value: zxteam.Financial = financial.parse("5.123");
+		const value: FinancialLike = financial.parse("5.123");
 		const result: number = value.round(0).toInt();
 		assert.equal(result, 5);
 	});

@@ -1,4 +1,4 @@
-import * as zxteam from "@zxteam/contract";
+import { Financial as FinancialLike } from "@zxteam/contract";
 
 import { assert } from "chai";
 
@@ -9,44 +9,44 @@ type TestCases = Array<[
 	/*right: */string,
 	/*expectedResult: */string,
 	/*fractionalDigits: */number,
-	/*roundMode: */zxteam.Financial.RoundMode,
+	/*roundMode: */FinancialLike.RoundMode,
 	/*backends: */Array<Settings.Backend>
 ]>;
 
 const testCases: TestCases = [
-	["0.5", "3.3333333333", "1.6666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["-0.5", "3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["-0.5", "-3.3333333333", "1.6666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["0.5", "-3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["0.5", "3.3333333333", "1.6666666667", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["-0.5", "3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["-0.5", "-3.3333333333", "1.6666666667", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["0.5", "-3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["0.5", "3.3333333333", "1.6666666666", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["-0.5", "3.3333333333", "-1.6666666667", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["-0.5", "-3.3333333333", "1.6666666666", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["0.5", "-3.3333333333", "-1.6666666667", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["0.5", "3.3333333333", "1.6666666666", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["-0.5", "3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["-0.5", "-3.3333333333", "1.6666666666", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["0.5", "-3.3333333333", "-1.6666666666", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["0.5", "3.3333333333", "1.6666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["-0.5", "3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["-0.5", "-3.3333333333", "1.6666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["0.5", "-3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["0.5", "3.3333333333", "1.6666666667", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["-0.5", "3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["-0.5", "-3.3333333333", "1.6666666667", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["0.5", "-3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["0.5", "3.3333333333", "1.6666666666", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["-0.5", "3.3333333333", "-1.6666666667", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["-0.5", "-3.3333333333", "1.6666666666", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["0.5", "-3.3333333333", "-1.6666666667", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["0.5", "3.3333333333", "1.6666666666", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.5", "3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.5", "-3.3333333333", "1.6666666666", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["0.5", "-3.3333333333", "-1.6666666666", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
 
-	["0.5000000001", "3.3333333333", "1.666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "3.3333333333", "-1.666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "-3.3333333333", "1.666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "-3.3333333333", "-1.666666667", 10, zxteam.Financial.RoundMode.Round, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "3.3333333333", "1.666666667", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "3.3333333333", "-1.6666666669", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "-3.3333333333", "1.666666667", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "-3.3333333333", "-1.6666666669", 10, zxteam.Financial.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "3.3333333333", "1.6666666669", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "3.3333333333", "-1.666666667", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "-3.3333333333", "1.6666666669", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "-3.3333333333", "-1.666666667", 10, zxteam.Financial.RoundMode.Floor, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "3.3333333333", "1.6666666669", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "3.3333333333", "-1.6666666669", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["-0.5000000001", "-3.3333333333", "1.6666666669", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
-	["0.5000000001", "-3.3333333333", "-1.6666666669", 10, zxteam.Financial.RoundMode.Trunc, [Settings.Backend.bignumberjs]]
+	["0.5000000001", "3.3333333333", "1.666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "3.3333333333", "-1.666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "-3.3333333333", "1.666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "-3.3333333333", "-1.666666667", 10, FinancialLike.RoundMode.Round, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "3.3333333333", "1.666666667", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "3.3333333333", "-1.6666666669", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "-3.3333333333", "1.666666667", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "-3.3333333333", "-1.6666666669", 10, FinancialLike.RoundMode.Ceil, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "3.3333333333", "1.6666666669", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "3.3333333333", "-1.666666667", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "-3.3333333333", "1.6666666669", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "-3.3333333333", "-1.666666667", 10, FinancialLike.RoundMode.Floor, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "3.3333333333", "1.6666666669", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "3.3333333333", "-1.6666666669", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["-0.5000000001", "-3.3333333333", "1.6666666669", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]],
+	["0.5000000001", "-3.3333333333", "-1.6666666669", 10, FinancialLike.RoundMode.Trunc, [Settings.Backend.bignumberjs]]
 ];
 
 testCases.forEach(function (testCase) {
@@ -68,17 +68,17 @@ testCases.forEach(function (testCase) {
 				assert.equal(result, expectedResult);
 			});
 
-			it("financial.multiply(left: zxteam.Financial, right: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = financial.multiply(friendlyLeft, friendlyRight);
+			it("financial.multiply(left: FinancialLike, right: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = financial.multiply(friendlyLeft, friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 
-			it("value.multiply(value: zxteam.Financial): zxteam.Financial", function () {
-				const friendlyLeft: zxteam.Financial = financial.parse(left);
-				const friendlyRight: zxteam.Financial = financial.parse(right);
-				const result: zxteam.Financial = friendlyLeft.multiply(friendlyRight);
+			it("value.multiply(value: FinancialLike): FinancialLike", function () {
+				const friendlyLeft: FinancialLike = financial.parse(left);
+				const friendlyRight: FinancialLike = financial.parse(right);
+				const result: FinancialLike = friendlyLeft.multiply(friendlyRight);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});
