@@ -79,7 +79,17 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			return backendClass.ensureNullable(value, errorMessage);
 		},
 
-		fromFloat(value: number): FinancialLike {
+		fromFloat(value: number, roundMode?: FinancialLike.RoundMode): FinancialLike {
+			if (roundMode !== undefined) {
+				const overridenSettings: Settings = Object.freeze({
+					decimalSeparator: settings.decimalSeparator,
+					defaultRoundOpts: Object.freeze({
+						fractionalDigits: settings.defaultRoundOpts.fractionalDigits,
+						roundMode
+					})
+				});
+				return backendClass.fromFloat(value, overridenSettings);
+			}
 			return backendClass.fromFloat(value, settings);
 		},
 
@@ -274,7 +284,7 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 export const DEFAULT_SETTINGS: Settings = Object.freeze({
 	decimalSeparator: ".",
 	defaultRoundOpts: {
-		fractionalDigits: 32,
+		fractionalDigits: 18,
 		roundMode: FinancialLike.RoundMode.Round
 	}
 });

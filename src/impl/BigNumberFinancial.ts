@@ -10,12 +10,44 @@ import { Settings } from "../Settings";
 
 import { FractionDigitsGuard, UnreachableRoundMode } from "./heplers";
 
+// See https://mikemcl.github.io/bignumber.js/#decimal-places
+const DECIMAL_PLACES_MAP = new Map<BigNumber.Config["DECIMAL_PLACES"], typeof BigNumber>();
+function getBigNumberImpl(DECIMAL_PLACES: BigNumber.Config["DECIMAL_PLACES"]): typeof BigNumber {
+	const existentBN = DECIMAL_PLACES_MAP.get(DECIMAL_PLACES);
+	if (existentBN !== undefined) { return existentBN; }
+	const newBN = BigNumber.clone();
+	newBN.config({ DECIMAL_PLACES });
+	DECIMAL_PLACES_MAP.set(DECIMAL_PLACES, newBN);
+	return newBN;
+}
+
 export default class BigNumberFinancial extends AbstractFinancial {
 	private readonly _raw: BigNumber;
 
-
 	public static fromFloat(value: number, settings: Settings): BigNumberFinancial {
-		const raw = new BigNumber(value);
+		const BN = getBigNumberImpl(settings.defaultRoundOpts.fractionalDigits);
+		const raw = new BN(value);
+
+		if (settings.defaultRoundOpts.fractionalDigits < raw.decimalPlaces()) {
+			let rawRoundMode: BigNumber.RoundingMode;
+			switch (settings.defaultRoundOpts.roundMode) {
+				case FinancialLike.RoundMode.Ceil:
+					rawRoundMode = BigNumber.ROUND_CEIL;
+					break;
+				case FinancialLike.RoundMode.Floor:
+					rawRoundMode = BigNumber.ROUND_FLOOR;
+					break;
+				case FinancialLike.RoundMode.Round:
+					rawRoundMode = BigNumber.ROUND_HALF_EVEN;
+					break;
+				case FinancialLike.RoundMode.Trunc:
+					rawRoundMode = BigNumber.ROUND_DOWN;
+					break;
+			}
+			const correctedRaw: BigNumber = raw.decimalPlaces(settings.defaultRoundOpts.fractionalDigits, rawRoundMode);
+			return new BigNumberFinancial(correctedRaw, settings);
+		}
+
 		return new BigNumberFinancial(raw, settings);
 	}
 
@@ -23,7 +55,9 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		if (!Number.isSafeInteger(value)) {
 			throw new ArgumentError(`Wrong value ${value}. Expected safe integer.`);
 		}
-		const raw = new BigNumber(value);
+		const BN = getBigNumberImpl(settings.defaultRoundOpts.fractionalDigits);
+		const raw = new BN(value);
+
 		return new BigNumberFinancial(raw, settings);
 	}
 
@@ -42,13 +76,22 @@ export default class BigNumberFinancial extends AbstractFinancial {
 
 	public static parse(value: string, settings: Settings): BigNumberFinancial {
 		AbstractFinancial.verify(value); // raise error if wrong value
-		const raw = new BigNumber(value);
+		const BN = getBigNumberImpl(settings.defaultRoundOpts.fractionalDigits);
+		const raw = new BN(value);
+
+		const decimalPlaces = raw.decimalPlaces();
+		if (decimalPlaces > settings.defaultRoundOpts.fractionalDigits) {
+			const bigNumberRoundMode = convertRoundMode(settings.defaultRoundOpts.roundMode, raw.isPositive());
+			const roundedRaw = raw.decimalPlaces(settings.defaultRoundOpts.fractionalDigits, bigNumberRoundMode);
+			return new BigNumberFinancial(roundedRaw, settings);
+		}
+
 		let rawStr = raw.toString(10);
 		if (rawStr.length < value.length) {
-			if (raw.decimalPlaces() > 0) {
+			if (decimalPlaces > 0) {
 				// Workaround for X.XXX00000
 				rawStr = rawStr.padEnd(value.length, "0");
-			} else if (raw.decimalPlaces() === 0 && (rawStr.length + 1) < value.length) {
+			} else if (decimalPlaces === 0 && (rawStr.length + 1) < value.length) {
 				// Workaround for X.00000
 				rawStr += ".";
 				rawStr = rawStr.padEnd(value.length, "0");
@@ -57,7 +100,7 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		if (rawStr !== value) {
 			throw new ArgumentError(`The value ${value} cannot be represented in backend: 'bignumber'`);
 		}
-		if (settings.defaultRoundOpts.fractionalDigits < raw.decimalPlaces()) {
+		if (settings.defaultRoundOpts.fractionalDigits < decimalPlaces) {
 			const roundedRaw = raw.decimalPlaces(settings.defaultRoundOpts.fractionalDigits);
 			return new BigNumberFinancial(roundedRaw, settings);
 		} else {
@@ -78,20 +121,18 @@ export default class BigNumberFinancial extends AbstractFinancial {
 
 	public divide(value: FinancialLike, roundMode?: FinancialLike.RoundMode): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
-		const result: BigNumber = this._raw.div(friendlyValue._raw);
+
+		if (roundMode === undefined) {
+			roundMode = this._settings.defaultRoundOpts.roundMode;
+		}
 
 		const { fractionalDigits } = this._settings.defaultRoundOpts;
+		const BN = getBigNumberImpl(fractionalDigits + 2);
+		const result: BigNumber = new BN(this._raw).div(friendlyValue._raw);
+		const bigNumberRoundMode = convertRoundMode(roundMode, result.isPositive());
+		const roundedResult = result.decimalPlaces(this._settings.defaultRoundOpts.fractionalDigits, bigNumberRoundMode);
 
-		if (fractionalDigits < result.decimalPlaces()) {
-			if (roundMode === undefined) {
-				roundMode = this._settings.defaultRoundOpts.roundMode;
-			}
-			const bigNumberRoundMode = convertRoundMode(roundMode, result.isPositive());
-			const roundedResult = result.decimalPlaces(fractionalDigits, bigNumberRoundMode);
-			return new BigNumberFinancial(roundedResult, this._settings);
-		} else {
-			return new BigNumberFinancial(result, this._settings);
-		}
+		return new BigNumberFinancial(roundedResult, this._settings);
 	}
 
 	public equals(value: FinancialLike): boolean {

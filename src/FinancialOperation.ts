@@ -27,7 +27,7 @@ export interface FinancialOperation {
 	ensure(value: FinancialLike, errorMessage?: string): FinancialLike;
 	ensureNullable(value: FinancialLike | null, errorMessage?: string): FinancialLike | null;
 
-	fromFloat(value: number): FinancialLike;
+	fromFloat(value: number, roundMode?: FinancialLike.RoundMode): FinancialLike;
 
 	fromInt(value: number): FinancialLike;
 
