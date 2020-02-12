@@ -106,7 +106,7 @@ testCases.forEach(function (testCase) {
 
 			it("value.round(fractionalDigits: Financial.FractionDigits): FinancialLike", function () {
 				const friendlyValue: FinancialLike = financial.parse(value);
-				const result: FinancialLike = friendlyValue.round(fractionalDigits);
+				const result: FinancialLike = friendlyValue.round(fractionalDigits, roundMode);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

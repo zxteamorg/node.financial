@@ -78,9 +78,47 @@ testCases.forEach(function (testCase) {
 			it("value.multiply(value: FinancialLike): FinancialLike", function () {
 				const friendlyLeft: FinancialLike = financial.parse(left);
 				const friendlyRight: FinancialLike = financial.parse(right);
-				const result: FinancialLike = friendlyLeft.multiply(friendlyRight);
+				const result: FinancialLike = friendlyLeft.multiply(friendlyRight, fractionalDigits, roundMode);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});
+	});
+});
+
+
+describe(`multiply custom tests`, function () {
+	it("0.011 * 0.011 = 0.000121 (fractionalDigits: 6)", function () {
+		const amount: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 3 }
+		}).parse("0.011");
+		const price: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 3 }
+		}).parse("0.011");
+
+		const result: string = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Floor, fractionalDigits: 6 }
+		}).multiply(amount, price).toString();
+
+		assert.isString(result);
+		assert.equal(result, "0.000121");
+	});
+
+	it("0.011 * 0.01 = 0.0002 (fractionalDigits: 4 + RoundMode.Ceil)", function () {
+		const amount: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 3 }
+		}).parse("0.011");
+		const price: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 3 }
+		}).parse("0.01");
+
+		const result: string = amount.multiply(price, 4, FinancialLike.RoundMode.Ceil).toString();
+
+		assert.isString(result);
+		assert.equal(result, "0.0002");
 	});
 });

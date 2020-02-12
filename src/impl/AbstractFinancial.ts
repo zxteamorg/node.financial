@@ -21,7 +21,9 @@ export abstract class AbstractFinancial implements FinancialLike {
 
 	public abstract abs(): FinancialLike;
 	public abstract add(value: FinancialLike): FinancialLike;
-	public abstract divide(value: FinancialLike, roundMode?: FinancialLike.RoundMode): FinancialLike;
+	public abstract divide(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): FinancialLike;
 	public abstract equals(value: FinancialLike): boolean;
 	public abstract gt(value: FinancialLike): boolean;
 	public abstract gte(value: FinancialLike): boolean;
@@ -33,10 +35,15 @@ export abstract class AbstractFinancial implements FinancialLike {
 	public abstract lte(value: FinancialLike): boolean;
 	public abstract max(value: FinancialLike): FinancialLike;
 	public abstract min(value: FinancialLike): FinancialLike;
-	public abstract mod(value: FinancialLike, roundMode?: FinancialLike.RoundMode): FinancialLike;
-	public abstract multiply(value: FinancialLike, roundMode?: FinancialLike.RoundMode): FinancialLike;
+	public abstract mod(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): FinancialLike;
+	public abstract multiply(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): FinancialLike;
 	public abstract round(
-		fractionalDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): FinancialLike;
+		fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): FinancialLike;
 	public abstract subtract(value: FinancialLike): FinancialLike;
 	public abstract toFloat(): number;
 	public abstract toInt(): number;

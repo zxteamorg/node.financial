@@ -59,7 +59,7 @@ testCases.forEach(function (testCase) {
 			it("value.mod(value: FinancialLike): FinancialLike", function () {
 				const friendlyLeft: FinancialLike = financial.parse(left);
 				const friendlyRight: FinancialLike = financial.parse(right);
-				const result: FinancialLike = friendlyLeft.mod(friendlyRight);
+				const result: FinancialLike = friendlyLeft.mod(friendlyRight, fractionalDigits, roundMode);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});

@@ -122,9 +122,31 @@ testCases.forEach(function (testCase) {
 			it("value.divide(value: FinancialLike): FinancialLike", function () {
 				const friendlyLeft: FinancialLike = financial.parse(left);
 				const friendlyRight: FinancialLike = financial.parse(right);
-				const result: FinancialLike = friendlyLeft.divide(friendlyRight);
+				const result: FinancialLike = friendlyLeft.divide(friendlyRight, fractionalDigits, roundMode);
 				assert.equal(result.toString(), expectedResult);
 			});
 		});
+	});
+});
+
+
+describe(`divide custom tests`, function () {
+	it("150.42 / 9812.22 = 0.01532987 (fractionalDigits: 8)", function () {
+		const amount: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 2 }
+		}).parse("150.42");
+		const price: FinancialLike = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Round, fractionalDigits: 2 }
+		}).parse("9812.22");
+
+		const result: string = setup(Settings.Backend.bignumberjs, {
+			decimalSeparator: ".",
+			defaultRoundOpts: { roundMode: FinancialLike.RoundMode.Ceil, fractionalDigits: 8 }
+		}).divide(amount, price).toString();
+
+		assert.isString(result);
+		assert.equal(result, "0.01532987");
 	});
 });

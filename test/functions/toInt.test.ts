@@ -95,7 +95,7 @@ describe(`round + toInt should works`, function () {
 
 	it("value.round(0).toInt(): number", function () {
 		const value: FinancialLike = financial.parse("5.123");
-		const result: number = value.round(0).toInt();
+		const result: number = value.round(0, financial.settings.defaultRoundOpts.roundMode).toInt();
 		assert.equal(result, 5);
 	});
 });

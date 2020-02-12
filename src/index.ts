@@ -42,8 +42,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.add(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.add(friendlyRight).toString();
 			}
 			throw new Error("Wrong arguments passed");
@@ -51,11 +51,12 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 
 		divide(left: any, right: any, roundMode?: FinancialLike.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
-				return left.divide(right, roundMode);
+				return left.divide(right, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
-				return friendlyLeft.divide(friendlyRight, roundMode).toString();
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
+				return friendlyLeft.divide(friendlyRight, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode)
+					.toString();
 			}
 			throw new Error("Wrong arguments passed");
 		},
@@ -64,8 +65,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.equals(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.equals(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
@@ -101,8 +102,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.gt(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.gt(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
@@ -112,8 +113,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.gte(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.gte(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
@@ -167,8 +168,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.lt(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.lt(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
@@ -178,8 +179,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.lte(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.lte(friendlyRight);
 			}
 			throw new Error("Wrong arguments passed");
@@ -189,8 +190,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.max(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.max(friendlyRight).toString();
 			}
 			throw new Error("Wrong arguments passed");
@@ -200,8 +201,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.min(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.min(friendlyRight).toString();
 			}
 			throw new Error("Wrong arguments passed");
@@ -209,22 +210,23 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 
 		mod(left: any, right: any, roundMode?: FinancialLike.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
-				return left.mod(right, roundMode);
+				return left.mod(right, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
-				return friendlyLeft.mod(friendlyRight, roundMode).toString();
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
+				return friendlyLeft.mod(friendlyRight, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode).toString();
 			}
 			throw new Error("Wrong arguments passed");
 		},
 
 		multiply(left: any, right: any, roundMode?: FinancialLike.RoundMode): any {
 			if (left instanceof backendClass && right instanceof backendClass) {
-				return left.multiply(right, roundMode);
+				return left.multiply(right, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
-				return friendlyLeft.multiply(friendlyRight, roundMode).toString();
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
+				return friendlyLeft.multiply(friendlyRight, settings.defaultRoundOpts.fractionalDigits, settings.defaultRoundOpts.roundMode)
+					.toString();
 			}
 			throw new Error("Wrong arguments passed");
 		},
@@ -238,10 +240,10 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 
 		round(value: any, fractionDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): any {
 			if (value instanceof backendClass) {
-				return value.round(fractionDigits, roundMode);
+				return value.round(fractionDigits, roundMode || settings.defaultRoundOpts.roundMode);
 			} else if (_.isString(value)) {
 				const friendlyValue = backendClass.parse(value, settings);
-				return friendlyValue.round(fractionDigits, roundMode).toString();
+				return friendlyValue.round(fractionDigits, roundMode || settings.defaultRoundOpts.roundMode).toString();
 			}
 			throw new Error("Wrong arguments passed");
 		},
@@ -250,8 +252,8 @@ export function setup(backend: Settings.Backend, settings: Settings): FinancialO
 			if (left instanceof backendClass && right instanceof backendClass) {
 				return left.subtract(right);
 			} else if (_.isString(left) && _.isString(right)) {
-				const friendlyLeft = backendClass.parse(left, settings);
-				const friendlyRight = backendClass.parse(right, settings);
+				const friendlyLeft: FinancialLike = backendClass.parse(left, settings);
+				const friendlyRight: FinancialLike  = backendClass.parse(right, settings);
 				return friendlyLeft.subtract(friendlyRight).toString();
 			}
 			throw new Error("Wrong arguments passed");

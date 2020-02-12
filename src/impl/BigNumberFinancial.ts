@@ -119,19 +119,14 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public divide(value: FinancialLike, roundMode?: FinancialLike.RoundMode): BigNumberFinancial {
+	public divide(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
-
-		if (roundMode === undefined) {
-			roundMode = this._settings.defaultRoundOpts.roundMode;
-		}
-
-		const { fractionalDigits } = this._settings.defaultRoundOpts;
 		const BN = getBigNumberImpl(fractionalDigits + 2);
 		const result: BigNumber = new BN(this._raw).div(friendlyValue._raw);
 		const bigNumberRoundMode = convertRoundMode(roundMode, result.isPositive());
-		const roundedResult = result.decimalPlaces(this._settings.defaultRoundOpts.fractionalDigits, bigNumberRoundMode);
-
+		const roundedResult = result.decimalPlaces(fractionalDigits, bigNumberRoundMode);
 		return new BigNumberFinancial(roundedResult, this._settings);
 	}
 
@@ -189,31 +184,27 @@ export default class BigNumberFinancial extends AbstractFinancial {
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public mod(value: FinancialLike): BigNumberFinancial {
+	public mod(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
 		const result: BigNumber = this._raw.mod(friendlyValue._raw);
 		return new BigNumberFinancial(result, this._settings);
 	}
 
-	public multiply(value: FinancialLike, roundMode?: FinancialLike.RoundMode): BigNumberFinancial {
+	public multiply(
+		value: FinancialLike, fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode
+	): BigNumberFinancial {
 		const friendlyValue: BigNumberFinancial = this.wrap(value);
-		const result: BigNumber = this._raw.multipliedBy(friendlyValue._raw);
+		const BN = getBigNumberImpl(this._raw.decimalPlaces() + friendlyValue._raw.decimalPlaces());
+		const result: BigNumber = new BN(this._raw).multipliedBy(friendlyValue._raw);
+		const bigNumberRoundMode = convertRoundMode(roundMode, result.isPositive());
+		const roundedResult = result.decimalPlaces(fractionalDigits, bigNumberRoundMode);
 
-		const { fractionalDigits } = this._settings.defaultRoundOpts;
-
-		if (fractionalDigits < result.decimalPlaces()) {
-			if (roundMode === undefined) {
-				roundMode = this._settings.defaultRoundOpts.roundMode;
-			}
-			const bigNumberRoundMode = convertRoundMode(roundMode, result.isPositive());
-			const roundedResult = result.decimalPlaces(fractionalDigits, bigNumberRoundMode);
-			return new BigNumberFinancial(roundedResult, this._settings);
-		} else {
-			return new BigNumberFinancial(result, this._settings);
-		}
+		return new BigNumberFinancial(roundedResult, this._settings);
 	}
 
-	public round(fractionalDigits: FinancialLike.FractionDigits, roundMode?: FinancialLike.RoundMode): FinancialLike {
+	public round(fractionalDigits: FinancialLike.FractionDigits, roundMode: FinancialLike.RoundMode): FinancialLike {
 		FractionDigitsGuard.verifyFraction(fractionalDigits);
 
 		if (fractionalDigits < this._raw.decimalPlaces()) {
@@ -253,10 +244,16 @@ export default class BigNumberFinancial extends AbstractFinancial {
 
 	private constructor(value: BigNumber, settings: Settings) {
 		if (settings.defaultRoundOpts.fractionalDigits < value.decimalPlaces()) {
-			throw new ArgumentError(`Overflow fractionalDigits of Financial value`);
+			super({
+				decimalSeparator: settings.decimalSeparator,
+				defaultRoundOpts: {
+					roundMode: settings.defaultRoundOpts.roundMode,
+					fractionalDigits: value.decimalPlaces()
+				}
+			});
+		} else {
+			super(settings);
 		}
-
-		super(settings);
 		this._raw = value;
 	}
 
