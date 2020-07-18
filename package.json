@@ -22,7 +22,7 @@
 	"dependencies": {
 		"@zxteam/contract": "^6.0.56",
 		"@zxteam/errors": "^6.0.41",
-		"lodash": "^4.17.15"
+		"lodash": "^4.17.19"
 	},
 	"devDependencies": {
 		"@types/lodash": "^4.14.149",
