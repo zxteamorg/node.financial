@@ -1,3 +1,7 @@
+# DEPRECATED 
+
+The project has been moved to https://github.com/freemework/decimal/tree/src-typescript-bignumberjs
+
 # ZXTeam's Financial
 [![npm version badge](https://img.shields.io/npm/v/@zxteam/financial.svg)](https://www.npmjs.com/package/@zxteam/financial)
 [![downloads badge](https://img.shields.io/npm/dm/@zxteam/financial.svg)](https://www.npmjs.org/package/@zxteam/financial)
